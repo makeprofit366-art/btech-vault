@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — BTech Vault</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <script src="firebase-config.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="logo">BTech<span>Vault</span></a>
+  <div class="nav-actions">
+    <div class="nav-user" id="navUser">
+      <div class="spinner" style="width:14px;height:14px;"></div>
+    </div>
+    <button class="btn btn-outline" style="font-size:0.8rem;" onclick="signOut()">Logout</button>
+  </div>
+</nav>
+
+<!-- TABS -->
+<div class="tabs">
+  <a href="#" class="tab active" onclick="showTab('upload', this)">📤 Upload PDF</a>
+  <a href="#" class="tab" onclick="showTab('myuploads', this)">📁 My Uploads</a>
+  <a href="#" class="tab" onclick="showTab('saved', this)">🔖 Saved PDFs</a>
+</div>
+
+<!-- ====== UPLOAD TAB ====== -->
+<div id="tab-upload" class="tab-content" style="max-width:640px; margin:2rem auto; padding:0 1rem;">
+
+  <div style="background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:2rem;">
+    <h2 style="font-family:'Syne',sans-serif; font-weight:800; margin-bottom:0.5rem;">Upload a PDF</h2>
+    <p style="color:var(--text2); font-size:0.875rem; margin-bottom:1.5rem;">
+      Subject name mandatory. Tags help others find it. PDF is public — everyone view cheyyochu, but save cheyyalante login kavali.
+    </p>
+
+    <!-- PDF FILE -->
+    <div class="form-group">
+      <label>PDF File *</label>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" accept=".pdf" id="pdfFile" onchange="onFileSelect(this)"/>
+        <span class="upload-icon">📄</span>
+        <p>PDF drag & drop cheyyandi or click cheyyandi</p>
+        <small>Max size: 50MB • Only .pdf files</small>
+      </div>
+      <div id="filePreview" style="display:none; margin-top:0.75rem; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:0.75rem; display:none; align-items:center; gap:0.75rem;">
+        <span style="font-size:1.5rem;">📄</span>
+        <div>
+          <div id="fileName" style="font-weight:600; font-size:0.875rem;"></div>
+          <div id="fileSize" style="font-size:0.75rem; color:var(--text3);"></div>
+        </div>
+        <button onclick="clearFile()" style="margin-left:auto; background:none; border:none; color:var(--danger); cursor:pointer; font-size:1.2rem;">✕</button>
+      </div>
+    </div>
+
+    <!-- TITLE -->
+    <div class="form-group">
+      <label>PDF Title *</label>
+      <input type="text" id="pdfTitle" placeholder="e.g. Data Structures Unit 1 Notes" maxlength="100"/>
+    </div>
+
+    <!-- SUBJECT -->
+    <div class="form-group">
+      <label>Subject Name * (Very Important)</label>
+      <input type="text" id="pdfSubject" placeholder="e.g. Data Structures, DBMS, Networks..." maxlength="60" oninput="suggestSubjects(this.value)"/>
+      <div id="subjectSuggestions" style="display:none; background:var(--bg3); border:1px solid var(--border); border-radius:8px; margin-top:0.3rem; overflow:hidden;"></div>
+    </div>
+
+    <!-- BRANCH -->
+    <div class="form-group">
+      <label>Branch</label>
+      <select id="pdfBranch">
+        <option value="">Select Branch (optional)</option>
+        <option value="CSE">CSE</option>
+        <option value="ECE">ECE</option>
+        <option value="EEE">EEE</option>
+        <option value="Mech">Mech</option>
+        <option value="Civil">Civil</option>
+        <option value="IT">IT</option>
+        <option value="Chemical">Chemical</option>
+        <option value="Common">Common (All branches)</option>
+      </select>
+    </div>
+
+    <!-- YEAR -->
+    <div class="form-group">
+      <label>Year</label>
+      <select id="pdfYear">
+        <option value="">Select Year (optional)</option>
+        <option value="1st Year">1st Year</option>
+        <option value="2nd Year">2nd Year</option>
+        <option value="3rd Year">3rd Year</option>
+        <option value="4th Year">4th Year</option>
+      </select>
+    </div>
+
+    <!-- TAGS -->
+    <div class="form-group">
+      <label>Tags (Enter chesine Enter press cheyyandi)</label>
+      <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:0.5rem; min-height:44px; display:flex; flex-wrap:wrap; gap:0.4rem; align-items:center;" id="tagContainer" onclick="document.getElementById('tagInput').focus()">
+        <input type="text" id="tagInput" placeholder="supply, unit-2, previous-paper..." 
+          style="background:none; border:none; outline:none; color:var(--text); font-family:'Nunito',sans-serif; font-size:0.875rem; min-width:120px; flex:1;"
+          onkeydown="handleTagInput(event)"/>
+      </div>
+      <small style="color:var(--text3); font-size:0.75rem; margin-top:0.3rem; display:block;">
+        Suggested: supply • backlog • arrear • unit-1 • mid-1 • previous-paper • lab • notes
+      </small>
+      <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.6rem;">
+        <span class="tag" onclick="addTag('supply')">+ supply</span>
+        <span class="tag" onclick="addTag('backlog')">+ backlog</span>
+        <span class="tag" onclick="addTag('arrear')">+ arrear</span>
+        <span class="tag" onclick="addTag('unit-1')">+ unit-1</span>
+        <span class="tag" onclick="addTag('unit-2')">+ unit-2</span>
+        <span class="tag" onclick="addTag('previous-paper')">+ previous-paper</span>
+        <span class="tag" onclick="addTag('lab')">+ lab</span>
+        <span class="tag" onclick="addTag('notes')">+ notes</span>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div id="uploadStatus" style="font-size:0.8rem; color:var(--text2); margin-top:0.4rem; display:none;"></div>
+
+    <!-- SUBMIT -->
+    <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:1rem; padding:0.75rem;" 
+      id="uploadBtn" onclick="uploadPdf()">
+      📤 Upload PDF
+    </button>
+  </div>
+</div>
+
+<!-- ====== MY UPLOADS TAB ====== -->
+<div id="tab-myuploads" class="tab-content" style="display:none;">
+  <div class="section-header">
+    <span class="section-title">My Uploaded PDFs</span>
+  </div>
+  <div class="pdf-grid" id="myUploadsGrid">
+    <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Loading...</div>
+  </div>
+</div>
+
+<!-- ====== SAVED TAB ====== -->
+<div id="tab-saved" class="tab-content" style="display:none;">
+  <div class="section-header">
+    <span class="section-title">Nee Saved PDFs <span style="font-size:0.75rem; color:var(--text3); font-family:'DM Mono',monospace;">(only nuvvu chudagalav)</span></span>
+  </div>
+  <div class="pdf-grid" id="savedGrid">
+    <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Loading...</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================
+// STATE
+// ============================================
+let currentUser = null;
+let tags = [];
+let selectedFile = null;
+
+const SUBJECTS = [
+  'Data Structures', 'DBMS', 'Computer Networks', 'Operating Systems',
+  'Software Engineering', 'Algorithms', 'Computer Architecture',
+  'Digital Electronics', 'Signals & Systems', 'Engineering Mathematics',
+  'Engineering Physics', 'Engineering Chemistry', 'C Programming',
+  'Java', 'Python', 'Web Technologies', 'Machine Learning',
+  'Artificial Intelligence', 'Compiler Design', 'Theory of Computation'
+];
+
+// ============================================
+// INIT
+// ============================================
+auth.onAuthStateChanged(async (user) => {
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+  currentUser = user;
+  document.getElementById('navUser').innerHTML = `
+    <img src="${user.photoURL}" alt="${user.displayName}" referrerpolicy="no-referrer" style="width:32px;height:32px;border-radius:50%;border:2px solid var(--border)"/>
+    <span style="font-size:0.875rem; color:var(--text2);">${user.displayName.split(' ')[0]}</span>
+  `;
+  loadMyUploads();
+  loadSaved();
+});
+
+// ============================================
+// TABS
+// ============================================
+function showTab(name, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tab-${name}`).style.display = name === 'upload' ? 'block' : 'block';
+  el.classList.add('active');
+  event.preventDefault();
+}
+
+// ============================================
+// FILE SELECT
+// ============================================
+function onFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  if (!file.name.endsWith('.pdf')) {
+    showToast('Only PDF files allow cheyyali!', 'error');
+    input.value = '';
+    return;
+  }
+
+  if (file.size > 50 * 1024 * 1024) {
+    showToast('File 50MB kante peddagaa undhi!', 'error');
+    input.value = '';
+    return;
+  }
+
+  selectedFile = file;
+  document.getElementById('filePreview').style.display = 'flex';
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = (file.size / (1024*1024)).toFixed(2) + ' MB';
+  document.getElementById('uploadZone').style.borderColor = 'var(--success)';
+
+  // Auto-fill title from filename
+  if (!document.getElementById('pdfTitle').value) {
+    document.getElementById('pdfTitle').value = file.name.replace('.pdf', '').replace(/_/g,' ').replace(/-/g,' ');
+  }
+}
+
+function clearFile() {
+  selectedFile = null;
+  document.getElementById('pdfFile').value = '';
+  document.getElementById('filePreview').style.display = 'none';
+  document.getElementById('uploadZone').style.borderColor = '';
+}
+
+// ============================================
+// TAGS
+// ============================================
+function handleTagInput(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (val && !tags.includes(val) && tags.length < 10) {
+      addTag(val);
+    }
+    e.target.value = '';
+  }
+}
+
+function addTag(val) {
+  val = val.trim().toLowerCase();
+  if (!val || tags.includes(val) || tags.length >= 10) return;
+  tags.push(val);
+  renderTags();
+}
+
+function removeTag(val) {
+  tags = tags.filter(t => t !== val);
+  renderTags();
+}
+
+function renderTags() {
+  const container = document.getElementById('tagContainer');
+  const input = document.getElementById('tagInput');
+  container.innerHTML = '';
+  tags.forEach(t => {
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.style.cssText = 'border-color:var(--accent); color:var(--accent); cursor:default;';
+    span.innerHTML = `${t} <span onclick="removeTag('${t}')" style="cursor:pointer; margin-left:0.2rem; opacity:0.7;">✕</span>`;
+    container.appendChild(span);
+  });
+  container.appendChild(input);
+  input.focus();
+}
+
+// ============================================
+// SUBJECT SUGGESTIONS
+// ============================================
+function suggestSubjects(val) {
+  const box = document.getElementById('subjectSuggestions');
+  if (!val || val.length < 2) { box.style.display = 'none'; return; }
+
+  const matches = SUBJECTS.filter(s => s.toLowerCase().includes(val.toLowerCase())).slice(0, 5);
+  if (matches.length === 0) { box.style.display = 'none'; return; }
+
+  box.style.display = 'block';
+  box.innerHTML = matches.map(m => `
+    <div onclick="selectSubject('${m}')" style="padding:0.6rem 1rem; cursor:pointer; font-size:0.875rem; transition:background 0.1s;"
+      onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">${m}</div>
+  `).join('');
+}
+
+function selectSubject(val) {
+  document.getElementById('pdfSubject').value = val;
+  document.getElementById('subjectSuggestions').style.display = 'none';
+}
+
+// ============================================
+// UPLOAD PDF
+// ============================================
+async function uploadPdf() {
+  const title = document.getElementById('pdfTitle').value.trim();
+  const subject = document.getElementById('pdfSubject').value.trim();
+  const branch = document.getElementById('pdfBranch').value;
+  const year = document.getElementById('pdfYear').value;
+
+  if (!selectedFile) { showToast('PDF select cheyyandi!', 'error'); return; }
+  if (!title) { showToast('Title enter cheyyandi!', 'error'); return; }
+  if (!subject) { showToast('Subject name mandatory!', 'error'); return; }
+
+  const btn = document.getElementById('uploadBtn');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Uploading...';
+
+  const progressBar = document.getElementById('progressBar');
+  const progressFill = document.getElementById('progressFill');
+  const statusDiv = document.getElementById('uploadStatus');
+  progressBar.style.display = 'block';
+  statusDiv.style.display = 'block';
+  statusDiv.textContent = 'Firebase Storage ki upload avuthundhi...';
+
+  try {
+    // Upload file to Firebase Storage
+    const fileName = `pdfs/${currentUser.uid}/${Date.now()}_${selectedFile.name}`;
+    const storageRef = storage.ref(fileName);
+    const uploadTask = storageRef.put(selectedFile);
+
+    uploadTask.on('state_changed', (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      progressFill.style.width = progress + '%';
+      statusDiv.textContent = `Uploading... ${Math.round(progress)}%`;
+    });
+
+    await uploadTask;
+    const downloadURL = await storageRef.getDownloadURL();
+
+    // Save metadata to Firestore
+    const pdfData = {
+      title,
+      subject,
+      branch: branch || null,
+      year: year || null,
+      tags,
+      fileUrl: downloadURL,
+      fileName: selectedFile.name,
+      fileSize: selectedFile.size,
+      uploadedBy: currentUser.uid,
+      uploaderName: currentUser.displayName,
+      uploaderEmail: currentUser.email,
+      uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      status: 'active'
+    };
+
+    await db.collection('pdfs').add(pdfData);
+
+    progressFill.style.width = '100%';
+    statusDiv.textContent = '✅ Upload successful!';
+    showToast('PDF successfully uploaded! 🎉', 'success');
+
+    // Reset form
+    setTimeout(() => {
+      clearFile();
+      document.getElementById('pdfTitle').value = '';
+      document.getElementById('pdfSubject').value = '';
+      document.getElementById('pdfBranch').value = '';
+      document.getElementById('pdfYear').value = '';
+      tags = [];
+      renderTags();
+      progressBar.style.display = 'none';
+      statusDiv.style.display = 'none';
+      progressFill.style.width = '0%';
+      btn.disabled = false;
+      btn.innerHTML = '📤 Upload PDF';
+      loadMyUploads();
+    }, 1500);
+
+  } catch (err) {
+    console.error(err);
+    showToast('Upload failed: ' + err.message, 'error');
+    btn.disabled = false;
+    btn.innerHTML = '📤 Upload PDF';
+    progressBar.style.display = 'none';
+    statusDiv.style.display = 'none';
+  }
+}
+
+// ============================================
+// MY UPLOADS
+// ============================================
+async function loadMyUploads() {
+  if (!currentUser) return;
+  const grid = document.getElementById('myUploadsGrid');
+  try {
+    const snap = await db.collection('pdfs')
+      .where('uploadedBy', '==', currentUser.uid)
+      .orderBy('uploadedAt', 'desc')
+      .get();
+
+    if (snap.empty) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <span class="empty-icon">📭</span>
+          <h3>Inka upload cheyyaledu</h3>
+          <p>First PDF upload cheyyandi!</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = snap.docs.map(doc => {
+      const pdf = doc.data();
+      const date = pdf.uploadedAt ? new Date(pdf.uploadedAt.seconds * 1000).toLocaleDateString('en-IN') : '';
+      return `
+        <div class="pdf-card">
+          <div class="pdf-icon">📄</div>
+          <div class="pdf-title">${escHtml(pdf.title)}</div>
+          <div class="pdf-subject">📚 ${escHtml(pdf.subject)}</div>
+          <div class="pdf-meta">${date} • ${(pdf.fileSize/(1024*1024)).toFixed(1)} MB</div>
+          <div class="pdf-tags">${(pdf.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+          <div class="pdf-actions">
+            <a href="viewer.html?id=${doc.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.8rem;">📖 View</a>
+            <button class="btn btn-danger" style="font-size:0.8rem;" onclick="deleteMyPdf('${doc.id}', '${escHtml(pdf.fileName)}')">🗑 Delete</button>
+          </div>
+        </div>`;
+    }).join('');
+  } catch (err) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>Error loading</h3><p>${err.message}</p></div>`;
+  }
+}
+
+async function deleteMyPdf(pdfId, fileName) {
+  if (!confirm('Idi delete cheyyalani sure na?')) return;
+  try {
+    await db.collection('pdfs').doc(pdfId).delete();
+    showToast('PDF deleted', 'info');
+    loadMyUploads();
+  } catch (err) {
+    showToast('Delete failed: ' + err.message, 'error');
+  }
+}
+
+// ============================================
+// SAVED PDFS
+// ============================================
+async function loadSaved() {
+  if (!currentUser) return;
+  const grid = document.getElementById('savedGrid');
+  try {
+    const snap = await db.collection('users').doc(currentUser.uid)
+      .collection('savedPDFs').orderBy('savedAt', 'desc').get();
+
+    if (snap.empty) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <span class="empty-icon">🔖</span>
+          <h3>Inka save cheyyaledu</h3>
+          <p>Public feed lo PDFs browse chesthe save button click cheyyandi</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = snap.docs.map(doc => {
+      const saved = doc.data();
+      return `
+        <div class="pdf-card">
+          <div class="pdf-icon">📄</div>
+          <div class="pdf-title">${escHtml(saved.title)}</div>
+          <div class="pdf-subject">📚 ${escHtml(saved.subject)}</div>
+          <div class="pdf-actions">
+            <a href="viewer.html?id=${doc.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.8rem;">📖 View</a>
+            <button class="btn btn-danger" style="font-size:0.8rem;" onclick="unsavePdf('${doc.id}')">🗑 Remove</button>
+          </div>
+        </div>`;
+    }).join('');
+  } catch (err) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>Error: ${err.message}</h3></div>`;
+  }
+}
+
+async function unsavePdf(pdfId) {
+  await db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(pdfId).delete();
+  showToast('Removed from saves', 'info');
+  loadSaved();
+}
+
+// ============================================
+// UTILS
+// ============================================
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showToast(msg, type = 'info') {
+  const toast = document.getElementById('toast');
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  toast.innerHTML = `${icons[type] || ''} ${msg}`;
+  toast.className = `toast ${type} show`;
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Drag and drop
+const uploadZone = document.getElementById('uploadZone');
+uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    document.getElementById('pdfFile').files = e.dataTransfer.files;
+    onFileSelect(document.getElementById('pdfFile'));
+  }
+});
+</script>
+</body>
+</html>

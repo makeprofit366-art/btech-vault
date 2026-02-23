@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BTech Vault — Study PDFs</title>
+  <link rel="stylesheet" href="style.css"/>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <script src="firebase-config.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="logo">BTech<span>Vault</span></a>
+  <div class="nav-actions" id="navActions">
+    <div class="loading" style="padding:0; gap:0.4rem; font-size:0.8rem;">
+      <div class="spinner" style="width:14px;height:14px;"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Study Smarter.<br><span class="highlight">Find PDFs Fast.</span></h1>
+  <p>B.Tech students ki — supply, backlog, arrears anni PDFs oka chota. Free ga access cheyyandi.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num" id="totalPdfs">—</span>
+      <span class="stat-label">Total PDFs</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="totalSubjects">—</span>
+      <span class="stat-label">Subjects</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="totalUsers">—</span>
+      <span class="stat-label">Contributors</span>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search by title, subject, tag..." oninput="filterPdfs()"/>
+  </div>
+  <div class="filter-tags" id="subjectFilters">
+    <span class="tag active" onclick="filterBySubject('', this)">All</span>
+  </div>
+</div>
+
+<!-- SECTION -->
+<div class="section-header">
+  <span class="section-title">All PDFs</span>
+  <span style="font-size:0.8rem; color:var(--text3);" id="pdfCount"></span>
+</div>
+
+<!-- PDF GRID -->
+<div class="pdf-grid" id="pdfGrid">
+  <div class="loading" style="grid-column:1/-1">
+    <div class="spinner"></div> Loading PDFs...
+  </div>
+</div>
+
+<!-- LOGIN PROMPT MODAL (when non-logged user tries to save) -->
+<div class="modal-overlay" id="loginPromptModal">
+  <div class="modal" style="max-width:380px; text-align:center;">
+    <div style="font-size:3rem; margin-bottom:1rem;">🔐</div>
+    <h2>Login Cheyyandi</h2>
+    <p style="color:var(--text2); margin-bottom:1.5rem; font-size:0.9rem;">
+      PDF save cheskovadam ki Google account tho login cheyyandi. Free, fast!
+    </p>
+    <a href="login.html" class="btn btn-primary" style="width:100%; justify-content:center; margin-bottom:0.75rem;">
+      Login / Sign Up
+    </a>
+    <button class="btn btn-outline" style="width:100%; justify-content:center;" onclick="closeModal('loginPromptModal')">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================
+// STATE
+// ============================================
+let allPdfs = [];
+let currentUser = null;
+let savedPdfIds = new Set();
+let activeSubject = '';
+
+// ============================================
+// INIT
+// ============================================
+auth.onAuthStateChanged(async (user) => {
+  currentUser = user;
+  updateNavbar(user);
+  if (user) {
+    await loadSavedIds();
+  }
+  loadPdfs();
+  loadStats();
+});
+
+function updateNavbar(user) {
+  const nav = document.getElementById('navActions');
+  if (user) {
+    nav.innerHTML = `
+      <div class="nav-user">
+        <img src="${user.photoURL}" alt="${user.displayName}" referrerpolicy="no-referrer"/>
+        <span>${user.displayName.split(' ')[0]}</span>
+      </div>
+      <a href="dashboard.html" class="btn btn-outline" style="font-size:0.8rem;">Dashboard</a>
+      <button class="btn btn-outline" style="font-size:0.8rem;" onclick="signOut()">Logout</button>
+    `;
+  } else {
+    nav.innerHTML = `
+      <a href="login.html" class="btn btn-outline" style="font-size:0.8rem;">Login</a>
+      <a href="login.html" class="btn btn-primary" style="font-size:0.8rem;">Sign Up</a>
+    `;
+  }
+}
+
+// ============================================
+// LOAD PDFS
+// ============================================
+async function loadPdfs() {
+  try {
+    const snapshot = await db.collection('pdfs')
+      .where('status', '==', 'active')
+      .orderBy('uploadedAt', 'desc')
+      .get();
+
+    allPdfs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    buildSubjectFilters();
+    renderPdfs(allPdfs);
+    document.getElementById('pdfCount').textContent = `${allPdfs.length} PDFs found`;
+  } catch (err) {
+    console.error(err);
+    document.getElementById('pdfGrid').innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <span class="empty-icon">⚠️</span>
+        <h3>Load cheyyataniki error</h3>
+        <p>Firebase config check cheyyandi</p>
+      </div>
+    `;
+  }
+}
+
+async function loadStats() {
+  try {
+    const pdfsSnap = await db.collection('pdfs').where('status', '==', 'active').get();
+    const usersSnap = await db.collection('users').get();
+    const subjects = new Set(pdfsSnap.docs.map(d => d.data().subject).filter(Boolean));
+
+    document.getElementById('totalPdfs').textContent = pdfsSnap.size;
+    document.getElementById('totalSubjects').textContent = subjects.size;
+    document.getElementById('totalUsers').textContent = usersSnap.size;
+  } catch {}
+}
+
+async function loadSavedIds() {
+  if (!currentUser) return;
+  try {
+    const snap = await db.collection('users').doc(currentUser.uid)
+      .collection('savedPDFs').get();
+    savedPdfIds = new Set(snap.docs.map(d => d.id));
+  } catch {}
+}
+
+// ============================================
+// RENDER
+// ============================================
+function renderPdfs(pdfs) {
+  const grid = document.getElementById('pdfGrid');
+  if (pdfs.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <span class="empty-icon">📭</span>
+        <h3>PDF lu dorakaledu</h3>
+        <p>Vere filter try cheyyandi or first ga upload cheyyandi!</p>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = pdfs.map(pdf => {
+    const isSaved = savedPdfIds.has(pdf.id);
+    const tags = (pdf.tags || []).slice(0, 4);
+    const date = pdf.uploadedAt ? new Date(pdf.uploadedAt.seconds * 1000).toLocaleDateString('en-IN') : '';
+
+    return `
+      <div class="pdf-card" onclick="openPdf('${pdf.id}', event)">
+        <div class="pdf-icon">📄</div>
+        <div class="pdf-title">${escHtml(pdf.title)}</div>
+        <div class="pdf-subject">📚 ${escHtml(pdf.subject)}</div>
+        <div class="pdf-meta">
+          Uploaded by ${escHtml(pdf.uploaderName || 'Anonymous')} • ${date}
+        </div>
+        <div class="pdf-tags">
+          ${tags.map(t => `<span class="tag">${escHtml(t)}</span>`).join('')}
+        </div>
+        <div class="pdf-actions" onclick="event.stopPropagation()">
+          <button class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.8rem;"
+            onclick="openPdf('${pdf.id}', event)">
+            📖 Open PDF
+          </button>
+          <button class="btn ${isSaved ? 'btn-outline' : 'btn-outline'}" 
+            id="save-${pdf.id}"
+            style="font-size:0.8rem; ${isSaved ? 'color:var(--success); border-color:var(--success)' : ''}"
+            onclick="toggleSave('${pdf.id}', event)">
+            ${isSaved ? '✅ Saved' : '🔖 Save'}
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================
+// OPEN PDF
+// ============================================
+function openPdf(pdfId, event) {
+  if (event) event.stopPropagation();
+  window.location.href = `viewer.html?id=${pdfId}`;
+}
+
+// ============================================
+// SAVE / UNSAVE
+// ============================================
+async function toggleSave(pdfId, event) {
+  if (event) event.stopPropagation();
+
+  if (!currentUser) {
+    openModal('loginPromptModal');
+    return;
+  }
+
+  const btn = document.getElementById(`save-${pdfId}`);
+  const isSaved = savedPdfIds.has(pdfId);
+  const userSavesRef = db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(pdfId);
+
+  if (isSaved) {
+    await userSavesRef.delete();
+    savedPdfIds.delete(pdfId);
+    btn.innerHTML = '🔖 Save';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+    showToast('PDF removed from saves', 'info');
+  } else {
+    const pdf = allPdfs.find(p => p.id === pdfId);
+    await userSavesRef.set({
+      savedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      title: pdf.title,
+      subject: pdf.subject,
+      pdfId: pdfId
+    });
+    savedPdfIds.add(pdfId);
+    btn.innerHTML = '✅ Saved';
+    btn.style.color = 'var(--success)';
+    btn.style.borderColor = 'var(--success)';
+    showToast('PDF saved to your account! 🎉', 'success');
+  }
+}
+
+// ============================================
+// FILTERS
+// ============================================
+function buildSubjectFilters() {
+  const subjects = [...new Set(allPdfs.map(p => p.subject).filter(Boolean))];
+  const container = document.getElementById('subjectFilters');
+  container.innerHTML = `<span class="tag active" onclick="filterBySubject('', this)">All</span>`;
+  subjects.forEach(sub => {
+    container.innerHTML += `<span class="tag tag-subject" onclick="filterBySubject('${sub}', this)">${sub}</span>`;
+  });
+}
+
+function filterBySubject(subject, el) {
+  document.querySelectorAll('#subjectFilters .tag').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  activeSubject = subject;
+  filterPdfs();
+}
+
+function filterPdfs() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = allPdfs;
+
+  if (activeSubject) {
+    filtered = filtered.filter(p => p.subject === activeSubject);
+  }
+
+  if (query) {
+    filtered = filtered.filter(p =>
+      p.title.toLowerCase().includes(query) ||
+      (p.subject || '').toLowerCase().includes(query) ||
+      (p.tags || []).some(t => t.toLowerCase().includes(query))
+    );
+  }
+
+  renderPdfs(filtered);
+  document.getElementById('pdfCount').textContent = `${filtered.length} PDFs found`;
+}
+
+// ============================================
+// UTILS
+// ============================================
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showToast(msg, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = `toast ${type} show`;
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Close modal on overlay click
+document.getElementById('loginPromptModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal('loginPromptModal');
+});
+</script>
+</body>
+</html>
