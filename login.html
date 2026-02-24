@@ -7,71 +7,69 @@
   <link rel="stylesheet" href="style.css"/>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-  <script src="firebase-config.js"></script>
 </head>
 <body>
 
 <div class="login-page">
   <div class="login-card">
-    <span class="logo-big">BTech<span style="color:var(--text2); font-weight:400;">Vault</span></span>
+    <span class="logo-big">BTech<span style="color:#94a3b8; font-weight:400;">Vault</span></span>
     <p class="tagline">// supply ki. backlogs ki. success ki.</p>
 
-    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem;">
-      <p style="font-size:0.875rem; color:var(--text2); margin-bottom:0.75rem;">🎓 <strong style="color:var(--text);">Idi B.Tech students ki</strong> — free study PDFs share & access cheyyatanki</p>
-      <div style="display:flex; flex-direction:column; gap:0.4rem;">
-        <div style="font-size:0.8rem; color:var(--text3);">✅ PDFs free ga browse cheyyochu (login lekundha)</div>
-        <div style="font-size:0.8rem; color:var(--text3);">✅ Login chesthe PDFs save cheyyochu</div>
-        <div style="font-size:0.8rem; color:var(--text3);">✅ Login chesthe PDFs upload cheyyochu</div>
-        <div style="font-size:0.8rem; color:var(--accent3);">🔒 Nee saves others ki never show avvavu</div>
+    <div style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:1.25rem; margin-bottom:1.5rem;">
+      <p style="font-size:0.875rem; color:#f8fafc; margin-bottom:0.75rem;">🎓 <strong>B.Tech PDFs ikkada dorukuthayi</strong></p>
+      <div style="font-size:0.8rem; color:#94a3b8;">
+        ✅ Login ayyi PDFs upload cheyyandi
       </div>
     </div>
 
-    <button class="btn-google" onclick="handleGoogleLogin()" id="loginBtn">
-      <img src="https://www.google.com/favicon.ico" alt="Google"/>
+    <button class="btn-google" onclick="handleGoogleLogin()" id="loginBtn" style="width:100%; padding:12px; cursor:pointer; background:white; color:black; border-radius:8px; border:none; font-weight:bold; display:flex; align-items:center; justify-content:center; gap:10px;">
+      <img src="https://www.google.com/favicon.ico" alt="Google" style="width:18px;"/>
       Continue with Google
     </button>
 
-    <div id="errorMsg" style="display:none; background:rgba(248,113,113,0.1); border:1px solid var(--danger); border-radius:8px; padding:0.75rem; margin-top:1rem; font-size:0.85rem; color:var(--danger);"></div>
+    <div id="errorMsg" style="display:none; background:rgba(248,113,113,0.1); border:1px solid #f87171; border-radius:8px; padding:10px; margin-top:15px; color:#f87171; font-size:0.85rem;"></div>
 
-    <div class="login-divider">or just browse</div>
+    <div style="margin:20px 0; color:#475569; font-size:0.8rem;">లేదా</div>
 
-    <a href="index.html" class="btn btn-outline" style="width:100%; justify-content:center;">
-      Browse PDFs (No Login)
+    <a href="index.html" style="text-decoration:none; color:#94a3b8; border:1px solid #334155; padding:10px; border-radius:8px; display:block; text-align:center;">
+      Login లేకుండా చూడండి
     </a>
-
-    <p style="text-align:center; font-size:0.75rem; color:var(--text3); margin-top:1.5rem; font-family:'DM Mono',monospace;">
-      Nee data safe ga untundi. We don't sell anything.
-    </p>
   </div>
 </div>
 
 <script>
-auth.onAuthStateChanged((user) => {
-  if (user) {
-    // Already logged in, redirect
-    const redirect = new URLSearchParams(window.location.search).get('redirect') || 'index.html';
-    window.location.href = redirect;
-  }
-});
+// --- IKKADA NEE FIREBASE DETAILS (FIRE CODE) PASTE CHEYYI ---
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+// ----------------------------------------------------------
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
 async function handleGoogleLogin() {
   const btn = document.getElementById('loginBtn');
   const errDiv = document.getElementById('errorMsg');
 
   btn.disabled = true;
-  btn.innerHTML = `<div class="spinner" style="border:2px solid #ccc; border-top-color:#333;"></div> Logging in...`;
+  btn.innerText = "Loading...";
   errDiv.style.display = 'none';
 
   try {
-    await signInWithGoogle();
-    window.location.href = 'index.html';
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+    window.location.href = 'index.html'; 
   } catch (err) {
     errDiv.style.display = 'block';
-    errDiv.textContent = 'Login error: ' + (err.message || 'Malli try cheyyandi');
+    errDiv.textContent = 'Error: ' + err.message;
     btn.disabled = false;
-    btn.innerHTML = `<img src="https://www.google.com/favicon.ico" alt="Google"/> Continue with Google`;
+    btn.innerHTML = `<img src="https://www.google.com/favicon.ico" alt="Google" style="width:18px;"/> Continue with Google`;
   }
 }
 </script>
