@@ -1,61 +1,21 @@
-// ============================================
-// FIREBASE CONFIG - Replace with your own!
-// ============================================
-// Steps:
-// 1. Go to https://console.firebase.google.com
-// 2. Create new project
-// 3. Add Web App
-// 4. Copy config below and replace
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBi4Udgz97OJo1sei1pAmCJ9oiBT4BSGMw",
+  authDomain: "btech-vault.firebaseapp.com",
+  projectId: "btech-vault",
+  storageBucket: "btech-vault.firebasestorage.app",
+  messagingSenderId: "8508597620",
+  appId: "1:8508597620:web:f36418f8c702e8a21c3821",
+  measurementId: "G-X0TY8S1TPB"
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-const db = firebase.firestore();
-const storage = firebase.storage();
-
-// Google Auth Provider
-const googleProvider = new firebase.auth.GoogleAuthProvider();
-
-// ============================================
-// AUTH FUNCTIONS
-// ============================================
-
-async function signInWithGoogle() {
-  try {
-    const result = await auth.signInWithPopup(googleProvider);
-    const user = result.user;
-    // Create user doc if first time
-    await db.collection('users').doc(user.uid).set({
-      name: user.displayName,
-      email: user.email,
-      photo: user.photoURL,
-      joinedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-    return user;
-  } catch (error) {
-    console.error("Login error:", error);
-    throw error;
-  }
-}
-
-async function signOut() {
-  await auth.signOut();
-  window.location.href = 'index.html';
-}
-
-// Get current user
-function getCurrentUser() {
-  return new Promise((resolve) => {
-    auth.onAuthStateChanged(resolve);
-  });
-}
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
