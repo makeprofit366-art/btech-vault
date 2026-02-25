@@ -37,7 +37,7 @@
   <div style="background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:2rem;">
     <h2 style="font-family:'Syne',sans-serif; font-weight:800; margin-bottom:0.5rem;">Upload a PDF</h2>
     <p style="color:var(--text2); font-size:0.875rem; margin-bottom:1.5rem;">
-      Subject name mandatory. Tags help others find it. PDF is public — everyone view cheyyochu, but save cheyyalante login kavali.
+      Subject name is mandatory. Tags help others find your PDF. PDF is public — anyone can view, but must login to save.
     </p>
 
     <!-- PDF FILE -->
@@ -46,7 +46,7 @@
       <div class="upload-zone" id="uploadZone">
         <input type="file" accept=".pdf" id="pdfFile" onchange="onFileSelect(this)"/>
         <span class="upload-icon">📄</span>
-        <p>PDF drag & drop cheyyandi or click cheyyandi</p>
+        <p>Drag & drop PDF here or click to select</p>
         <small>Max size: 50MB • Only .pdf files</small>
       </div>
       <div id="filePreview" style="display:none; margin-top:0.75rem; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:0.75rem; display:none; align-items:center; gap:0.75rem;">
@@ -68,8 +68,7 @@
     <!-- SUBJECT -->
     <div class="form-group">
       <label>Subject Name * (Very Important)</label>
-      <input type="text" id="pdfSubject" placeholder="e.g. Data Structures, DBMS, Networks..." maxlength="60" oninput="suggestSubjects(this.value)"/>
-      <div id="subjectSuggestions" style="display:none; background:var(--bg3); border:1px solid var(--border); border-radius:8px; margin-top:0.3rem; overflow:hidden;"></div>
+      <input type="text" id="pdfSubject" placeholder="e.g. Data Structures, DBMS, Networks..." maxlength="60" oninput="suggestSubjects(this.value)"/>      <div id="subjectSuggestions" style="display:none; background:var(--bg3); border:1px solid var(--border); border-radius:8px; margin-top:0.3rem; overflow:hidden;"></div>
     </div>
 
     <!-- BRANCH -->
@@ -110,8 +109,7 @@
       </div>
       <small style="color:var(--text3); font-size:0.75rem; margin-top:0.3rem; display:block;">
         Suggested: supply • backlog • arrear • unit-1 • mid-1 • previous-paper • lab • notes
-      </small>
-      <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.6rem;">
+      </small>      <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.6rem;">
         <span class="tag" onclick="addTag('supply')">+ supply</span>
         <span class="tag" onclick="addTag('backlog')">+ backlog</span>
         <span class="tag" onclick="addTag('arrear')">+ arrear</span>
@@ -150,7 +148,7 @@
 <!-- ====== SAVED TAB ====== -->
 <div id="tab-saved" class="tab-content" style="display:none;">
   <div class="section-header">
-    <span class="section-title">Nee Saved PDFs <span style="font-size:0.75rem; color:var(--text3); font-family:'DM Mono',monospace;">(only nuvvu chudagalav)</span></span>
+    <span class="section-title">My Saved PDFs <span style="font-size:0.75rem; color:var(--text3); font-family:'DM Mono',monospace;">(only visible to you)</span></span>
   </div>
   <div class="pdf-grid" id="savedGrid">
     <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Loading...</div>
@@ -411,8 +409,8 @@ async function loadMyUploads() {
       grid.innerHTML = `
         <div class="empty-state" style="grid-column:1/-1">
           <span class="empty-icon">📭</span>
-          <h3>Inka upload cheyyaledu</h3>
-          <p>First PDF upload cheyyandi!</p>
+          <h3>No uploads yet</h3>
+          <p>Upload your first PDF!</p>
         </div>`;
       return;
     }
@@ -463,8 +461,8 @@ async function loadSaved() {
       grid.innerHTML = `
         <div class="empty-state" style="grid-column:1/-1">
           <span class="empty-icon">🔖</span>
-          <h3>Inka save cheyyaledu</h3>
-          <p>Public feed lo PDFs browse chesthe save button click cheyyandi</p>
+          <h3>No saved PDFs yet</h3>
+          <p>Browse PDFs and click Save to add them here</p>
         </div>`;
       return;
     }
