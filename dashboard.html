@@ -4,379 +4,377 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard — BTech Vault</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <script src="firebase-config.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f8f9fa; color: #1a1a2e; min-height: 100vh; }
+    nav { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 1.2rem; font-weight: 700; color: #1a1a2e; text-decoration: none; }
+    .logo span { color: #4f46e5; }
+    .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+    .nav-user { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: #6b7280; }
+    .nav-user img { width: 30px; height: 30px; border-radius: 50%; }
+    .btn { padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+    .btn-primary { background: #4f46e5; color: #fff; }
+    .btn-primary:hover { background: #4338ca; }
+    .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+    .btn-outline:hover { border-color: #4f46e5; color: #4f46e5; }
+    .btn-danger { background: #fff; color: #ef4444; border: 1px solid #ef4444; }
+    .btn-danger:hover { background: #ef4444; color: #fff; }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+
+    /* TABS */
+    .tabs { background: #fff; border-bottom: 1px solid #e5e7eb; display: flex; padding: 0 2rem; }
+    .tab { padding: 1rem 1.25rem; font-size: 0.875rem; font-weight: 500; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; text-decoration: none; transition: all 0.15s; }
+    .tab:hover { color: #4f46e5; }
+    .tab.active { color: #4f46e5; border-bottom-color: #4f46e5; }
+
+    /* UPLOAD FORM */
+    .form-wrap { max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    .form-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 2rem; }
+    .form-card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .form-card p { color: #6b7280; font-size: 0.875rem; margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.3px; }
+    .form-group input, .form-group select { width: 100%; padding: 0.6rem 0.85rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.875rem; outline: none; font-family: 'Inter', sans-serif; background: #f9fafb; color: #111; transition: border 0.15s; }
+    .form-group input:focus, .form-group select:focus { border-color: #4f46e5; background: #fff; }
+
+    /* UPLOAD ZONE */
+    .upload-zone { border: 2px dashed #d1d5db; border-radius: 10px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; background: #f9fafb; }
+    .upload-zone:hover, .upload-zone.over { border-color: #4f46e5; background: #eef2ff; }
+    .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .upload-zone .u-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+    .upload-zone p { color: #6b7280; font-size: 0.875rem; }
+    .upload-zone small { color: #9ca3af; font-size: 0.75rem; }
+    .file-preview { display: none; align-items: center; gap: 0.75rem; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 0.75rem; margin-top: 0.75rem; }
+    .file-preview.show { display: flex; }
+    .file-name { font-size: 0.875rem; font-weight: 500; }
+    .file-size { font-size: 0.75rem; color: #6b7280; }
+
+    /* TAGS */
+    .tag-box { border: 1px solid #d1d5db; border-radius: 6px; padding: 0.4rem 0.6rem; min-height: 42px; display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; background: #f9fafb; cursor: text; }
+    .tag-box:focus-within { border-color: #4f46e5; background: #fff; }
+    .tag-item { background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 4px; padding: 0.15rem 0.5rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.3rem; }
+    .tag-item button { background: none; border: none; cursor: pointer; color: #4f46e5; font-size: 0.9rem; padding: 0; line-height: 1; }
+    .tag-input { border: none; outline: none; font-family: 'Inter', sans-serif; font-size: 0.875rem; background: transparent; min-width: 100px; flex: 1; color: #111; }
+    .tag-suggestions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+    .tag-pill { padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; background: #f3f4f6; border: 1px solid #e5e7eb; color: #6b7280; cursor: pointer; transition: all 0.15s; }
+    .tag-pill:hover { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+
+    /* PROGRESS */
+    .progress-wrap { margin-top: 0.75rem; display: none; }
+    .progress-wrap.show { display: block; }
+    .progress-bar { width: 100%; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #4f46e5; border-radius: 3px; transition: width 0.3s; width: 0%; }
+    .progress-text { font-size: 0.78rem; color: #6b7280; margin-top: 0.35rem; }
+
+    /* PDF GRID */
+    .grid-wrap { padding: 1.5rem 2rem; }
+    .grid-title { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #374151; }
+    .pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1.1rem; }
+    .card-icon { font-size: 1.5rem; margin-bottom: 0.6rem; }
+    .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .card-subject { font-size: 0.78rem; color: #4f46e5; margin-bottom: 0.5rem; }
+    .card-meta { font-size: 0.72rem; color: #9ca3af; margin-bottom: 0.6rem; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.75rem; }
+    .tag { font-size: 0.7rem; padding: 0.15rem 0.45rem; border-radius: 4px; background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+    .card-actions { display: flex; gap: 0.5rem; }
+    .card-actions .btn { flex: 1; justify-content: center; }
+
+    /* EMPTY */
+    .empty { text-align: center; padding: 3rem 1rem; color: #9ca3af; grid-column: 1/-1; }
+    .empty .e-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .empty h3 { font-size: 0.95rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem; }
+
+    /* TOAST */
+    .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1f2937; color: #fff; padding: 0.75rem 1.1rem; border-radius: 8px; font-size: 0.875rem; z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .spinner { width: 16px; height: 16px; border: 2px solid #e5e7eb; border-top-color: #4f46e5; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 640px) { .grid-wrap, nav, .tabs { padding-left: 1rem; padding-right: 1rem; } .pdf-grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar">
+<nav>
   <a href="index.html" class="logo">BTech<span>Vault</span></a>
-  <div class="nav-actions">
-    <div class="nav-user" id="navUser">
-      <div class="spinner" style="width:14px;height:14px;"></div>
-    </div>
-    <button class="btn btn-outline" style="font-size:0.8rem;" onclick="signOut()">Logout</button>
+  <div class="nav-right">
+    <div class="nav-user" id="navUser"><div class="spinner"></div></div>
+    <button class="btn btn-outline btn-sm" onclick="signOut()">Logout</button>
   </div>
 </nav>
 
-<!-- TABS -->
 <div class="tabs">
-  <a href="#" class="tab active" onclick="showTab('upload', this)">📤 Upload PDF</a>
-  <a href="#" class="tab" onclick="showTab('myuploads', this)">📁 My Uploads</a>
-  <a href="#" class="tab" onclick="showTab('saved', this)">🔖 Saved PDFs</a>
+  <a href="#" class="tab active" id="tab-upload-btn" onclick="showTab('upload',this);return false;">📤 Upload PDF</a>
+  <a href="#" class="tab" id="tab-myuploads-btn" onclick="showTab('myuploads',this);return false;">📁 My Uploads</a>
+  <a href="#" class="tab" id="tab-saved-btn" onclick="showTab('saved',this);return false;">🔖 Saved PDFs</a>
 </div>
 
-<!-- ====== UPLOAD TAB ====== -->
-<div id="tab-upload" class="tab-content" style="max-width:640px; margin:2rem auto; padding:0 1rem;">
+<!-- UPLOAD TAB -->
+<div id="tab-upload" class="form-wrap">
+  <div class="form-card">
+    <h2>Upload a PDF</h2>
+    <p>Subject name is mandatory. Tags help others find your PDF easily.</p>
 
-  <div style="background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:2rem;">
-    <h2 style="font-family:'Syne',sans-serif; font-weight:800; margin-bottom:0.5rem;">Upload a PDF</h2>
-    <p style="color:var(--text2); font-size:0.875rem; margin-bottom:1.5rem;">
-      Subject name is mandatory. Tags help others find your PDF. PDF is public — anyone can view, but must login to save.
-    </p>
-
-    <!-- PDF FILE -->
     <div class="form-group">
       <label>PDF File *</label>
       <div class="upload-zone" id="uploadZone">
         <input type="file" accept=".pdf" id="pdfFile" onchange="onFileSelect(this)"/>
-        <span class="upload-icon">📄</span>
-        <p>Drag & drop PDF here or click to select</p>
-        <small>Max size: 50MB • Only .pdf files</small>
+        <span class="u-icon">📄</span>
+        <p>Drag & drop or click to select PDF</p>
+        <small>Max 25MB • PDF only</small>
       </div>
-      <div id="filePreview" style="display:none; margin-top:0.75rem; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:0.75rem; display:none; align-items:center; gap:0.75rem;">
-        <span style="font-size:1.5rem;">📄</span>
+      <div class="file-preview" id="filePreview">
+        <span style="font-size:1.5rem">📄</span>
         <div>
-          <div id="fileName" style="font-weight:600; font-size:0.875rem;"></div>
-          <div id="fileSize" style="font-size:0.75rem; color:var(--text3);"></div>
+          <div class="file-name" id="fileName"></div>
+          <div class="file-size" id="fileSize"></div>
         </div>
-        <button onclick="clearFile()" style="margin-left:auto; background:none; border:none; color:var(--danger); cursor:pointer; font-size:1.2rem;">✕</button>
+        <button onclick="clearFile()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#ef4444;font-size:1.1rem">✕</button>
       </div>
     </div>
 
-    <!-- TITLE -->
     <div class="form-group">
-      <label>PDF Title *</label>
+      <label>Title *</label>
       <input type="text" id="pdfTitle" placeholder="e.g. Data Structures Unit 1 Notes" maxlength="100"/>
     </div>
 
-    <!-- SUBJECT -->
     <div class="form-group">
       <label>Subject Name * (Very Important)</label>
-      <input type="text" id="pdfSubject" placeholder="e.g. Data Structures, DBMS, Networks..." maxlength="60" oninput="suggestSubjects(this.value)"/>      <div id="subjectSuggestions" style="display:none; background:var(--bg3); border:1px solid var(--border); border-radius:8px; margin-top:0.3rem; overflow:hidden;"></div>
+      <input type="text" id="pdfSubject" placeholder="e.g. Data Structures, DBMS, Networks..." maxlength="60"/>
     </div>
 
-    <!-- BRANCH -->
     <div class="form-group">
       <label>Branch</label>
       <select id="pdfBranch">
         <option value="">Select Branch (optional)</option>
-        <option value="CSE">CSE</option>
-        <option value="ECE">ECE</option>
-        <option value="EEE">EEE</option>
-        <option value="Mech">Mech</option>
-        <option value="Civil">Civil</option>
-        <option value="IT">IT</option>
-        <option value="Chemical">Chemical</option>
-        <option value="Common">Common (All branches)</option>
+        <option>CSE</option><option>ECE</option><option>EEE</option>
+        <option>Mech</option><option>Civil</option><option>IT</option>
+        <option>Chemical</option><option>Common</option>
       </select>
     </div>
 
-    <!-- YEAR -->
     <div class="form-group">
       <label>Year</label>
       <select id="pdfYear">
         <option value="">Select Year (optional)</option>
-        <option value="1st Year">1st Year</option>
-        <option value="2nd Year">2nd Year</option>
-        <option value="3rd Year">3rd Year</option>
-        <option value="4th Year">4th Year</option>
+        <option>1st Year</option><option>2nd Year</option>
+        <option>3rd Year</option><option>4th Year</option>
       </select>
     </div>
 
-    <!-- TAGS -->
     <div class="form-group">
-      <label>Tags (Enter chesine Enter press cheyyandi)</label>
-      <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:0.5rem; min-height:44px; display:flex; flex-wrap:wrap; gap:0.4rem; align-items:center;" id="tagContainer" onclick="document.getElementById('tagInput').focus()">
-        <input type="text" id="tagInput" placeholder="supply, unit-2, previous-paper..." 
-          style="background:none; border:none; outline:none; color:var(--text); font-family:'Nunito',sans-serif; font-size:0.875rem; min-width:120px; flex:1;"
-          onkeydown="handleTagInput(event)"/>
+      <label>Tags</label>
+      <div class="tag-box" id="tagBox" onclick="document.getElementById('tagInput').focus()">
+        <input type="text" id="tagInput" class="tag-input" placeholder="Type tag, press Enter..."
+          onkeydown="handleTag(event)"/>
       </div>
-      <small style="color:var(--text3); font-size:0.75rem; margin-top:0.3rem; display:block;">
-        Suggested: supply • backlog • arrear • unit-1 • mid-1 • previous-paper • lab • notes
-      </small>      <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.6rem;">
-        <span class="tag" onclick="addTag('supply')">+ supply</span>
-        <span class="tag" onclick="addTag('backlog')">+ backlog</span>
-        <span class="tag" onclick="addTag('arrear')">+ arrear</span>
-        <span class="tag" onclick="addTag('unit-1')">+ unit-1</span>
-        <span class="tag" onclick="addTag('unit-2')">+ unit-2</span>
-        <span class="tag" onclick="addTag('previous-paper')">+ previous-paper</span>
-        <span class="tag" onclick="addTag('lab')">+ lab</span>
-        <span class="tag" onclick="addTag('notes')">+ notes</span>
+      <div class="tag-suggestions">
+        <span class="tag-pill" onclick="addTag('supply')">+ supply</span>
+        <span class="tag-pill" onclick="addTag('backlog')">+ backlog</span>
+        <span class="tag-pill" onclick="addTag('arrear')">+ arrear</span>
+        <span class="tag-pill" onclick="addTag('unit-1')">+ unit-1</span>
+        <span class="tag-pill" onclick="addTag('unit-2')">+ unit-2</span>
+        <span class="tag-pill" onclick="addTag('previous-paper')">+ previous-paper</span>
+        <span class="tag-pill" onclick="addTag('lab')">+ lab</span>
+        <span class="tag-pill" onclick="addTag('notes')">+ notes</span>
       </div>
     </div>
 
-    <!-- PROGRESS -->
-    <div class="progress-bar" id="progressBar">
-      <div class="progress-fill" id="progressFill"></div>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText">Uploading...</div>
     </div>
-    <div id="uploadStatus" style="font-size:0.8rem; color:var(--text2); margin-top:0.4rem; display:none;"></div>
 
-    <!-- SUBMIT -->
-    <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:1rem; padding:0.75rem;" 
-      id="uploadBtn" onclick="uploadPdf()">
+    <button class="btn btn-primary" id="uploadBtn" style="width:100%;justify-content:center;margin-top:1rem;padding:0.75rem;" onclick="uploadPdf()">
       📤 Upload PDF
     </button>
   </div>
 </div>
 
-<!-- ====== MY UPLOADS TAB ====== -->
-<div id="tab-myuploads" class="tab-content" style="display:none;">
-  <div class="section-header">
-    <span class="section-title">My Uploaded PDFs</span>
-  </div>
-  <div class="pdf-grid" id="myUploadsGrid">
-    <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Loading...</div>
-  </div>
-</div>
-
-<!-- ====== SAVED TAB ====== -->
-<div id="tab-saved" class="tab-content" style="display:none;">
-  <div class="section-header">
-    <span class="section-title">My Saved PDFs <span style="font-size:0.75rem; color:var(--text3); font-family:'DM Mono',monospace;">(only visible to you)</span></span>
-  </div>
-  <div class="pdf-grid" id="savedGrid">
-    <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Loading...</div>
+<!-- MY UPLOADS TAB -->
+<div id="tab-myuploads" style="display:none;">
+  <div class="grid-wrap">
+    <div class="grid-title">My Uploaded PDFs</div>
+    <div class="pdf-grid" id="myGrid">
+      <div class="empty" style="grid-column:1/-1"><div class="spinner"></div></div>
+    </div>
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- SAVED TAB -->
+<div id="tab-saved" style="display:none;">
+  <div class="grid-wrap">
+    <div class="grid-title">Saved PDFs <span style="font-size:0.75rem;color:#9ca3af;font-weight:400;">(only visible to you)</span></div>
+    <div class="pdf-grid" id="savedGrid">
+      <div class="empty" style="grid-column:1/-1"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================
-// STATE
-// ============================================
+// ============ CLOUDINARY CONFIG ============
+const CLOUD_NAME = 'djfdw2srr';
+const UPLOAD_PRESET = 'btech_vault';
+// ==========================================
+
 let currentUser = null;
 let tags = [];
 let selectedFile = null;
 
-const SUBJECTS = [
-  'Data Structures', 'DBMS', 'Computer Networks', 'Operating Systems',
-  'Software Engineering', 'Algorithms', 'Computer Architecture',
-  'Digital Electronics', 'Signals & Systems', 'Engineering Mathematics',
-  'Engineering Physics', 'Engineering Chemistry', 'C Programming',
-  'Java', 'Python', 'Web Technologies', 'Machine Learning',
-  'Artificial Intelligence', 'Compiler Design', 'Theory of Computation'
-];
-
-// ============================================
-// INIT
-// ============================================
-auth.onAuthStateChanged(async (user) => {
-  if (!user) {
-    window.location.href = 'login.html';
-    return;
-  }
+auth.onAuthStateChanged(user => {
+  if (!user) { window.location.href = 'login.html'; return; }
   currentUser = user;
   document.getElementById('navUser').innerHTML = `
-    <img src="${user.photoURL}" alt="${user.displayName}" referrerpolicy="no-referrer" style="width:32px;height:32px;border-radius:50%;border:2px solid var(--border)"/>
-    <span style="font-size:0.875rem; color:var(--text2);">${user.displayName.split(' ')[0]}</span>
-  `;
+    <img src="${user.photoURL}" referrerpolicy="no-referrer" style="width:28px;height:28px;border-radius:50%;"/>
+    <span style="font-size:0.875rem;color:#6b7280;">${user.displayName.split(' ')[0]}</span>`;
   loadMyUploads();
   loadSaved();
 });
 
-// ============================================
 // TABS
-// ============================================
 function showTab(name, el) {
-  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(`tab-${name}`).style.display = name === 'upload' ? 'block' : 'block';
+  ['upload','myuploads','saved'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = 'none';
+    document.getElementById('tab-' + t + '-btn').classList.remove('active');
+  });
+  document.getElementById('tab-' + name).style.display = name === 'upload' ? 'block' : 'block';
   el.classList.add('active');
-  event.preventDefault();
 }
 
-// ============================================
 // FILE SELECT
-// ============================================
 function onFileSelect(input) {
   const file = input.files[0];
   if (!file) return;
-
-  if (!file.name.endsWith('.pdf')) {
-    showToast('Only PDF files allow cheyyali!', 'error');
-    input.value = '';
-    return;
-  }
-
-  if (file.size > 50 * 1024 * 1024) {
-    showToast('File 50MB kante peddagaa undhi!', 'error');
-    input.value = '';
-    return;
-  }
-
+  if (!file.name.endsWith('.pdf')) { showToast('Only PDF files allowed!'); input.value=''; return; }
+  if (file.size > 25 * 1024 * 1024) { showToast('File too large! Max 25MB'); input.value=''; return; }
   selectedFile = file;
-  document.getElementById('filePreview').style.display = 'flex';
+  document.getElementById('filePreview').classList.add('show');
   document.getElementById('fileName').textContent = file.name;
-  document.getElementById('fileSize').textContent = (file.size / (1024*1024)).toFixed(2) + ' MB';
-  document.getElementById('uploadZone').style.borderColor = 'var(--success)';
-
-  // Auto-fill title from filename
-  if (!document.getElementById('pdfTitle').value) {
-    document.getElementById('pdfTitle').value = file.name.replace('.pdf', '').replace(/_/g,' ').replace(/-/g,' ');
-  }
+  document.getElementById('fileSize').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
+  document.getElementById('uploadZone').style.borderColor = '#4f46e5';
+  if (!document.getElementById('pdfTitle').value)
+    document.getElementById('pdfTitle').value = file.name.replace('.pdf','').replace(/_/g,' ');
 }
 
 function clearFile() {
   selectedFile = null;
   document.getElementById('pdfFile').value = '';
-  document.getElementById('filePreview').style.display = 'none';
+  document.getElementById('filePreview').classList.remove('show');
   document.getElementById('uploadZone').style.borderColor = '';
 }
 
-// ============================================
 // TAGS
-// ============================================
-function handleTagInput(e) {
+function handleTag(e) {
   if (e.key === 'Enter' || e.key === ',') {
     e.preventDefault();
-    const val = e.target.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
-    if (val && !tags.includes(val) && tags.length < 10) {
-      addTag(val);
-    }
+    const val = e.target.value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
+    if (val) addTag(val);
     e.target.value = '';
   }
 }
-
 function addTag(val) {
   val = val.trim().toLowerCase();
   if (!val || tags.includes(val) || tags.length >= 10) return;
   tags.push(val);
   renderTags();
 }
-
-function removeTag(val) {
-  tags = tags.filter(t => t !== val);
-  renderTags();
-}
-
+function removeTag(val) { tags = tags.filter(t => t !== val); renderTags(); }
 function renderTags() {
-  const container = document.getElementById('tagContainer');
+  const box = document.getElementById('tagBox');
   const input = document.getElementById('tagInput');
-  container.innerHTML = '';
+  box.innerHTML = '';
   tags.forEach(t => {
     const span = document.createElement('span');
-    span.className = 'tag';
-    span.style.cssText = 'border-color:var(--accent); color:var(--accent); cursor:default;';
-    span.innerHTML = `${t} <span onclick="removeTag('${t}')" style="cursor:pointer; margin-left:0.2rem; opacity:0.7;">✕</span>`;
-    container.appendChild(span);
+    span.className = 'tag-item';
+    span.innerHTML = `${t} <button onclick="removeTag('${t}')">✕</button>`;
+    box.appendChild(span);
   });
-  container.appendChild(input);
-  input.focus();
+  box.appendChild(input);
 }
 
-// ============================================
-// SUBJECT SUGGESTIONS
-// ============================================
-function suggestSubjects(val) {
-  const box = document.getElementById('subjectSuggestions');
-  if (!val || val.length < 2) { box.style.display = 'none'; return; }
-
-  const matches = SUBJECTS.filter(s => s.toLowerCase().includes(val.toLowerCase())).slice(0, 5);
-  if (matches.length === 0) { box.style.display = 'none'; return; }
-
-  box.style.display = 'block';
-  box.innerHTML = matches.map(m => `
-    <div onclick="selectSubject('${m}')" style="padding:0.6rem 1rem; cursor:pointer; font-size:0.875rem; transition:background 0.1s;"
-      onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">${m}</div>
-  `).join('');
-}
-
-function selectSubject(val) {
-  document.getElementById('pdfSubject').value = val;
-  document.getElementById('subjectSuggestions').style.display = 'none';
-}
-
-// ============================================
-// UPLOAD PDF
-// ============================================
+// UPLOAD TO CLOUDINARY
 async function uploadPdf() {
   const title = document.getElementById('pdfTitle').value.trim();
   const subject = document.getElementById('pdfSubject').value.trim();
   const branch = document.getElementById('pdfBranch').value;
   const year = document.getElementById('pdfYear').value;
 
-  if (!selectedFile) { showToast('PDF select cheyyandi!', 'error'); return; }
-  if (!title) { showToast('Title enter cheyyandi!', 'error'); return; }
-  if (!subject) { showToast('Subject name mandatory!', 'error'); return; }
+  if (!selectedFile) { showToast('Please select a PDF!'); return; }
+  if (!title) { showToast('Please enter a title!'); return; }
+  if (!subject) { showToast('Subject name is required!'); return; }
 
   const btn = document.getElementById('uploadBtn');
   btn.disabled = true;
-  btn.innerHTML = '⏳ Uploading...';
+  btn.innerHTML = '<div class="spinner" style="border-color:#fff;border-top-color:#4f46e5;"></div> Uploading...';
 
-  const progressBar = document.getElementById('progressBar');
+  const progressWrap = document.getElementById('progressWrap');
   const progressFill = document.getElementById('progressFill');
-  const statusDiv = document.getElementById('uploadStatus');
-  progressBar.style.display = 'block';
-  statusDiv.style.display = 'block';
-  statusDiv.textContent = 'Firebase Storage ki upload avuthundhi...';
+  const progressText = document.getElementById('progressText');
+  progressWrap.classList.add('show');
 
   try {
-    // Upload file to Firebase Storage
-    const fileName = `pdfs/${currentUser.uid}/${Date.now()}_${selectedFile.name}`;
-    const storageRef = storage.ref(fileName);
-    const uploadTask = storageRef.put(selectedFile);
+    // Upload to Cloudinary
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('resource_type', 'raw');
 
-    uploadTask.on('state_changed', (snapshot) => {
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      progressFill.style.width = progress + '%';
-      statusDiv.textContent = `Uploading... ${Math.round(progress)}%`;
+    const xhr = new XMLHttpRequest();
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const pct = Math.round(e.loaded / e.total * 100);
+        progressFill.style.width = pct + '%';
+        progressText.textContent = `Uploading... ${pct}%`;
+      }
+    };
+
+    const uploadResult = await new Promise((resolve, reject) => {
+      xhr.onload = () => {
+        if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
+        else reject(new Error('Upload failed'));
+      };
+      xhr.onerror = () => reject(new Error('Network error'));
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload`);
+      xhr.send(formData);
     });
 
-    await uploadTask;
-    const downloadURL = await storageRef.getDownloadURL();
+    progressText.textContent = 'Saving details...';
 
-    // Save metadata to Firestore
-    const pdfData = {
-      title,
-      subject,
-      branch: branch || null,
-      year: year || null,
-      tags,
-      fileUrl: downloadURL,
+    // Save to Firestore
+    await db.collection('pdfs').add({
+      title, subject, branch: branch||null, year: year||null, tags,
+      fileUrl: uploadResult.secure_url,
       fileName: selectedFile.name,
       fileSize: selectedFile.size,
       uploadedBy: currentUser.uid,
       uploaderName: currentUser.displayName,
-      uploaderEmail: currentUser.email,
       uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
       status: 'active'
-    };
-
-    await db.collection('pdfs').add(pdfData);
+    });
 
     progressFill.style.width = '100%';
-    statusDiv.textContent = '✅ Upload successful!';
-    showToast('PDF successfully uploaded! 🎉', 'success');
+    progressText.textContent = '✅ Upload successful!';
+    showToast('PDF uploaded successfully! 🎉');
 
-    // Reset form
     setTimeout(() => {
       clearFile();
       document.getElementById('pdfTitle').value = '';
       document.getElementById('pdfSubject').value = '';
       document.getElementById('pdfBranch').value = '';
       document.getElementById('pdfYear').value = '';
-      tags = [];
-      renderTags();
-      progressBar.style.display = 'none';
-      statusDiv.style.display = 'none';
+      tags = []; renderTags();
+      progressWrap.classList.remove('show');
       progressFill.style.width = '0%';
       btn.disabled = false;
       btn.innerHTML = '📤 Upload PDF';
@@ -384,141 +382,88 @@ async function uploadPdf() {
     }, 1500);
 
   } catch (err) {
-    console.error(err);
-    showToast('Upload failed: ' + err.message, 'error');
+    showToast('Upload failed: ' + err.message);
     btn.disabled = false;
     btn.innerHTML = '📤 Upload PDF';
-    progressBar.style.display = 'none';
-    statusDiv.style.display = 'none';
+    progressWrap.classList.remove('show');
   }
 }
 
-// ============================================
 // MY UPLOADS
-// ============================================
 async function loadMyUploads() {
-  if (!currentUser) return;
-  const grid = document.getElementById('myUploadsGrid');
+  const grid = document.getElementById('myGrid');
   try {
-    const snap = await db.collection('pdfs')
-      .where('uploadedBy', '==', currentUser.uid)
-      .orderBy('uploadedAt', 'desc')
-      .get();
-
+    const snap = await db.collection('pdfs').where('uploadedBy','==',currentUser.uid).orderBy('uploadedAt','desc').get();
     if (snap.empty) {
-      grid.innerHTML = `
-        <div class="empty-state" style="grid-column:1/-1">
-          <span class="empty-icon">📭</span>
-          <h3>No uploads yet</h3>
-          <p>Upload your first PDF!</p>
-        </div>`;
+      grid.innerHTML = `<div class="empty"><div class="e-icon">📭</div><h3>No uploads yet</h3><p>Upload your first PDF!</p></div>`;
       return;
     }
-
     grid.innerHTML = snap.docs.map(doc => {
-      const pdf = doc.data();
-      const date = pdf.uploadedAt ? new Date(pdf.uploadedAt.seconds * 1000).toLocaleDateString('en-IN') : '';
-      return `
-        <div class="pdf-card">
-          <div class="pdf-icon">📄</div>
-          <div class="pdf-title">${escHtml(pdf.title)}</div>
-          <div class="pdf-subject">📚 ${escHtml(pdf.subject)}</div>
-          <div class="pdf-meta">${date} • ${(pdf.fileSize/(1024*1024)).toFixed(1)} MB</div>
-          <div class="pdf-tags">${(pdf.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-          <div class="pdf-actions">
-            <a href="viewer.html?id=${doc.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.8rem;">📖 View</a>
-            <button class="btn btn-danger" style="font-size:0.8rem;" onclick="deleteMyPdf('${doc.id}', '${escHtml(pdf.fileName)}')">🗑 Delete</button>
-          </div>
-        </div>`;
+      const p = doc.data();
+      const date = p.uploadedAt ? new Date(p.uploadedAt.seconds*1000).toLocaleDateString('en-IN') : '';
+      return `<div class="card">
+        <div class="card-icon">📄</div>
+        <div class="card-title">${esc(p.title)}</div>
+        <div class="card-subject">📚 ${esc(p.subject)}</div>
+        <div class="card-meta">${date} · ${(p.fileSize/1024/1024).toFixed(1)} MB</div>
+        <div class="card-tags">${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <div class="card-actions">
+          <a href="viewer.html?id=${doc.id}" class="btn btn-outline btn-sm">📖 View</a>
+          <button class="btn btn-danger btn-sm" onclick="deleteMyPdf('${doc.id}')">🗑 Delete</button>
+        </div>
+      </div>`;
     }).join('');
-  } catch (err) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>Error loading</h3><p>${err.message}</p></div>`;
+  } catch(e) {
+    grid.innerHTML = `<div class="empty"><h3>Error loading</h3><p>${e.message}</p></div>`;
   }
 }
 
-async function deleteMyPdf(pdfId, fileName) {
-  if (!confirm('Idi delete cheyyalani sure na?')) return;
-  try {
-    await db.collection('pdfs').doc(pdfId).delete();
-    showToast('PDF deleted', 'info');
-    loadMyUploads();
-  } catch (err) {
-    showToast('Delete failed: ' + err.message, 'error');
-  }
+async function deleteMyPdf(id) {
+  if (!confirm('Delete this PDF?')) return;
+  await db.collection('pdfs').doc(id).delete();
+  showToast('PDF deleted');
+  loadMyUploads();
 }
 
-// ============================================
-// SAVED PDFS
-// ============================================
+// SAVED
 async function loadSaved() {
-  if (!currentUser) return;
   const grid = document.getElementById('savedGrid');
   try {
-    const snap = await db.collection('users').doc(currentUser.uid)
-      .collection('savedPDFs').orderBy('savedAt', 'desc').get();
-
+    const snap = await db.collection('users').doc(currentUser.uid).collection('savedPDFs').orderBy('savedAt','desc').get();
     if (snap.empty) {
-      grid.innerHTML = `
-        <div class="empty-state" style="grid-column:1/-1">
-          <span class="empty-icon">🔖</span>
-          <h3>No saved PDFs yet</h3>
-          <p>Browse PDFs and click Save to add them here</p>
-        </div>`;
+      grid.innerHTML = `<div class="empty"><div class="e-icon">🔖</div><h3>No saved PDFs</h3><p>Browse PDFs and click Save</p></div>`;
       return;
     }
-
     grid.innerHTML = snap.docs.map(doc => {
-      const saved = doc.data();
-      return `
-        <div class="pdf-card">
-          <div class="pdf-icon">📄</div>
-          <div class="pdf-title">${escHtml(saved.title)}</div>
-          <div class="pdf-subject">📚 ${escHtml(saved.subject)}</div>
-          <div class="pdf-actions">
-            <a href="viewer.html?id=${doc.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.8rem;">📖 View</a>
-            <button class="btn btn-danger" style="font-size:0.8rem;" onclick="unsavePdf('${doc.id}')">🗑 Remove</button>
-          </div>
-        </div>`;
+      const s = doc.data();
+      return `<div class="card">
+        <div class="card-icon">📄</div>
+        <div class="card-title">${esc(s.title)}</div>
+        <div class="card-subject">📚 ${esc(s.subject)}</div>
+        <div class="card-actions">
+          <a href="viewer.html?id=${doc.id}" class="btn btn-primary btn-sm">📖 View</a>
+          <button class="btn btn-danger btn-sm" onclick="unsave('${doc.id}')">🗑 Remove</button>
+        </div>
+      </div>`;
     }).join('');
-  } catch (err) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>Error: ${err.message}</h3></div>`;
+  } catch(e) {
+    grid.innerHTML = `<div class="empty"><h3>Error: ${e.message}</h3></div>`;
   }
 }
 
-async function unsavePdf(pdfId) {
-  await db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(pdfId).delete();
-  showToast('Removed from saves', 'info');
+async function unsave(id) {
+  await db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(id).delete();
+  showToast('Removed from saved');
   loadSaved();
 }
 
-// ============================================
-// UTILS
-// ============================================
-function escHtml(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function showToast(msg, type = 'info') {
-  const toast = document.getElementById('toast');
-  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
-  toast.innerHTML = `${icons[type] || ''} ${msg}`;
-  toast.className = `toast ${type} show`;
-  setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-// Drag and drop
-const uploadZone = document.getElementById('uploadZone');
-uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragover'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-uploadZone.addEventListener('drop', (e) => {
-  e.preventDefault();
-  uploadZone.classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) {
-    document.getElementById('pdfFile').files = e.dataTransfer.files;
-    onFileSelect(document.getElementById('pdfFile'));
-  }
-});
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
 </body>
 </html>
