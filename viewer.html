@@ -4,169 +4,135 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PDF Viewer — BTech Vault</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <script src="firebase-config.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:#1a1a2e; color:#fff; height:100vh; display:flex; flex-direction:column; }
+    nav { background:#111827; border-bottom:1px solid #374151; padding:0 1rem; height:54px; display:flex; align-items:center; gap:0.75rem; flex-shrink:0; }
+    .btn { padding:0.35rem 0.8rem; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer; border:none; text-decoration:none; display:inline-flex; align-items:center; gap:0.3rem; transition:all 0.15s; font-family:'Inter',sans-serif; white-space:nowrap; }
+    .btn-back { background:#374151; color:#e5e7eb; }
+    .btn-back:hover { background:#4b5563; }
+    .btn-save { background:#4f46e5; color:#fff; }
+    .btn-save:hover { background:#4338ca; }
+    .btn-saved { background:#065f46; color:#6ee7b7; border:1px solid #047857; }
+    .btn-whatsapp { background:#25d366; color:#fff; }
+    .btn-whatsapp:hover { background:#1da851; }
+    .btn-link { background:#374151; color:#e5e7eb; }
+    .btn-link:hover { background:#4b5563; }
+    .btn-login { background:#f59e0b; color:#fff; }
+    .pdf-info { flex:1; min-width:0; }
+    .pdf-title { font-size:0.9rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#f9fafb; }
+    .pdf-meta { font-size:0.72rem; color:#9ca3af; }
+    .viewer-area { flex:1; overflow:hidden; background:#525659; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+    .center { display:flex; align-items:center; justify-content:center; height:100%; flex-direction:column; gap:1rem; color:#9ca3af; }
+    .spinner { width:28px; height:28px; border:3px solid #374151; border-top-color:#4f46e5; border-radius:50%; animation:spin 0.7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .toast { position:fixed; bottom:1.5rem; right:1.5rem; background:#1f2937; color:#fff; padding:0.65rem 1rem; border-radius:8px; font-size:0.85rem; z-index:999; transform:translateY(80px); opacity:0; transition:all 0.3s; border:1px solid #374151; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+    .overlay.active { opacity:1; pointer-events:all; }
+    .modal { background:#1f2937; border:1px solid #374151; border-radius:12px; padding:1.75rem; width:100%; max-width:340px; text-align:center; }
+    .modal h2 { font-size:1rem; font-weight:700; margin-bottom:0.4rem; }
+    .modal p { color:#9ca3af; font-size:0.85rem; margin-bottom:1.25rem; }
+    @media(max-width:600px) { .hide-mobile { display:none; } }
+  </style>
 </head>
-<body style="overflow:hidden;">
+<body>
 
-<!-- VIEWER HEADER -->
-<div class="viewer-header">
-  <div style="display:flex; align-items:center; gap:1rem; flex:1; min-width:0;">
-    <a href="index.html" class="btn btn-outline" style="font-size:0.8rem; flex-shrink:0;">← Back</a>
-    <div style="min-width:0;">
-      <div id="pdfTitle" style="font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Loading...</div>
-      <div id="pdfSubject" style="font-size:0.75rem; color:var(--text3); font-family:'DM Mono',monospace;"></div>
-    </div>
+<nav>
+  <a href="index.html" class="btn btn-back">← Back</a>
+  <div class="pdf-info">
+    <div class="pdf-title" id="pdfTitle">Loading...</div>
+    <div class="pdf-meta" id="pdfMeta"></div>
   </div>
-  <div style="display:flex; align-items:center; gap:0.75rem; flex-shrink:0;">
-    <div id="pdfTags" style="display:flex; gap:0.4rem;"></div>
-    <button id="saveBtn" class="btn btn-outline" style="font-size:0.8rem;" onclick="toggleSave()">🔖 Save</button>
-    <div id="navUser" style="font-size:0.8rem; color:var(--text2);"></div>
+  <button class="btn btn-whatsapp" onclick="shareWhatsApp()">📱 WhatsApp</button>
+  <button class="btn btn-link" onclick="copyLink()">🔗 Copy Link</button>
+  <button class="btn btn-save" id="saveBtn" onclick="toggleSave()">🔖 Save</button>
+</nav>
+
+<div class="viewer-area" id="viewerArea">
+  <div class="center" id="loadingDiv">
+    <div class="spinner"></div>
+    <p>Loading PDF...</p>
   </div>
 </div>
 
-<!-- PDF LOADING STATE -->
-<div id="loadingState" style="display:flex; align-items:center; justify-content:center; height:calc(100vh - 64px); flex-direction:column; gap:1rem; color:var(--text2);">
-  <div class="spinner" style="width:32px; height:32px; border-width:3px;"></div>
-  <p>Loading PDF...</p>
-</div>
-
-<!-- PDF IFRAME (Google Docs Viewer - no download) -->
-<iframe id="pdfFrame" class="viewer-frame" style="display:none;"
-  sandbox="allow-scripts allow-same-origin allow-forms"
-  allowfullscreen>
-</iframe>
-
-<!-- LOGIN PROMPT for save -->
-<div class="modal-overlay" id="loginModal">
-  <div class="modal" style="max-width:360px; text-align:center;">
-    <div style="font-size:2.5rem; margin-bottom:1rem;">🔐</div>
+<div class="overlay" id="loginModal">
+  <div class="modal">
+    <div style="font-size:2rem;margin-bottom:0.5rem">🔐</div>
     <h2>Login Required</h2>
-    <p style="color:var(--text2); margin-bottom:1.5rem; font-size:0.875rem;">Please login with Google to save PDFs to your account</p>
-    <a href="login.html" class="btn btn-primary" style="width:100%; justify-content:center; margin-bottom:0.75rem;">Login / Sign Up</a>
-    <button class="btn btn-outline" style="width:100%; justify-content:center;" onclick="closeModal()">Cancel</button>
+    <p>Login to save PDFs to your account.</p>
+    <a href="login.html" class="btn btn-save" style="width:100%;justify-content:center;margin-bottom:0.5rem;padding:0.6rem">Login / Sign Up</a>
+    <button class="btn btn-back" style="width:100%;justify-content:center;padding:0.6rem" onclick="document.getElementById('loginModal').classList.remove('active')">Cancel</button>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-let currentUser = null;
-let pdfId = null;
-let pdfData = null;
-let isSaved = false;
+let currentUser=null, pdfData=null, isSaved=false;
+const pdfId = new URLSearchParams(location.search).get('id');
 
-// ============================================
-// INIT
-// ============================================
-const params = new URLSearchParams(window.location.search);
-pdfId = params.get('id');
-
-if (!pdfId) {
-  window.location.href = 'index.html';
-}
-
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged(async user => {
   currentUser = user;
-  updateNavUser(user);
+  if (!pdfId) { history.back(); return; }
   await loadPdf();
   if (user) {
-    await checkIfSaved();
+    await checkSaved();
+  } else {
+    document.getElementById('saveBtn').innerHTML = '🔐 Login to Save';
+    document.getElementById('saveBtn').className = 'btn btn-login';
   }
 });
 
-function updateNavUser(user) {
-  const nav = document.getElementById('navUser');
-  if (user) {
-    nav.innerHTML = `
-      <img src="${user.photoURL}" referrerpolicy="no-referrer" style="width:28px;height:28px;border-radius:50%;border:2px solid var(--border)"/>
-    `;
-  } else {
-    nav.innerHTML = `<a href="login.html" class="btn btn-outline" style="font-size:0.75rem;">Login</a>`;
-  }
-}
-
-// ============================================
-// LOAD PDF METADATA
-// ============================================
 async function loadPdf() {
   try {
     const doc = await db.collection('pdfs').doc(pdfId).get();
-    if (!doc.exists) {
-      showError('PDF not found');
-      return;
-    }
-
+    if (!doc.exists) { showError('PDF not found!'); return; }
     pdfData = doc.data();
-    document.title = pdfData.title + ' — BTech Vault';
+
     document.getElementById('pdfTitle').textContent = pdfData.title;
-    document.getElementById('pdfSubject').textContent = '📚 ' + pdfData.subject + (pdfData.branch ? ` • ${pdfData.branch}` : '') + (pdfData.year ? ` • ${pdfData.year}` : '');
+    document.getElementById('pdfMeta').textContent = [pdfData.subject, pdfData.branch, pdfData.year].filter(Boolean).join(' • ');
+    document.title = pdfData.title + ' — BTech Vault';
 
-    const tags = (pdfData.tags || []).slice(0, 3);
-    document.getElementById('pdfTags').innerHTML = tags.map(t => `<span class="tag">${t}</span>`).join('');
+    // Use Google Docs Viewer for Cloudinary PDFs
+    const fileUrl = pdfData.fileUrl;
+    const viewerUrl = 'https://docs.google.com/viewer?url=' + encodeURIComponent(fileUrl) + '&embedded=true';
 
-    // Load PDF in Google Docs Viewer (no download option)
-    const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfData.fileUrl)}&embedded=true&toolbar=0`;
-    const frame = document.getElementById('pdfFrame');
+    const iframe = document.createElement('iframe');
+    iframe.src = viewerUrl;
+    iframe.style.cssText = 'width:100%;height:100%;border:none;display:block;';
+    iframe.onload = () => document.getElementById('loadingDiv').style.display = 'none';
 
-    frame.onload = () => {
-      document.getElementById('loadingState').style.display = 'none';
-      frame.style.display = 'block';
-    };
-
-    frame.src = viewerUrl;
-
-    // Fallback timeout
+    // Fallback after 8 seconds
     setTimeout(() => {
-      if (document.getElementById('loadingState').style.display !== 'none') {
-        document.getElementById('loadingState').innerHTML = `
-          <div style="text-align:center; padding:2rem; max-width:400px;">
-            <div style="font-size:3rem; margin-bottom:1rem;">⚠️</div>
-            <h3 style="font-family:'Syne',sans-serif; margin-bottom:0.5rem;">PDF load kaaledu</h3>
-            <p style="color:var(--text2); font-size:0.875rem;">Google Docs Viewer load avvadam delayed avuthundhi. Kasepu try cheyyandi.</p>
-            <button class="btn btn-primary" style="margin-top:1rem;" onclick="retryLoad()">🔄 Retry</button>
-          </div>
-        `;
+      const loading = document.getElementById('loadingDiv');
+      if (loading && loading.style.display !== 'none') {
+        loading.innerHTML = `
+          <p style="color:#9ca3af;margin-bottom:1rem;">Preview not available in browser</p>
+          <a href="${fileUrl}" target="_blank" class="btn btn-save" style="padding:0.6rem 1.2rem">📄 Open PDF in New Tab</a>`;
       }
-    }, 15000);
+    }, 8000);
 
-  } catch (err) {
-    showError(err.message);
-  }
-}
-
-function retryLoad() {
-  if (pdfData) {
-    document.getElementById('loadingState').innerHTML = `<div class="spinner" style="width:32px;height:32px;border-width:3px;"></div><p style="color:var(--text2)">Reloading...</p>`;
-    const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfData.fileUrl)}&embedded=true&toolbar=0`;
-    document.getElementById('pdfFrame').src = viewerUrl;
+    document.getElementById('viewerArea').appendChild(iframe);
+  } catch(e) {
+    showError('Error: ' + e.message);
   }
 }
 
 function showError(msg) {
-  document.getElementById('loadingState').innerHTML = `
-    <div style="text-align:center;">
-      <div style="font-size:3rem; margin-bottom:1rem;">❌</div>
-      <h3 style="font-family:'Syne',sans-serif; margin-bottom:0.5rem;">Error</h3>
-      <p style="color:var(--text2);">${msg}</p>
-      <a href="index.html" class="btn btn-primary" style="margin-top:1rem;">← Back to Home</a>
-    </div>
-  `;
+  document.getElementById('loadingDiv').innerHTML = `<p style="color:#ef4444">${msg}</p>`;
 }
 
-// ============================================
-// SAVE
-// ============================================
-async function checkIfSaved() {
-  if (!currentUser || !pdfId) return;
+async function checkSaved() {
   try {
-    const doc = await db.collection('users').doc(currentUser.uid)
-      .collection('savedPDFs').doc(pdfId).get();
+    const doc = await db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(pdfId).get();
     isSaved = doc.exists;
     updateSaveBtn();
   } catch {}
@@ -174,59 +140,37 @@ async function checkIfSaved() {
 
 function updateSaveBtn() {
   const btn = document.getElementById('saveBtn');
-  if (isSaved) {
-    btn.innerHTML = '✅ Saved';
-    btn.style.color = 'var(--success)';
-    btn.style.borderColor = 'var(--success)';
-  } else {
-    btn.innerHTML = '🔖 Save';
-    btn.style.color = '';
-    btn.style.borderColor = '';
-  }
+  btn.innerHTML = isSaved ? '✅ Saved' : '🔖 Save';
+  btn.className = isSaved ? 'btn btn-saved' : 'btn btn-save';
 }
 
 async function toggleSave() {
-  if (!currentUser) {
-    document.getElementById('loginModal').classList.add('active');
-    return;
-  }
-
+  if (!currentUser) { document.getElementById('loginModal').classList.add('active'); return; }
   const ref = db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(pdfId);
-
   if (isSaved) {
-    await ref.delete();
-    isSaved = false;
-    showToast('Removed from saves', 'info');
+    await ref.delete(); isSaved = false; showToast('Removed from saved');
   } else {
-    await ref.set({
-      savedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      title: pdfData.title,
-      subject: pdfData.subject,
-      pdfId
-    });
-    isSaved = true;
-    showToast('Saved to your account! 🎉', 'success');
+    await ref.set({ savedAt: firebase.firestore.FieldValue.serverTimestamp(), title: pdfData.title, subject: pdfData.subject, pdfId });
+    isSaved = true; showToast('PDF saved! 🎉');
   }
   updateSaveBtn();
 }
 
-function closeModal() {
-  document.getElementById('loginModal').classList.remove('active');
+function shareWhatsApp() {
+  const url = location.href;
+  const text = `Check out this PDF: ${pdfData ? pdfData.title : 'BTech Vault PDF'}\n${url}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
-// ============================================
-// UTILS
-// ============================================
-function showToast(msg, type = 'info') {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.className = `toast ${type} show`;
-  setTimeout(() => toast.classList.remove('show'), 3000);
+function copyLink() {
+  navigator.clipboard.writeText(location.href).then(() => showToast('Link copied! 📋'));
 }
 
-document.getElementById('loginModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
 </script>
 </body>
 </html>
