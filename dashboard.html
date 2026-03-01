@@ -393,7 +393,7 @@ async function uploadPdf() {
 async function loadMyUploads() {
   const grid = document.getElementById('myGrid');
   try {
-    const snap = await db.collection('pdfs').where('uploadedBy','==',currentUser.uid).orderBy('uploadedAt','desc').get();
+    const snap = await db.collection('pdfs').where('uploadedBy','==',currentUser.uid).get();
     if (snap.empty) {
       grid.innerHTML = `<div class="empty"><div class="e-icon">📭</div><h3>No uploads yet</h3><p>Upload your first PDF!</p></div>`;
       return;
