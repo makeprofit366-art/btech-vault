@@ -342,10 +342,10 @@ async function uploadPdf() {
     const uploadResult = await new Promise((resolve, reject) => {
       xhr.onload = () => {
         if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
-        else reject(new Error('Upload failed'));
+        else reject(new Error('Upload failed: ' + xhr.responseText));
       };
       xhr.onerror = () => reject(new Error('Network error'));
-      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload`);
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`);
       xhr.send(formData);
     });
 
