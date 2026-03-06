@@ -113,10 +113,8 @@ async function loadPdfData() {
     document.getElementById('pdfMeta').textContent = [pdfData.subject, pdfData.branch, pdfData.year].filter(Boolean).join(' • ');
     document.title = pdfData.title + ' — BTech Vault';
 
-    // Get the raw Cloudinary URL
+    // Get the original Cloudinary URL - keep as is
     let url = pdfData.fileUrl;
-    // Ensure we use raw URL for PDF
-    url = url.replace('/image/upload/', '/raw/upload/').replace('/auto/upload/', '/raw/upload/');
     
     document.getElementById('openBtn').href = url;
 
