@@ -10,37 +10,42 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <script src="firebase-config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Inter',sans-serif; background:#1a1a2e; color:#fff; height:100vh; display:flex; flex-direction:column; }
+    body { font-family:'Inter',sans-serif; background:#1a1a2e; color:#fff; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
     nav { background:#111827; border-bottom:1px solid #374151; padding:0 1rem; height:54px; display:flex; align-items:center; gap:0.75rem; flex-shrink:0; }
     .btn { padding:0.35rem 0.8rem; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer; border:none; text-decoration:none; display:inline-flex; align-items:center; gap:0.3rem; transition:all 0.15s; font-family:'Inter',sans-serif; white-space:nowrap; }
     .btn-back { background:#374151; color:#e5e7eb; }
-    .btn-back:hover { background:#4b5563; }
     .btn-save { background:#4f46e5; color:#fff; }
-    .btn-save:hover { background:#4338ca; }
-    .btn-saved { background:#065f46; color:#6ee7b7; border:1px solid #047857; }
+    .btn-saved { background:#065f46; color:#6ee7b7; }
     .btn-whatsapp { background:#25d366; color:#fff; }
-    .btn-whatsapp:hover { background:#1da851; }
     .btn-link { background:#374151; color:#e5e7eb; }
-    .btn-link:hover { background:#4b5563; }
-    .btn-login { background:#f59e0b; color:#fff; }
+    .btn-open { background:#f59e0b; color:#fff; }
     .pdf-info { flex:1; min-width:0; }
-    .pdf-title { font-size:0.9rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#f9fafb; }
+    .pdf-title { font-size:0.9rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .pdf-meta { font-size:0.72rem; color:#9ca3af; }
-    .viewer-area { flex:1; overflow:hidden; background:#525659; }
-    iframe { width:100%; height:100%; border:none; display:block; }
-    .center { display:flex; align-items:center; justify-content:center; height:100%; flex-direction:column; gap:1rem; color:#9ca3af; }
-    .spinner { width:28px; height:28px; border:3px solid #374151; border-top-color:#4f46e5; border-radius:50%; animation:spin 0.7s linear infinite; }
+    
+    .viewer-area { flex:1; overflow-y:auto; background:#525659; display:flex; flex-direction:column; align-items:center; padding:1rem; }
+    
+    .center { display:flex; align-items:center; justify-content:center; height:100%; flex-direction:column; gap:1rem; color:#9ca3af; width:100%; }
+    .spinner { width:32px; height:32px; border:3px solid #374151; border-top-color:#4f46e5; border-radius:50%; animation:spin 0.7s linear infinite; }
     @keyframes spin { to { transform:rotate(360deg); } }
-    .toast { position:fixed; bottom:1.5rem; right:1.5rem; background:#1f2937; color:#fff; padding:0.65rem 1rem; border-radius:8px; font-size:0.85rem; z-index:999; transform:translateY(80px); opacity:0; transition:all 0.3s; border:1px solid #374151; }
+    
+    #pdfCanvas { max-width:100%; background:#fff; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
+    
+    .page-nav { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); background:#111827; border:1px solid #374151; border-radius:20px; padding:0.4rem 0.75rem; display:flex; align-items:center; gap:0.75rem; z-index:50; }
+    .page-btn { background:#374151; color:#fff; border:none; width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; }
+    .page-btn:hover { background:#4f46e5; }
+    .page-info { color:#e5e7eb; font-size:0.8rem; font-family:'Inter',sans-serif; }
+    
+    .toast { position:fixed; bottom:1.5rem; right:1.5rem; background:#1f2937; color:#fff; padding:0.65rem 1rem; border-radius:8px; font-size:0.85rem; z-index:999; transform:translateY(80px); opacity:0; transition:all 0.3s; }
     .toast.show { transform:translateY(0); opacity:1; }
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.2s; }
     .overlay.active { opacity:1; pointer-events:all; }
     .modal { background:#1f2937; border:1px solid #374151; border-radius:12px; padding:1.75rem; width:100%; max-width:340px; text-align:center; }
     .modal h2 { font-size:1rem; font-weight:700; margin-bottom:0.4rem; }
     .modal p { color:#9ca3af; font-size:0.85rem; margin-bottom:1.25rem; }
-    @media(max-width:600px) { .hide-mobile { display:none; } }
   </style>
 </head>
 <body>
@@ -52,8 +57,8 @@
     <div class="pdf-meta" id="pdfMeta"></div>
   </div>
   <button class="btn btn-whatsapp" onclick="shareWhatsApp()">📱 WhatsApp</button>
-  <button class="btn btn-link" onclick="copyLink()">🔗 Copy Link</button>
-  <a id="openBtn" href="#" target="_blank" class="btn" style="background:#f59e0b;color:#fff;">📄 Open</a>
+  <button class="btn btn-link" onclick="copyLink()">🔗 Copy</button>
+  <a id="openBtn" href="#" target="_blank" class="btn btn-open">📄 Open</a>
   <button class="btn btn-save" id="saveBtn" onclick="toggleSave()">🔖 Save</button>
 </nav>
 
@@ -62,6 +67,13 @@
     <div class="spinner"></div>
     <p>Loading PDF...</p>
   </div>
+  <canvas id="pdfCanvas" style="display:none;"></canvas>
+</div>
+
+<div class="page-nav" id="pageNav" style="display:none;">
+  <button class="page-btn" onclick="prevPage()">◀</button>
+  <span class="page-info" id="pageInfo"></span>
+  <button class="page-btn" onclick="nextPage()">▶</button>
 </div>
 
 <div class="overlay" id="loginModal">
@@ -77,73 +89,92 @@
 <div class="toast" id="toast"></div>
 
 <script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
 let currentUser=null, pdfData=null, isSaved=false;
+let pdfDoc=null, pageNum=1;
 const pdfId = new URLSearchParams(location.search).get('id');
 
 auth.onAuthStateChanged(async user => {
   currentUser = user;
   if (!pdfId) { history.back(); return; }
-  await loadPdf();
-  if (user) {
-    await checkSaved();
-  } else {
-    document.getElementById('saveBtn').innerHTML = '🔐 Login to Save';
-    document.getElementById('saveBtn').className = 'btn btn-login';
-  }
+  await loadPdfData();
+  if (user) await checkSaved();
+  else { document.getElementById('saveBtn').textContent = '🔐 Login'; }
 });
 
-async function loadPdf() {
+async function loadPdfData() {
   try {
     const doc = await db.collection('pdfs').doc(pdfId).get();
-    if (!doc.exists) { showError('PDF not found!'); return; }
+    if (!doc.exists) { showErr('PDF not found!'); return; }
     pdfData = doc.data();
 
     document.getElementById('pdfTitle').textContent = pdfData.title;
     document.getElementById('pdfMeta').textContent = [pdfData.subject, pdfData.branch, pdfData.year].filter(Boolean).join(' • ');
     document.title = pdfData.title + ' — BTech Vault';
 
-    const fileUrl = pdfData.fileUrl;
-    document.getElementById('openBtn').href = fileUrl;
+    // Get the raw Cloudinary URL
+    let url = pdfData.fileUrl;
+    // Ensure we use raw URL for PDF
+    url = url.replace('/image/upload/', '/raw/upload/').replace('/auto/upload/', '/raw/upload/');
+    
+    document.getElementById('openBtn').href = url;
 
-    // Use PDF.js CDN to render PDF
-    const container = document.getElementById('viewerArea');
-    container.innerHTML = `
-      <canvas id="pdfCanvas" style="display:block;margin:0 auto;max-width:100%;background:#fff;"></canvas>
-      <div id="pageControls" style="display:none;position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:#1f2937;border:1px solid #374151;border-radius:8px;padding:0.5rem 1rem;display:flex;align-items:center;gap:0.75rem;z-index:50;">
-        <button onclick="prevPage()" style="background:#374151;color:#fff;border:none;padding:0.3rem 0.75rem;border-radius:4px;cursor:pointer;font-family:Inter,sans-serif;">◀</button>
-        <span id="pageInfo" style="color:#e5e7eb;font-size:0.85rem;font-family:Inter,sans-serif;white-space:nowrap;"></span>
-        <button onclick="nextPage()" style="background:#374151;color:#fff;border:none;padding:0.3rem 0.75rem;border-radius:4px;cursor:pointer;font-family:Inter,sans-serif;">▶</button>
-      </div>
-    `;
-
-    // Load PDF.js
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-    script.onload = () => {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      loadPDFJs(fileUrl);
-    };
-    script.onerror = () => {
-      document.getElementById('loadingDiv') && (document.getElementById('loadingDiv').style.display = 'none');
-      container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:1rem;color:#9ca3af;">
-        <p>Preview unavailable</p>
-        <a href="${fileUrl}" target="_blank" style="background:#4f46e5;color:#fff;padding:0.6rem 1.2rem;border-radius:6px;text-decoration:none;font-size:0.9rem;">📄 Open PDF</a>
-      </div>`;
-    };
-    document.head.appendChild(script);  } catch(e) {
-    showError('Error: ' + e.message);
+    // Load with PDF.js using CORS proxy
+    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+    
+    try {
+      const loadingTask = pdfjsLib.getDocument(proxyUrl);
+      pdfDoc = await loadingTask.promise;
+      document.getElementById('loadingDiv').style.display = 'none';
+      document.getElementById('pdfCanvas').style.display = 'block';
+      document.getElementById('pageNav').style.display = 'flex';
+      renderPage(1);
+    } catch(e) {
+      // If proxy fails, try direct
+      try {
+        const loadingTask2 = pdfjsLib.getDocument(url);
+        pdfDoc = await loadingTask2.promise;
+        document.getElementById('loadingDiv').style.display = 'none';
+        document.getElementById('pdfCanvas').style.display = 'block';
+        document.getElementById('pageNav').style.display = 'flex';
+        renderPage(1);
+      } catch(e2) {
+        showErr('Cannot preview. Use Open button ↗', url);
+      }
+    }
+  } catch(e) {
+    showErr('Error: ' + e.message);
   }
 }
 
-function showError(msg) {
-  document.getElementById('loadingDiv').innerHTML = `<p style="color:#ef4444">${msg}</p>`;
+async function renderPage(num) {
+  const page = await pdfDoc.getPage(num);
+  const canvas = document.getElementById('pdfCanvas');
+  const ctx = canvas.getContext('2d');
+  const scale = Math.min((window.innerWidth - 32) / page.getViewport({scale:1}).width, 2);
+  const vp = page.getViewport({scale});
+  canvas.width = vp.width;
+  canvas.height = vp.height;
+  await page.render({canvasContext:ctx, viewport:vp}).promise;
+  document.getElementById('pageInfo').textContent = `${num} / ${pdfDoc.numPages}`;
+  pageNum = num;
+}
+
+function prevPage() { if(pageNum > 1) renderPage(pageNum - 1); }
+function nextPage() { if(pdfDoc && pageNum < pdfDoc.numPages) renderPage(pageNum + 1); }
+
+function showErr(msg, url) {
+  document.getElementById('loadingDiv').innerHTML = `
+    <p style="color:#9ca3af;margin-bottom:1rem;text-align:center;">${msg}</p>
+    ${url ? `<a href="${url}" target="_blank" class="btn btn-open" style="padding:0.6rem 1.2rem;font-size:0.9rem;">📄 Open PDF in New Tab</a>` : ''}
+  `;
 }
 
 async function checkSaved() {
   try {
     const doc = await db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(pdfId).get();
-    isSaved = doc.exists;
-    updateSaveBtn();
+    isSaved = doc.exists; updateSaveBtn();
   } catch {}
 }
 
@@ -166,51 +197,13 @@ async function toggleSave() {
 }
 
 function shareWhatsApp() {
-  const url = location.href;
-  const text = `Check out this PDF: ${pdfData ? pdfData.title : 'BTech Vault PDF'}\n${url}`;
+  const text = `Check out this PDF: ${pdfData ? pdfData.title : ''}\n${location.href}`;
   window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
 function copyLink() {
   navigator.clipboard.writeText(location.href).then(() => showToast('Link copied! 📋'));
 }
-
-let pdfDoc=null, pageNum=1, pageRendering=false;
-
-async function loadPDFJs(url) {
-  try {
-    const loadingTask = pdfjsLib.getDocument({url, withCredentials:false});
-    pdfDoc = await loadingTask.promise;
-    document.getElementById('loadingDiv') && (document.getElementById('loadingDiv').style.display='none');
-    document.getElementById('pageControls').style.display='flex';
-    renderPage(1);
-  } catch(e) {
-    console.error(e);
-    document.getElementById('loadingDiv') && (document.getElementById('loadingDiv').style.display='none');
-    document.getElementById('pdfCanvas').insertAdjacentHTML('afterend',
-      `<div style="text-align:center;padding:2rem;color:#9ca3af;">
-        <p style="margin-bottom:1rem">Could not render PDF inline</p>
-        <a href="${document.getElementById('openBtn').href}" target="_blank" style="background:#4f46e5;color:#fff;padding:0.6rem 1.2rem;border-radius:6px;text-decoration:none;">📄 Open PDF in New Tab</a>
-      </div>`);
-  }
-}
-
-async function renderPage(num) {
-  if (!pdfDoc) return;
-  pageRendering = true;
-  const page = await pdfDoc.getPage(num);
-  const canvas = document.getElementById('pdfCanvas');
-  const ctx = canvas.getContext('2d');
-  const vp = page.getViewport({scale: Math.min(window.innerWidth/page.getViewport({scale:1}).width, 1.5)});
-  canvas.height = vp.height;
-  canvas.width = vp.width;
-  await page.render({canvasContext:ctx, viewport:vp}).promise;
-  pageRendering = false;
-  document.getElementById('pageInfo').textContent = `Page ${num} of ${pdfDoc.numPages}`;
-}
-
-function prevPage() { if(pageNum>1){pageNum--;renderPage(pageNum);} }
-function nextPage() { if(pageNum<pdfDoc.numPages){pageNum++;renderPage(pageNum);} }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
