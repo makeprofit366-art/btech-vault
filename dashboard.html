@@ -153,7 +153,14 @@
     </div>
 
     <div class="form-group">
-      <label>Branch</label>
+      <label>College Name</label>
+      <input type="text" id="pdfCollege" placeholder="e.g. JNTU Kakinada, KL University..." maxlength="100"/>
+    </div>
+
+    <div class="form-group">
+      <label>Regulation Year</label>
+      <input type="text" id="pdfRegulation" placeholder="e.g. R20, R18, R22..." maxlength="20"/>
+    </div>
       <select id="pdfBranch">
         <option value="">Select Branch (optional)</option>
         <option>CSE</option><option>ECE</option><option>EEE</option>
@@ -309,6 +316,8 @@ async function uploadPdf() {
   const subject = document.getElementById('pdfSubject').value.trim();
   const branch = document.getElementById('pdfBranch').value;
   const year = document.getElementById('pdfYear').value;
+  const college = document.getElementById('pdfCollege').value;
+  const regulation = document.getElementById('pdfRegulation').value;
 
   if (!selectedFile) { showToast('Please select a PDF!'); return; }
   if (!title) { showToast('Please enter a title!'); return; }
@@ -353,7 +362,7 @@ async function uploadPdf() {
 
     // Save to Firestore
     await db.collection('pdfs').add({
-      title, subject, branch: branch||null, year: year||null, tags,
+      title, subject, branch: branch||null, year: year||null, college: college||null, regulation: regulation||null, tags,
       fileUrl: uploadResult.secure_url,
       fileName: selectedFile.name,
       fileSize: selectedFile.size,
@@ -373,6 +382,8 @@ async function uploadPdf() {
       document.getElementById('pdfSubject').value = '';
       document.getElementById('pdfBranch').value = '';
       document.getElementById('pdfYear').value = '';
+      document.getElementById('pdfCollege').value = '';
+      document.getElementById('pdfRegulation').value = '';
       tags = []; renderTags();
       progressWrap.classList.remove('show');
       progressFill.style.width = '0%';
