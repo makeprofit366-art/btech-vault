@@ -130,7 +130,7 @@
         <input type="file" accept=".pdf" id="pdfFile" onchange="onFileSelect(this)"/>
         <span class="u-icon">📄</span>
         <p>Drag & drop or click to select PDF</p>
-        <small>Max 25MB • PDF only</small>
+        <small>Max 10MB • PDF only</small>
       </div>
       <div class="file-preview" id="filePreview">
         <span style="font-size:1.5rem">📄</span>
@@ -264,7 +264,7 @@ function onFileSelect(input) {
   const file = input.files[0];
   if (!file) return;
   if (!file.name.endsWith('.pdf')) { showToast('Only PDF files allowed!'); input.value=''; return; }
-  if (file.size > 25 * 1024 * 1024) { showToast('File too large! Max 25MB'); input.value=''; return; }
+  if (file.size > 10 * 1024 * 1024) { showToast('❌ File too large! Max 10MB. Please compress your PDF first.'); input.value=''; return; }
   selectedFile = file;
   document.getElementById('filePreview').classList.add('show');
   document.getElementById('fileName').textContent = file.name;
