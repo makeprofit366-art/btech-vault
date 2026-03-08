@@ -130,7 +130,7 @@
         <input type="file" accept=".pdf" id="pdfFile" onchange="onFileSelect(this)"/>
         <span class="u-icon">📄</span>
         <p>Drag & drop or click to select PDF</p>
-        <small>Max 10MB • PDF only</small>
+        <small>Max 25MB • PDF only</small>
         <small style="margin-top:4px;">PDF too large? <a href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-25mb" target="_blank" style="color:#4f46e5;font-weight:600;">Click here to compress it free ↗</a></small>
       </div>
       <div class="file-preview" id="filePreview">
@@ -208,6 +208,12 @@
       <div class="progress-text" id="progressText">Uploading...</div>
     </div>
 
+    <div id="compressBanner" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:0.85rem 1rem;margin-bottom:1rem;">
+      <p style="font-size:0.85rem;color:#92400e;margin-bottom:0.4rem;">⚠️ <strong>File too large!</strong> Cloudinary free plan allows max 10MB per file.</p>
+      <a href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-25mb" target="_blank" style="font-size:0.85rem;color:#4f46e5;font-weight:600;">👉 Click here to compress your PDF for free ↗</a>
+      <p style="font-size:0.78rem;color:#92400e;margin-top:0.3rem;">After compressing, upload again!</p>
+    </div>
+
     <button class="btn btn-primary" id="uploadBtn" style="width:100%;justify-content:center;margin-top:1rem;padding:0.75rem;" onclick="uploadPdf()">
       📤 Upload PDF
     </button>
@@ -271,7 +277,7 @@ function onFileSelect(input) {
   const file = input.files[0];
   if (!file) return;
   if (!file.name.endsWith('.pdf')) { showToast('Only PDF files allowed!'); input.value=''; return; }
-  if (file.size > 10 * 1024 * 1024) { showToast('❌ File too large! Max 10MB. Please compress your PDF first.'); input.value=''; return; }
+  if (file.size > 25 * 1024 * 1024) { showToast('❌ File too large! Max 25MB. Please compress first.'); input.value=''; return; }
   selectedFile = file;
   document.getElementById('filePreview').classList.add('show');
   document.getElementById('fileName').textContent = file.name;
@@ -359,7 +365,14 @@ async function uploadPdf() {
     const uploadResult = await new Promise((resolve, reject) => {
       xhr.onload = () => {
         if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
-        else reject(new Error('Upload failed: ' + xhr.responseText));
+        else {
+          const errData = JSON.parse(xhr.responseText);
+          if (errData.error && errData.error.message && errData.error.message.includes('too large')) {
+            reject(new Error('FILE_TOO_LARGE'));
+          } else {
+            reject(new Error('Upload failed: ' + xhr.responseText));
+          }
+        }
       };
       xhr.onerror = () => reject(new Error('Network error'));
       xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`);
@@ -402,7 +415,14 @@ async function uploadPdf() {
     }, 1500);
 
   } catch (err) {
-    showToast('Upload failed: ' + err.message);
+    if (err.message === 'FILE_TOO_LARGE') {
+      showToast('❌ File too large! Cloudinary limit is 10MB. Please compress first.');
+      progressWrap.style.display = 'none';
+      // Show compress banner
+      document.getElementById('compressBanner').style.display = 'block';
+    } else {
+      showToast('Upload failed: ' + err.message);
+    }
     btn.disabled = false;
     btn.innerHTML = '📤 Upload PDF';
     progressWrap.classList.remove('show');
