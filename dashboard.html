@@ -130,8 +130,8 @@
         <input type="file" accept=".pdf" id="pdfFile" onchange="onFileSelect(this)"/>
         <span class="u-icon">📄</span>
         <p>Drag & drop or click to select PDF</p>
-        <small>Max 25MB • PDF only</small>
-        <small style="margin-top:4px;">PDF too large? <a href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-25mb" target="_blank" style="color:#4f46e5;font-weight:600;">Click here to compress it free ↗</a></small>
+        <small>Max 10MB • PDF only</small>
+        <small style="margin-top:4px;display:block;">PDF too large? <a href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-25mb" target="_blank" style="color:#4f46e5;font-weight:600;">Click here to compress it free ↗</a></small>
       </div>
       <div class="file-preview" id="filePreview">
         <span style="font-size:1.5rem">📄</span>
@@ -279,8 +279,12 @@ function onFileSelect(input) {
   const file = input.files[0];
   if (!file) return;
   if (!file.name.endsWith('.pdf')) { showToast('Only PDF files allowed!'); input.value=''; return; }
-  if (file.size > 25 * 1024 * 1024) { showToast('❌ File too large! Max 25MB. Please compress first.'); input.value=''; return; }
+  if (file.size > 10 * 1024 * 1024) { 
+    document.getElementById('compressBanner').style.display = 'block';
+    input.value=''; return; 
+  }
   selectedFile = file;
+  document.getElementById('compressBanner').style.display = 'none';
   document.getElementById('filePreview').classList.add('show');
   document.getElementById('fileName').textContent = file.name;
   document.getElementById('fileSize').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
