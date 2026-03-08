@@ -131,6 +131,7 @@
         <span class="u-icon">📄</span>
         <p>Drag & drop or click to select PDF</p>
         <small>Max 10MB • PDF only</small>
+        <small style="margin-top:4px;">PDF too large? <a href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-25mb" target="_blank" style="color:#4f46e5;font-weight:600;">Click here to compress it free ↗</a></small>
       </div>
       <div class="file-preview" id="filePreview">
         <span style="font-size:1.5rem">📄</span>
@@ -194,6 +195,12 @@
         <span class="tag-pill" onclick="addTag('lab')">+ lab</span>
         <span class="tag-pill" onclick="addTag('notes')">+ notes</span>
       </div>
+    </div>
+
+    <div class="form-group">
+      <label>YouTube Video Link <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
+      <input type="url" id="pdfYoutube" placeholder="e.g. https://youtube.com/watch?v=..." maxlength="200"/>
+      <small style="color:#9ca3af;font-size:0.75rem;">Add a related YouTube lecture or explanation video</small>
     </div>
 
     <div class="progress-wrap" id="progressWrap">
@@ -318,6 +325,7 @@ async function uploadPdf() {
   const year = document.getElementById('pdfYear').value;
   const college = document.getElementById('pdfCollege').value;
   const regulation = document.getElementById('pdfRegulation').value;
+  const youtubeUrl = document.getElementById('pdfYoutube').value.trim();
 
   if (!selectedFile) { showToast('Please select a PDF!'); return; }
   if (!title) { showToast('Please enter a title!'); return; }
@@ -362,7 +370,7 @@ async function uploadPdf() {
 
     // Save to Firestore
     await db.collection('pdfs').add({
-      title, subject, branch: branch||null, year: year||null, college: college||null, regulation: regulation||null, tags,
+      title, subject, branch: branch||null, year: year||null, college: college||null, regulation: regulation||null, youtubeUrl: youtubeUrl||null, tags,
       fileUrl: uploadResult.secure_url,
       fileName: selectedFile.name,
       fileSize: selectedFile.size,
@@ -384,6 +392,7 @@ async function uploadPdf() {
       document.getElementById('pdfYear').value = '';
       document.getElementById('pdfCollege').value = '';
       document.getElementById('pdfRegulation').value = '';
+      document.getElementById('pdfYoutube').value = '';
       tags = []; renderTags();
       progressWrap.classList.remove('show');
       progressFill.style.width = '0%';
