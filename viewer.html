@@ -39,7 +39,23 @@
     .page-btn:hover { background:#4f46e5; }
     .page-info { color:#e5e7eb; font-size:0.8rem; font-family:'Inter',sans-serif; }
     
-    .toast { position:fixed; bottom:1.5rem; right:1.5rem; background:#1f2937; color:#fff; padding:0.65rem 1rem; border-radius:8px; font-size:0.85rem; z-index:999; transform:translateY(80px); opacity:0; transition:all 0.3s; }
+    .comments-section { background:#111827; border-top:1px solid #374151; padding:1.5rem; flex-shrink:0; }
+    .comments-title { font-size:0.95rem; font-weight:600; color:#e5e7eb; margin-bottom:1rem; }
+    .comment-input-row { display:flex; gap:0.5rem; margin-bottom:1rem; }
+    .comment-input { flex:1; background:#1f2937; border:1px solid #374151; border-radius:8px; padding:0.6rem 0.85rem; color:#e5e7eb; font-size:0.85rem; font-family:'Inter',sans-serif; outline:none; }
+    .comment-input:focus { border-color:#4f46e5; }
+    .comment-submit { background:#4f46e5; color:#fff; border:none; border-radius:8px; padding:0.6rem 1rem; font-size:0.85rem; cursor:pointer; font-family:'Inter',sans-serif; white-space:nowrap; }
+    .comment-item { display:flex; gap:0.75rem; margin-bottom:0.85rem; }
+    .comment-avatar { width:32px; height:32px; border-radius:50%; background:#4f46e5; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; color:#fff; flex-shrink:0; }
+    .comment-body { flex:1; }
+    .comment-name { font-size:0.78rem; font-weight:600; color:#9ca3af; margin-bottom:0.2rem; }
+    .comment-text { font-size:0.85rem; color:#e5e7eb; line-height:1.5; }
+    .comment-time { font-size:0.72rem; color:#6b7280; margin-top:0.2rem; }
+    .youtube-box { background:#1f2937; border:1px solid #374151; border-radius:8px; padding:0.75rem 1rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.75rem; text-decoration:none; }
+    .youtube-box:hover { border-color:#ef4444; }
+    .yt-icon { font-size:1.4rem; }
+    .yt-text { font-size:0.85rem; color:#e5e7eb; font-weight:500; }
+    .yt-sub { font-size:0.75rem; color:#9ca3af; }
     .toast.show { transform:translateY(0); opacity:1; }
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.2s; }
     .overlay.active { opacity:1; pointer-events:all; }
@@ -86,6 +102,20 @@
   </div>
 </div>
 
+<!-- YOUTUBE + COMMENTS -->
+<div class="comments-section" id="commentsSection" style="display:none;">
+  <div id="youtubeBox"></div>
+  <div class="comments-title">💬 Comments</div>
+  <div class="comment-input-row" id="commentInputRow" style="display:none;">
+    <input class="comment-input" id="commentInput" placeholder="Write a comment..." maxlength="300" onkeydown="if(event.key==='Enter')postComment()"/>
+    <button class="comment-submit" onclick="postComment()">Post</button>
+  </div>
+  <div id="loginToComment" style="font-size:0.82rem;color:#9ca3af;margin-bottom:0.85rem;display:none;">
+    <a href="login.html" style="color:#4f46e5;">Login</a> to post a comment.
+  </div>
+  <div id="commentsList"><div style="color:#6b7280;font-size:0.85rem;">Loading comments...</div></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -110,7 +140,7 @@ async function loadPdfData() {
     pdfData = doc.data();
 
     document.getElementById('pdfTitle').textContent = pdfData.title;
-    document.getElementById('pdfMeta').textContent = [pdfData.subject, pdfData.branch, pdfData.year].filter(Boolean).join(' • ');
+    document.getElementById('pdfMeta').textContent = [pdfData.subject, pdfData.branch, pdfData.year, pdfData.college, pdfData.regulation].filter(Boolean).join(' • ');
     document.title = pdfData.title + ' — BTech Vault';
 
     // Get the original Cloudinary URL - keep as is
@@ -141,6 +171,24 @@ async function loadPdfData() {
         showErr('Cannot preview. Use Open button ↗', url);
       }
     }
+
+    // Show YouTube link if exists
+    if (pdfData.youtubeUrl) {
+      document.getElementById('youtubeBox').innerHTML = `
+        <a href="${pdfData.youtubeUrl}" target="_blank" class="youtube-box">
+          <span class="yt-icon">▶️</span>
+          <div><div class="yt-text">Watch Related YouTube Video</div>
+          <div class="yt-sub" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:250px;">${pdfData.youtubeUrl}</div></div>
+        </a>`;
+    }
+    document.getElementById('commentsSection').style.display = 'block';
+    loadComments();
+    if (currentUser) {
+      document.getElementById('commentInputRow').style.display = 'flex';
+    } else {
+      document.getElementById('loginToComment').style.display = 'block';
+    }
+
   } catch(e) {
     showErr('Error: ' + e.message);
   }
@@ -192,6 +240,45 @@ async function toggleSave() {
     isSaved = true; showToast('PDF saved! 🎉');
   }
   updateSaveBtn();
+}
+
+async function loadComments() {
+  try {
+    const snap = await db.collection('pdfs').doc(pdfId).collection('comments')
+      .orderBy('createdAt','asc').limit(50).get();
+    const list = document.getElementById('commentsList');
+    if (snap.empty) { list.innerHTML = '<div style="color:#6b7280;font-size:0.85rem;">No comments yet. Be the first!</div>'; return; }
+    list.innerHTML = snap.docs.map(d => {
+      const c = d.data();
+      const initials = (c.userName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      const time = c.createdAt ? new Date(c.createdAt.seconds*1000).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '';
+      return `<div class="comment-item">
+        <div class="comment-avatar">${initials}</div>
+        <div class="comment-body">
+          <div class="comment-name">${c.userName||'Anonymous'}</div>
+          <div class="comment-text">${c.text}</div>
+          <div class="comment-time">${time}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { document.getElementById('commentsList').innerHTML = '<div style="color:#6b7280;font-size:0.85rem;">Could not load comments.</div>'; }
+}
+
+async function postComment() {
+  if (!currentUser) return;
+  const input = document.getElementById('commentInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  try {
+    await db.collection('pdfs').doc(pdfId).collection('comments').add({
+      text, userId: currentUser.uid,
+      userName: currentUser.displayName || 'Anonymous',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    showToast('Comment posted! 💬');
+    loadComments();
+  } catch(e) { showToast('Failed to post comment'); }
 }
 
 function shareWhatsApp() {
