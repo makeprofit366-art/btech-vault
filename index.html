@@ -1,108 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BTech Vault — Study PDFs</title>
+  <title>BTech Vault — Free Study PDFs</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <script src="firebase-config.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: #f8f9fa; color: #1a1a2e; min-height: 100vh; }
-    nav { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-    .logo { font-size: 1.2rem; font-weight: 700; color: #1a1a2e; text-decoration: none; }
-    .logo span { color: #4f46e5; }
-    .nav-right { display: flex; align-items: center; gap: 0.75rem; }
-    .nav-user { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: #6b7280; }
-    .nav-user img { width: 30px; height: 30px; border-radius: 50%; }
-    .btn { padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.15s; font-family: 'Inter', sans-serif; }
-    .btn-primary { background: #4f46e5; color: #fff; }
-    .btn-primary:hover { background: #4338ca; }
-    .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
-    .btn-outline:hover { border-color: #4f46e5; color: #4f46e5; }
-    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
-    .hero { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 2.5rem 2rem; }
-    .hero h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.4rem; }
-    .hero h1 span { color: #4f46e5; }
-    .hero p { color: #6b7280; font-size: 0.95rem; }
-    .hero-stats { display: flex; gap: 2rem; margin-top: 1.25rem; }
-    .stat-num { font-size: 1.25rem; font-weight: 700; color: #4f46e5; }
-    .stat-label { font-size: 0.75rem; color: #9ca3af; }
-    .filter-bar { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 1rem 2rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
-    .search-wrap { position: relative; flex: 1; min-width: 220px; }
-    .search-wrap input { width: 100%; padding: 0.55rem 1rem 0.55rem 2.25rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.875rem; outline: none; font-family: 'Inter', sans-serif; background: #f9fafb; }
-    .search-wrap input:focus { border-color: #4f46e5; background: #fff; }
-    .search-wrap .icon { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); color: #9ca3af; }
-    .filter-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-    .pill { padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #6b7280; transition: all 0.15s; }
-    .pill:hover, .pill.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
-    .main { padding: 1.5rem 2rem; }
-    .grid-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .grid-header h2 { font-size: 1rem; font-weight: 600; color: #374151; }
-    .grid-header span { font-size: 0.8rem; color: #9ca3af; }
-    .pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1.25rem; transition: all 0.15s; }
-    .card:hover { border-color: #4f46e5; box-shadow: 0 4px 16px rgba(79,70,229,0.1); transform: translateY(-1px); }
-    .card-icon { width: 40px; height: 40px; background: #eef2ff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 0.85rem; }
-    .card-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; color: #111827; line-height: 1.3; }
-    .card-subject { font-size: 0.8rem; color: #4f46e5; font-weight: 500; margin-bottom: 0.3rem; }
-    .card-extra { font-size: 0.75rem; color: #6b7280; margin-bottom: 0.3rem; }
-    .card-meta { font-size: 0.75rem; color: #9ca3af; margin-bottom: 0.75rem; }
-    .card-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.85rem; }
-    .tag { font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
-    .card-actions { display: flex; gap: 0.5rem; }
-    .card-actions .btn { flex: 1; justify-content: center; }
-    .empty { text-align: center; padding: 4rem 1rem; color: #9ca3af; grid-column: 1/-1; }
-    .empty .e-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-    .empty h3 { font-size: 1rem; font-weight: 600; color: #6b7280; margin-bottom: 0.3rem; }
-    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-    .overlay.active { opacity: 1; pointer-events: all; }
-    .modal { background: #fff; border-radius: 12px; padding: 2rem; width: 100%; max-width: 380px; text-align: center; }
-    .modal h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .modal p { color: #6b7280; font-size: 0.875rem; margin-bottom: 1.5rem; }
-    .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1f2937; color: #fff; padding: 0.75rem 1.1rem; border-radius: 8px; font-size: 0.875rem; z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s; }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .spinner { width: 18px; height: 18px; border: 2px solid #e5e7eb; border-top-color: #4f46e5; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 3rem; color: #9ca3af; font-size: 0.875rem; grid-column: 1/-1; }
-    @media (max-width: 640px) { .hero h1 { font-size: 1.35rem; } .pdf-grid { grid-template-columns: 1fr; } .main, nav, .filter-bar { padding-left: 1rem; padding-right: 1rem; } }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:#f4f5f7;color:#111827;min-height:100vh;}
+
+    /* NAV */
+    nav{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 1.25rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+    .logo{font-size:1.15rem;font-weight:800;color:#111827;text-decoration:none;letter-spacing:-0.3px;}
+    .logo span{color:#4f46e5;}
+    .nav-actions{display:flex;align-items:center;gap:0.5rem;}
+    .btn{padding:0.45rem 0.9rem;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem;transition:all 0.15s;font-family:'Inter',sans-serif;white-space:nowrap;}
+    .btn-primary{background:#4f46e5;color:#fff;}
+    .btn-primary:hover{background:#4338ca;}
+    .btn-outline{background:#fff;color:#374151;border:1px solid #d1d5db;}
+    .btn-outline:hover{border-color:#4f46e5;color:#4f46e5;}
+    .btn-ghost{background:transparent;color:#6b7280;border:none;padding:0.45rem 0.6rem;}
+    .btn-ghost:hover{background:#f3f4f6;color:#111;}
+    .btn-sm{padding:0.35rem 0.7rem;font-size:0.78rem;}
+    .avatar-img{width:28px;height:28px;border-radius:50%;object-fit:cover;}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);padding:2rem 1.25rem;color:#fff;}
+    .hero h1{font-size:1.6rem;font-weight:800;line-height:1.2;margin-bottom:0.4rem;letter-spacing:-0.5px;}
+    .hero h1 span{color:#c7d2fe;}
+    .hero p{font-size:0.9rem;color:#c7d2fe;margin-bottom:1.25rem;line-height:1.5;}
+    .hero-stats{display:flex;gap:1.5rem;}
+    .stat{text-align:center;}
+    .stat-num{font-size:1.3rem;font-weight:800;color:#fff;}
+    .stat-label{font-size:0.7rem;color:#c7d2fe;text-transform:uppercase;letter-spacing:0.5px;}
+
+    /* UPLOAD BANNER - for non-logged in users */
+    .upload-banner{background:#fff;border-bottom:1px solid #e5e7eb;padding:0.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
+    .upload-banner-text{font-size:0.85rem;color:#374151;font-weight:500;}
+    .upload-banner-text span{color:#4f46e5;font-weight:600;}
+
+    /* FILTER BAR */
+    .filter-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:0.75rem 1.25rem;display:flex;flex-direction:column;gap:0.6rem;}
+    .search-wrap{position:relative;}
+    .search-wrap input{width:100%;padding:0.6rem 1rem 0.6rem 2.4rem;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.875rem;outline:none;font-family:'Inter',sans-serif;background:#f9fafb;color:#111;transition:all 0.15s;}
+    .search-wrap input:focus{border-color:#4f46e5;background:#fff;box-shadow:0 0 0 3px rgba(79,70,229,0.1);}
+    .search-icon{position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);font-size:0.9rem;color:#9ca3af;}
+    .pills{display:flex;gap:0.4rem;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+    .pills::-webkit-scrollbar{display:none;}
+    .pill{padding:0.3rem 0.8rem;border-radius:20px;font-size:0.78rem;font-weight:500;cursor:pointer;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
+    .pill.active{background:#4f46e5;color:#fff;border-color:#4f46e5;}
+
+    /* GRID */
+    .main{padding:1rem 1.25rem;padding-bottom:6rem;}
+    .grid-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;}
+    .grid-header h2{font-size:0.95rem;font-weight:700;color:#374151;}
+    .grid-header span{font-size:0.78rem;color:#9ca3af;}
+    .pdf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0.85rem;}
+
+    /* CARD */
+    .card{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:1.1rem;transition:all 0.2s;cursor:pointer;}
+    .card:hover{border-color:#4f46e5;box-shadow:0 4px 20px rgba(79,70,229,0.12);transform:translateY(-2px);}
+    .card-top{display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:0.75rem;}
+    .card-icon{width:42px;height:42px;background:#eef2ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+    .card-info{flex:1;min-width:0;}
+    .card-title{font-size:0.9rem;font-weight:700;color:#111827;line-height:1.3;margin-bottom:0.2rem;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+    .card-subject{font-size:0.75rem;color:#4f46e5;font-weight:600;}
+    .card-details{font-size:0.72rem;color:#6b7280;margin-bottom:0.6rem;line-height:1.5;}
+    .card-tags{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.75rem;}
+    .tag{font-size:0.68rem;padding:0.15rem 0.45rem;border-radius:4px;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb;}
+    .card-actions{display:flex;gap:0.5rem;}
+    .card-actions .btn{flex:1;justify-content:center;padding:0.5rem 0.5rem;font-size:0.8rem;}
+
+    /* FLOATING UPLOAD BUTTON */
+    .fab{position:fixed;bottom:1.5rem;right:1.25rem;z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem;}
+    .fab-main{background:#4f46e5;color:#fff;border:none;border-radius:16px;padding:0.75rem 1.25rem;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:0.5rem;box-shadow:0 4px 20px rgba(79,70,229,0.4);transition:all 0.2s;}
+    .fab-main:hover{background:#4338ca;transform:translateY(-2px);box-shadow:0 6px 24px rgba(79,70,229,0.5);}
+    .fab-label{background:#1f2937;color:#fff;font-size:0.72rem;padding:0.3rem 0.6rem;border-radius:6px;white-space:nowrap;}
+
+    /* EMPTY */
+    .empty{text-align:center;padding:3.5rem 1rem;color:#9ca3af;grid-column:1/-1;}
+    .empty .e-icon{font-size:2.5rem;margin-bottom:0.75rem;}
+    .empty h3{font-size:1rem;font-weight:600;color:#6b7280;margin-bottom:0.3rem;}
+    .loading{display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:3rem;color:#9ca3af;font-size:0.875rem;grid-column:1/-1;}
+
+    /* MODAL */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+    .overlay.active{opacity:1;pointer-events:all;}
+    .modal{background:#fff;border-radius:16px;padding:2rem;width:100%;max-width:360px;text-align:center;}
+    .modal h2{font-size:1.1rem;font-weight:700;margin-bottom:0.4rem;}
+    .modal p{color:#6b7280;font-size:0.85rem;margin-bottom:1.5rem;line-height:1.5;}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2937;color:#fff;padding:0.65rem 1.25rem;border-radius:10px;font-size:0.85rem;z-index:999;opacity:0;transition:all 0.3s;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+    .spinner{width:18px;height:18px;border:2px solid #e5e7eb;border-top-color:#4f46e5;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* MOBILE */
+    @media(max-width:640px){
+      .hero h1{font-size:1.3rem;}
+      .pdf-grid{grid-template-columns:1fr;}
+      .hide-mobile{display:none;}
+    }
+    @media(min-width:641px){
+      .hero{padding:2.5rem 2rem;}
+      .filter-bar{padding:0.85rem 2rem;flex-direction:row;align-items:center;}
+      .search-wrap{flex:1;max-width:400px;}
+      .main{padding:1.5rem 2rem;padding-bottom:2rem;}
+      .fab{bottom:2rem;right:2rem;}
+      .upload-banner{padding:0.75rem 2rem;}
+    }
   </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
   <a href="index.html" class="logo">BTech<span>Vault</span></a>
-  <div style="display:flex;align-items:center;gap:0.75rem;">
-    <a href="chat.html" style="text-decoration:none;background:#f3f4f6;border:1px solid #e5e7eb;padding:0.35rem 0.85rem;border-radius:6px;font-size:0.82rem;font-weight:500;color:#374151;display:flex;align-items:center;gap:0.3rem;">💬 Chat</a>
-    <div class="nav-right" id="navRight"><div class="spinner"></div></div>
+  <div class="nav-actions" id="navActions">
+    <div class="spinner"></div>
   </div>
 </nav>
 
+<!-- HERO -->
 <div class="hero">
-  <h1>Find Study PDFs <span>Fast</span></h1>
-  <p>Supply, backlog, arrears — all B.Tech study materials in one place. Free.</p>
+  <h1>Find Study PDFs <span>Fast ⚡</span></h1>
+  <p>Notes, PYQs, Lab manuals — all B.Tech study materials in one place. Free.</p>
   <div class="hero-stats">
-    <div><div class="stat-num" id="totalPdfs">—</div><div class="stat-label">PDFs</div></div>
-    <div><div class="stat-num" id="totalSubjects">—</div><div class="stat-label">Subjects</div></div>
-    <div><div class="stat-num" id="totalUsers">—</div><div class="stat-label">Contributors</div></div>
+    <div class="stat"><div class="stat-num" id="totalPdfs">—</div><div class="stat-label">PDFs</div></div>
+    <div class="stat"><div class="stat-num" id="totalSubjects">—</div><div class="stat-label">Subjects</div></div>
+    <div class="stat"><div class="stat-num" id="totalUsers">—</div><div class="stat-label">Contributors</div></div>
   </div>
 </div>
 
+<!-- UPLOAD BANNER (shown to all) -->
+<div class="upload-banner" id="uploadBanner">
+  <div class="upload-banner-text">📤 Have study materials? <span>Share with 1000s of students!</span></div>
+  <a href="dashboard.html" class="btn btn-primary btn-sm" id="uploadBannerBtn">Upload PDF</a>
+</div>
+
+<!-- FILTER BAR -->
 <div class="filter-bar">
   <div class="search-wrap">
-    <span class="icon">🔍</span>
+    <span class="search-icon">🔍</span>
     <input type="text" id="searchInput" placeholder="Search by title, subject or tag..." oninput="filterPdfs()"/>
   </div>
-  <div class="filter-pills" id="subjectFilters">
+  <div class="pills" id="subjectFilters">
     <span class="pill active" onclick="filterBySubject('',this)">All</span>
   </div>
 </div>
 
+<!-- MAIN GRID -->
 <div class="main">
   <div class="grid-header">
     <h2>All PDFs</h2>
@@ -113,13 +168,22 @@
   </div>
 </div>
 
+<!-- FLOATING UPLOAD BUTTON -->
+<div class="fab" id="fab">
+  <div class="fab-label">Share your notes!</div>
+  <button class="fab-main" onclick="window.location.href='dashboard.html'">
+    📤 Upload PDF
+  </button>
+</div>
+
+<!-- LOGIN MODAL -->
 <div class="overlay" id="loginModal">
   <div class="modal">
-    <div style="font-size:2rem;margin-bottom:0.75rem">🔐</div>
+    <div style="font-size:2.5rem;margin-bottom:0.75rem">🔐</div>
     <h2>Login Required</h2>
-    <p>Please login with Google to save PDFs to your account. It's free!</p>
-    <a href="login.html" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:0.5rem">Login / Sign Up</a>
-    <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="closeModal()">Cancel</button>
+    <p>Login with Google to save PDFs to your account. It's 100% free!</p>
+    <a href="login.html" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:0.5rem;padding:0.65rem">Login / Sign Up Free</a>
+    <button class="btn btn-outline" style="width:100%;justify-content:center;padding:0.65rem" onclick="closeModal()">Cancel</button>
   </div>
 </div>
 
@@ -129,17 +193,28 @@
 let allPdfs=[], currentUser=null, savedIds=new Set(), activeSubject='';
 
 auth.onAuthStateChanged(async(user)=>{
-  currentUser=user; renderNav(user);
+  currentUser=user;
+  renderNav(user);
   if(user) await loadSaved();
-  loadPdfs(); loadStats();
+  loadPdfs();
+  loadStats();
 });
 
 function renderNav(user){
-  const nav=document.getElementById('navRight');
+  const nav=document.getElementById('navActions');
   if(user){
-    nav.innerHTML=`<div class="nav-user"><img src="${user.photoURL}" referrerpolicy="no-referrer"/><span>${user.displayName.split(' ')[0]}</span></div><a href="dashboard.html" class="btn btn-outline btn-sm">Dashboard</a><button class="btn btn-outline btn-sm" onclick="signOut()">Logout</button>`;
+    nav.innerHTML=`
+      <a href="chat.html" class="btn btn-ghost btn-sm">💬</a>
+      <img src="${user.photoURL}" class="avatar-img" referrerpolicy="no-referrer"/>
+      <a href="dashboard.html" class="btn btn-outline btn-sm">Dashboard</a>
+      <button class="btn btn-ghost btn-sm hide-mobile" onclick="signOut()">Logout</button>`;
+    // Hide upload banner for logged in users (they know)
+    document.getElementById('fab').style.display='flex';
   } else {
-    nav.innerHTML=`<a href="login.html" class="btn btn-outline btn-sm">Login</a><a href="login.html" class="btn btn-primary btn-sm">Sign Up</a>`;
+    nav.innerHTML=`
+      <a href="chat.html" class="btn btn-ghost btn-sm">💬 Chat</a>
+      <a href="login.html" class="btn btn-outline btn-sm">Login</a>
+      <a href="login.html" class="btn btn-primary btn-sm">Sign Up</a>`;
   }
 }
 
@@ -147,16 +222,20 @@ async function loadPdfs(){
   try{
     const snap=await db.collection('pdfs').where('status','==','active').orderBy('uploadedAt','desc').get();
     allPdfs=snap.docs.map(d=>({id:d.id,...d.data()}));
-    buildFilters(); renderPdfs(allPdfs);
+    buildFilters();
+    renderPdfs(allPdfs);
     document.getElementById('pdfCount').textContent=allPdfs.length+' results';
   }catch(e){
-    document.getElementById('pdfGrid').innerHTML=`<div class="empty"><div class="e-icon">⚠️</div><h3>Could not load PDFs</h3><p>Firebase setup incomplete</p></div>`;
+    document.getElementById('pdfGrid').innerHTML=`<div class="empty"><div class="e-icon">⚠️</div><h3>Could not load PDFs</h3><p>${e.message}</p></div>`;
   }
 }
 
 async function loadStats(){
   try{
-    const[pdfs,users]=await Promise.all([db.collection('pdfs').where('status','==','active').get(),db.collection('users').get()]);
+    const[pdfs,users]=await Promise.all([
+      db.collection('pdfs').where('status','==','active').get(),
+      db.collection('users').get()
+    ]);
     const subjects=new Set(pdfs.docs.map(d=>d.data().subject).filter(Boolean));
     document.getElementById('totalPdfs').textContent=pdfs.size;
     document.getElementById('totalSubjects').textContent=subjects.size;
@@ -173,22 +252,29 @@ async function loadSaved(){
 
 function renderPdfs(pdfs){
   const grid=document.getElementById('pdfGrid');
-  if(!pdfs.length){grid.innerHTML=`<div class="empty"><div class="e-icon">📭</div><h3>No PDFs found</h3><p>Try a different filter</p></div>`;return;}
+  if(!pdfs.length){
+    grid.innerHTML=`<div class="empty"><div class="e-icon">📭</div><h3>No PDFs found</h3><p>Try a different search or filter</p></div>`;
+    return;
+  }
   grid.innerHTML=pdfs.map(pdf=>{
     const saved=savedIds.has(pdf.id);
-    const date=pdf.uploadedAt?new Date(pdf.uploadedAt.seconds*1000).toLocaleDateString('en-IN'):'';
+    const date=pdf.uploadedAt?new Date(pdf.uploadedAt.seconds*1000).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
     const tags=(pdf.tags||[]).slice(0,3);
-    const extraInfo = [pdf.branch, pdf.year, pdf.college, pdf.regulation].filter(Boolean).join(' · ');
-    return`<div class="card">
-      <div class="card-icon">📄</div>
-      <div class="card-title">${esc(pdf.title)}</div>
-      <div class="card-subject">📚 ${esc(pdf.subject)}</div>
-      ${extraInfo ? `<div class="card-extra">🏫 ${esc(extraInfo)}</div>` : ''}
-      <div class="card-meta">By ${esc(pdf.uploaderName||'Anonymous')} · ${date}</div>
+    const details=[pdf.branch,pdf.year,pdf.college,pdf.regulation].filter(Boolean).join(' · ');
+    return`<div class="card" onclick="window.location.href='viewer.html?id=${pdf.id}'">
+      <div class="card-top">
+        <div class="card-icon">📄</div>
+        <div class="card-info">
+          <div class="card-title">${esc(pdf.title)}</div>
+          <div class="card-subject">📚 ${esc(pdf.subject)}</div>
+        </div>
+      </div>
+      ${details?`<div class="card-details">🏫 ${esc(details)}</div>`:''}
+      <div class="card-details">By ${esc(pdf.uploaderName||'Anonymous')} · ${date}</div>
       <div class="card-tags">${tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
-      <div class="card-actions">
-        <a href="viewer.html?id=${pdf.id}" class="btn btn-primary btn-sm">📖 Open PDF</a>
-        <button class="btn btn-outline btn-sm" id="sv-${pdf.id}" onclick="toggleSave('${pdf.id}',event)" style="${saved?'color:#16a34a;border-color:#16a34a;':''}">
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <a href="viewer.html?id=${pdf.id}" class="btn btn-primary">📖 Open PDF</a>
+        <button class="btn btn-outline" id="sv-${pdf.id}" onclick="toggleSave('${pdf.id}',event)" style="${saved?'color:#16a34a;border-color:#16a34a;':''}">
           ${saved?'✅ Saved':'🔖 Save'}
         </button>
       </div>
@@ -216,7 +302,8 @@ async function toggleSave(id,e){
 function buildFilters(){
   const subjects=[...new Set(allPdfs.map(p=>p.subject).filter(Boolean))];
   const c=document.getElementById('subjectFilters');
-  c.innerHTML=`<span class="pill active" onclick="filterBySubject('',this)">All</span>`+subjects.map(s=>`<span class="pill" onclick="filterBySubject('${s}',this)">${s}</span>`).join('');
+  c.innerHTML=`<span class="pill active" onclick="filterBySubject('',this)">All</span>`+
+    subjects.map(s=>`<span class="pill" onclick="filterBySubject('${esc(s)}',this)">${esc(s)}</span>`).join('');
 }
 
 function filterBySubject(s,el){
@@ -228,8 +315,14 @@ function filterPdfs(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   let f=allPdfs;
   if(activeSubject)f=f.filter(p=>p.subject===activeSubject);
-  if(q)f=f.filter(p=>p.title.toLowerCase().includes(q)||(p.subject||'').toLowerCase().includes(q)||(p.tags||[]).some(t=>t.toLowerCase().includes(q)));
-  renderPdfs(f);document.getElementById('pdfCount').textContent=f.length+' results';
+  if(q)f=f.filter(p=>
+    (p.title||'').toLowerCase().includes(q)||
+    (p.subject||'').toLowerCase().includes(q)||
+    (p.tags||[]).some(t=>t.toLowerCase().includes(q))||
+    (p.college||'').toLowerCase().includes(q)
+  );
+  renderPdfs(f);
+  document.getElementById('pdfCount').textContent=f.length+' results';
 }
 
 function closeModal(){document.getElementById('loginModal').classList.remove('active');}
