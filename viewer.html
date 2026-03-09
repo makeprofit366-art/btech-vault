@@ -13,33 +13,157 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Inter',sans-serif; background:#1a1a2e; color:#fff; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
-    nav { background:#111827; border-bottom:1px solid #374151; padding:0 1rem; height:54px; display:flex; align-items:center; gap:0.75rem; flex-shrink:0; }
-    .btn { padding:0.35rem 0.8rem; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer; border:none; text-decoration:none; display:inline-flex; align-items:center; gap:0.3rem; transition:all 0.15s; font-family:'Inter',sans-serif; white-space:nowrap; }
-    .btn-back { background:#374151; color:#e5e7eb; }
-    .btn-save { background:#4f46e5; color:#fff; }
-    .btn-saved { background:#065f46; color:#6ee7b7; }
-    .btn-whatsapp { background:#25d366; color:#fff; }
-    .btn-link { background:#374151; color:#e5e7eb; }
-    .btn-open { background:#f59e0b; color:#fff; }
+    body { font-family:'Inter',sans-serif; background:#1a1a2e; color:#fff; height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
+
+    /* ── NAV ── */
+    nav {
+      background:#111827;
+      border-bottom:1px solid #374151;
+      padding:0.5rem 0.75rem;
+      display:flex;
+      flex-direction:column;
+      gap:0.45rem;
+      flex-shrink:0;
+    }
+
+    /* Row 1: Back + Title */
+    .nav-row1 {
+      display:flex;
+      align-items:center;
+      gap:0.5rem;
+      min-width:0;
+    }
+
+    /* Row 2: Action buttons */
+    .nav-row2 {
+      display:flex;
+      gap:0.4rem;
+      flex-wrap:nowrap;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      padding-bottom:2px;
+    }
+    .nav-row2::-webkit-scrollbar { display:none; }
+
+    .btn {
+      padding:0.38rem 0.75rem;
+      border-radius:6px;
+      font-size:0.78rem;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:0.25rem;
+      transition:all 0.15s;
+      font-family:'Inter',sans-serif;
+      white-space:nowrap;
+      flex-shrink:0;
+    }
+    .btn-back    { background:#374151; color:#e5e7eb; }
+    .btn-save    { background:#4f46e5; color:#fff; }
+    .btn-saved   { background:#065f46; color:#6ee7b7; }
+    .btn-whatsapp{ background:#25d366; color:#fff; }
+    .btn-link    { background:#374151; color:#e5e7eb; }
+    .btn-open    { background:#f59e0b; color:#fff; }
+    .btn-login   { background:#4f46e5; color:#fff; }
+
     .pdf-info { flex:1; min-width:0; }
-    .pdf-title { font-size:0.9rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .pdf-meta { font-size:0.72rem; color:#9ca3af; }
-    
-    .viewer-area { flex:1; overflow-y:auto; background:#525659; display:flex; flex-direction:column; align-items:center; padding:1rem; }
-    
+    .pdf-title { font-size:0.88rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pdf-meta  { font-size:0.7rem; color:#9ca3af; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    /* ── VIEWER ── */
+    .viewer-area {
+      flex:1;
+      overflow-y:auto;
+      background:#525659;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      /* bottom padding so canvas isn't hidden behind floating nav */
+      padding:0.75rem 0.75rem 90px;
+    }
+
     .center { display:flex; align-items:center; justify-content:center; height:100%; flex-direction:column; gap:1rem; color:#9ca3af; width:100%; }
     .spinner { width:32px; height:32px; border:3px solid #374151; border-top-color:#4f46e5; border-radius:50%; animation:spin 0.7s linear infinite; }
     @keyframes spin { to { transform:rotate(360deg); } }
-    
-    #pdfCanvas { max-width:100%; background:#fff; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
-    
-    .page-nav { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); background:#111827; border:1px solid #374151; border-radius:20px; padding:0.4rem 0.75rem; display:flex; align-items:center; gap:0.75rem; z-index:50; }
-    .page-btn { background:#374151; color:#fff; border:none; width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; }
-    .page-btn:hover { background:#4f46e5; }
-    .page-info { color:#e5e7eb; font-size:0.8rem; font-family:'Inter',sans-serif; }
-    
-    .comments-section { background:#111827; border-top:1px solid #374151; padding:1.5rem; flex-shrink:0; }
+
+    #pdfCanvas { max-width:100%; background:#fff; box-shadow:0 4px 20px rgba(0,0,0,0.5); border-radius:4px; }
+
+    /* ── FLOATING PAGE NAV — fixed, easy thumb reach ── */
+    .page-nav {
+      position:fixed;
+      bottom:0;
+      left:0;
+      right:0;
+      z-index:60;
+      background:#111827;
+      border-top:1px solid #374151;
+      padding:0.55rem 1rem;
+      display:none;          /* shown via JS */
+      align-items:center;
+      justify-content:space-between;
+      gap:0.5rem;
+      /* safe area for phones with home indicator */
+      padding-bottom:calc(0.55rem + env(safe-area-inset-bottom));
+    }
+
+    .page-nav-center {
+      display:flex;
+      align-items:center;
+      gap:0.6rem;
+    }
+
+    .page-btn {
+      background:#374151;
+      color:#fff;
+      border:none;
+      width:44px;
+      height:44px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:1.1rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition:background 0.15s;
+      -webkit-tap-highlight-color:transparent;
+      flex-shrink:0;
+    }
+    .page-btn:active { background:#4f46e5; }
+
+    /* Big prev/next tap zones on sides */
+    .page-btn-big {
+      width:52px;
+      height:52px;
+      border-radius:12px;
+      font-size:1.3rem;
+      background:#1f2937;
+      border:1px solid #374151;
+    }
+    .page-btn-big:active { background:#4f46e5; border-color:#4f46e5; }
+
+    .page-info { color:#e5e7eb; font-size:0.85rem; font-family:'Inter',sans-serif; font-weight:600; min-width:70px; text-align:center; }
+
+    /* Quick jump input */
+    .page-jump {
+      background:#1f2937;
+      border:1px solid #374151;
+      border-radius:6px;
+      color:#e5e7eb;
+      font-size:0.82rem;
+      font-family:'Inter',sans-serif;
+      width:44px;
+      padding:0.25rem 0.3rem;
+      text-align:center;
+      outline:none;
+    }
+    .page-jump:focus { border-color:#4f46e5; }
+
+    /* ── COMMENTS ── */
+    .comments-section { background:#111827; border-top:1px solid #374151; padding:1.25rem 1rem; flex-shrink:0; }
     .comments-title { font-size:0.95rem; font-weight:600; color:#e5e7eb; margin-bottom:1rem; }
     .comment-input-row { display:flex; gap:0.5rem; margin-bottom:1rem; }
     .comment-input { flex:1; background:#1f2937; border:1px solid #374151; border-radius:8px; padding:0.6rem 0.85rem; color:#e5e7eb; font-size:0.85rem; font-family:'Inter',sans-serif; outline:none; }
@@ -55,8 +179,18 @@
     .youtube-box:hover { border-color:#ef4444; }
     .yt-icon { font-size:1.4rem; }
     .yt-text { font-size:0.85rem; color:#e5e7eb; font-weight:500; }
-    .yt-sub { font-size:0.75rem; color:#9ca3af; }
-    .toast.show { transform:translateY(0); opacity:1; }
+    .yt-sub { font-size:0.75rem; color:#9ca3af; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(10px);
+      background:#1f2937; border:1px solid #374151; border-radius:8px;
+      padding:0.55rem 1.1rem; font-size:0.82rem; color:#e5e7eb;
+      opacity:0; transition:all 0.25s; z-index:999; pointer-events:none; white-space:nowrap;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* ── MODAL ── */
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.2s; }
     .overlay.active { opacity:1; pointer-events:all; }
     .modal { background:#1f2937; border:1px solid #374151; border-radius:12px; padding:1.75rem; width:100%; max-width:340px; text-align:center; }
@@ -66,18 +200,27 @@
 </head>
 <body>
 
+<!-- NAV: 2-row layout -->
 <nav>
-  <a href="index.html" class="btn btn-back">← Back</a>
-  <div class="pdf-info">
-    <div class="pdf-title" id="pdfTitle">Loading...</div>
-    <div class="pdf-meta" id="pdfMeta"></div>
+  <!-- Row 1: Back + PDF title/meta -->
+  <div class="nav-row1">
+    <a href="index.html" class="btn btn-back">← Back</a>
+    <div class="pdf-info">
+      <div class="pdf-title" id="pdfTitle">Loading...</div>
+      <div class="pdf-meta" id="pdfMeta"></div>
+    </div>
   </div>
-  <button class="btn btn-whatsapp" onclick="shareWhatsApp()">📱 WhatsApp</button>
-  <button class="btn btn-link" onclick="copyLink()">🔗 Copy</button>
-  <a id="openBtn" href="#" target="_blank" class="btn btn-open">📄 Open</a>
-  <button class="btn btn-save" id="saveBtn" onclick="toggleSave()">🔖 Save</button>
+
+  <!-- Row 2: Action buttons (scrollable if needed) -->
+  <div class="nav-row2">
+    <button class="btn btn-whatsapp" onclick="shareWhatsApp()">📱 WhatsApp</button>
+    <button class="btn btn-link"     onclick="copyLink()">🔗 Copy</button>
+    <a id="openBtn" href="#" target="_blank" class="btn btn-open">📄 Open</a>
+    <button class="btn btn-save" id="saveBtn" onclick="toggleSave()">🔖 Save</button>
+  </div>
 </nav>
 
+<!-- PDF VIEWER -->
 <div class="viewer-area" id="viewerArea">
   <div class="center" id="loadingDiv">
     <div class="spinner"></div>
@@ -86,23 +229,7 @@
   <canvas id="pdfCanvas" style="display:none;"></canvas>
 </div>
 
-<div class="page-nav" id="pageNav" style="display:none;">
-  <button class="page-btn" onclick="prevPage()">◀</button>
-  <span class="page-info" id="pageInfo"></span>
-  <button class="page-btn" onclick="nextPage()">▶</button>
-</div>
-
-<div class="overlay" id="loginModal">
-  <div class="modal">
-    <div style="font-size:2rem;margin-bottom:0.5rem">🔐</div>
-    <h2>Login Required</h2>
-    <p>Login to save PDFs to your account.</p>
-    <a href="login.html" class="btn btn-save" style="width:100%;justify-content:center;margin-bottom:0.5rem;padding:0.6rem">Login / Sign Up</a>
-    <button class="btn btn-back" style="width:100%;justify-content:center;padding:0.6rem" onclick="document.getElementById('loginModal').classList.remove('active')">Cancel</button>
-  </div>
-</div>
-
-<!-- YOUTUBE + COMMENTS -->
+<!-- Comments + YouTube (scrolls inside viewer-area naturally) -->
 <div class="comments-section" id="commentsSection" style="display:none;">
   <div id="youtubeBox"></div>
   <div class="comments-title">💬 Comments</div>
@@ -114,6 +241,30 @@
     <a href="login.html" style="color:#4f46e5;">Login</a> to post a comment.
   </div>
   <div id="commentsList"><div style="color:#6b7280;font-size:0.85rem;">Loading comments...</div></div>
+</div>
+
+<!-- FLOATING BOTTOM PAGE NAV -->
+<div class="page-nav" id="pageNav">
+  <button class="page-btn page-btn-big" onclick="prevPage()" title="Previous page">◀</button>
+
+  <div class="page-nav-center">
+    <span class="page-info" id="pageInfo">— / —</span>
+    <input class="page-jump" id="pageJump" type="number" min="1" title="Go to page"
+           onkeydown="if(event.key==='Enter')jumpToPage()" />
+  </div>
+
+  <button class="page-btn page-btn-big" onclick="nextPage()" title="Next page">▶</button>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="overlay" id="loginModal">
+  <div class="modal">
+    <div style="font-size:2rem;margin-bottom:0.5rem">🔐</div>
+    <h2>Login Required</h2>
+    <p>Login to save PDFs to your account.</p>
+    <a href="login.html" class="btn btn-save" style="width:100%;justify-content:center;margin-bottom:0.5rem;padding:0.6rem">Login / Sign Up</a>
+    <button class="btn btn-back" style="width:100%;justify-content:center;padding:0.6rem" onclick="document.getElementById('loginModal').classList.remove('active')">Cancel</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -143,42 +294,28 @@ async function loadPdfData() {
     document.getElementById('pdfMeta').textContent = [pdfData.subject, pdfData.branch, pdfData.year, pdfData.college, pdfData.regulation].filter(Boolean).join(' • ');
     document.title = pdfData.title + ' — BTech Vault';
 
-    // Get the original Cloudinary URL - keep as is
     let url = pdfData.fileUrl;
-    
     document.getElementById('openBtn').href = url;
 
-    // Load with PDF.js using CORS proxy
     const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-    
     try {
-      const loadingTask = pdfjsLib.getDocument(proxyUrl);
-      pdfDoc = await loadingTask.promise;
-      document.getElementById('loadingDiv').style.display = 'none';
-      document.getElementById('pdfCanvas').style.display = 'block';
-      document.getElementById('pageNav').style.display = 'flex';
-      renderPage(1);
+      pdfDoc = await pdfjsLib.getDocument(proxyUrl).promise;
+      showPdf();
     } catch(e) {
-      // If proxy fails, try direct
       try {
-        const loadingTask2 = pdfjsLib.getDocument(url);
-        pdfDoc = await loadingTask2.promise;
-        document.getElementById('loadingDiv').style.display = 'none';
-        document.getElementById('pdfCanvas').style.display = 'block';
-        document.getElementById('pageNav').style.display = 'flex';
-        renderPage(1);
+        pdfDoc = await pdfjsLib.getDocument(url).promise;
+        showPdf();
       } catch(e2) {
         showErr('Cannot preview. Use Open button ↗', url);
       }
     }
 
-    // Show YouTube link if exists
     if (pdfData.youtubeUrl) {
       document.getElementById('youtubeBox').innerHTML = `
         <a href="${pdfData.youtubeUrl}" target="_blank" class="youtube-box">
           <span class="yt-icon">▶️</span>
           <div><div class="yt-text">Watch Related YouTube Video</div>
-          <div class="yt-sub" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:250px;">${pdfData.youtubeUrl}</div></div>
+          <div class="yt-sub">${pdfData.youtubeUrl}</div></div>
         </a>`;
     }
     document.getElementById('commentsSection').style.display = 'block';
@@ -188,27 +325,51 @@ async function loadPdfData() {
     } else {
       document.getElementById('loginToComment').style.display = 'block';
     }
-
   } catch(e) {
     showErr('Error: ' + e.message);
   }
+}
+
+function showPdf() {
+  document.getElementById('loadingDiv').style.display = 'none';
+  document.getElementById('pdfCanvas').style.display = 'block';
+  document.getElementById('pageNav').style.display = 'flex';
+  document.getElementById('pageJump').max = pdfDoc.numPages;
+  renderPage(1);
 }
 
 async function renderPage(num) {
   const page = await pdfDoc.getPage(num);
   const canvas = document.getElementById('pdfCanvas');
   const ctx = canvas.getContext('2d');
-  const scale = Math.min((window.innerWidth - 32) / page.getViewport({scale:1}).width, 2);
+  const availW = window.innerWidth - 24;   // 12px side padding × 2
+  const scale = Math.min(availW / page.getViewport({scale:1}).width, 2);
   const vp = page.getViewport({scale});
   canvas.width = vp.width;
   canvas.height = vp.height;
   await page.render({canvasContext:ctx, viewport:vp}).promise;
-  document.getElementById('pageInfo').textContent = `${num} / ${pdfDoc.numPages}`;
   pageNum = num;
+  document.getElementById('pageInfo').textContent = `${num} / ${pdfDoc.numPages}`;
+  document.getElementById('pageJump').value = num;
+  // scroll canvas into view top
+  canvas.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function prevPage() { if(pageNum > 1) renderPage(pageNum - 1); }
 function nextPage() { if(pdfDoc && pageNum < pdfDoc.numPages) renderPage(pageNum + 1); }
+
+function jumpToPage() {
+  const n = parseInt(document.getElementById('pageJump').value);
+  if (n >= 1 && n <= pdfDoc.numPages) renderPage(n);
+}
+
+// Swipe gesture support
+let touchStartX = 0;
+document.getElementById('viewerArea').addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, {passive:true});
+document.getElementById('viewerArea').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 60) { dx < 0 ? nextPage() : prevPage(); }
+}, {passive:true});
 
 function showErr(msg, url) {
   document.getElementById('loadingDiv').innerHTML = `
