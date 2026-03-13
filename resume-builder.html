@@ -585,89 +585,176 @@ function collectData() {
   };
 }
 
-// ── GENERATE ──
-async function generateResume() {
+// ── GENERATE (pure JS template — no API needed) ──
+function generateResume() {
   const data = collectData();
   if (!data.name || !data.title || !data.summary) {
     alert('Please fill in at least: Name, Title, and Summary'); return;
   }
 
   const btn = document.getElementById('genBtn');
-  const pb = document.getElementById('progressBar');
-  const bf = document.getElementById('barFill');
-  const pt = document.getElementById('progressText');
+  const pb  = document.getElementById('progressBar');
+  const bf  = document.getElementById('barFill');
+  const pt  = document.getElementById('progressText');
 
   btn.disabled = true;
   pb.classList.add('show');
 
+  // Animate progress bar
   const steps = [
-    [10, '🤖 Reading your details...'],
-    [30, '🎨 Designing layout...'],
-    [60, '✍️ Writing content...'],
-    [85, '🔧 Polishing resume...'],
-    [95, '📄 Almost done...'],
+    [20,  '📋 Reading your details...'],
+    [50,  '🎨 Building layout...'],
+    [80,  '✍️ Filling in content...'],
+    [100, '✅ Resume ready!'],
   ];
   let si = 0;
   const interval = setInterval(() => {
     if (si < steps.length) { bf.style.width = steps[si][0]+'%'; pt.textContent = steps[si][1]; si++; }
-  }, 800);
+    else clearInterval(interval);
+  }, 400);
 
-  const prompt = `You are a professional resume designer. Generate a complete, beautiful HTML resume matching this EXACT template style.
-
-USER DATA:
-${JSON.stringify(data, null, 2)}
-
-OUTPUT RULES:
-- Return ONLY raw HTML (no markdown, no \`\`\`html, no explanation)
-- The HTML must be self-contained with inline <style>
-- Match this exact layout: 2-column (left: name/contact/summary/experience/education, right: projects/achievements/skills/courses/passions)
-- Color scheme: name in bold black uppercase, section titles with thick black underline, company names and links in #4f8ef7 blue
-- Font: use Google Font "DM Sans"
-- Skills as small blue pill badges
-- Achievements with emoji icons
-- Bullet points for experience
-- Professional, clean, ATS-friendly
-- Full page A4 proportions (min-height: 297mm equivalent)
-- All sections from user data must appear
-- If bullets in experience have newlines, render each as a <li>
-- The resume must look EXACTLY like a premium professional resume
-- DO NOT add any wrapper div with dark background — white background only
-- Start HTML with: <div style="font-family:'DM Sans'...`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:4000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const json = await res.json();
+  setTimeout(() => {
     clearInterval(interval);
-    bf.style.width = '100%';
-    pt.textContent = '✅ Resume ready!';
-
-    const html = json.content?.find(b=>b.type==='text')?.text || '';
-    // strip any accidental markdown fences
-    const clean = html.replace(/```html|```/g,'').trim();
-
-    setTimeout(() => {
-      pb.classList.remove('show');
-      btn.disabled = false;
-      document.getElementById('resultResume').innerHTML = clean;
-      document.getElementById('printArea').innerHTML = clean;
-      goStep(2);
-    }, 600);
-
-  } catch(e) {
-    clearInterval(interval);
+    const html = buildResumeHTML(data);
+    document.getElementById('resultResume').innerHTML = html;
+    document.getElementById('printArea').innerHTML = html;
     pb.classList.remove('show');
     btn.disabled = false;
-    bf.style.width = '0%';
-    alert('Error generating resume. Please try again.\n' + e.message);
-  }
+    goStep(2);
+  }, 2200);
+}
+
+function e(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function buildResumeHTML(d) {
+  // ── Experience ──
+  const expHTML = d.experience.filter(x=>x.title||x.company).map(x => {
+    const bullets = (x.bullets||'').split('\n').map(b=>b.replace(/^[•\-\*]\s*/,'')).filter(Boolean);
+    return `
+      <div style="margin-bottom:0.9rem;">
+        <div style="font-size:0.92rem;font-weight:700;color:#111;">${e(x.title)}</div>
+        <div style="color:#4f8ef7;font-size:0.8rem;font-weight:600;">${e(x.company)}</div>
+        <div style="font-size:0.72rem;color:#777;margin-bottom:0.3rem;">
+          ${x.start||x.end ? `📅 ${e(x.start)}${x.end?' – '+e(x.end):''}` : ''}
+          ${x.location ? ` &nbsp;📍 ${e(x.location)}` : ''}
+        </div>
+        ${bullets.length ? `<ul style="padding-left:1.1rem;margin:0;">${bullets.map(b=>`<li style="font-size:0.74rem;color:#333;margin-bottom:0.2rem;">${e(b)}</li>`).join('')}</ul>` : ''}
+      </div>`;
+  }).join('');
+
+  // ── Education ──
+  const eduHTML = d.education.filter(x=>x.degree||x.institution).map(x => `
+    <div style="margin-bottom:0.75rem;">
+      <div style="font-size:0.85rem;font-weight:700;color:#111;">${e(x.degree)}</div>
+      <div style="color:#4f8ef7;font-size:0.78rem;font-weight:600;">${e(x.institution)}</div>
+      <div style="font-size:0.72rem;color:#777;">
+        ${x.start||x.end ? `📅 ${e(x.start)}${x.end?' – '+e(x.end):''}` : ''}
+        ${x.location ? ` &nbsp;📍 ${e(x.location)}` : ''}
+        ${x.grade ? ` &nbsp;🎓 ${e(x.grade)}` : ''}
+      </div>
+    </div>`).join('');
+
+  // ── Projects ──
+  const projHTML = d.projects.filter(x=>x.name).map(x => `
+    <div style="margin-bottom:0.7rem;">
+      <div style="font-size:0.82rem;font-weight:700;color:#111;">${e(x.name)}${x.link?` <span style="font-size:0.7rem;color:#4f8ef7;">🔗 ${e(x.link)}</span>`:''}</div>
+      ${x.stack ? `<div style="font-size:0.7rem;color:#4f8ef7;font-weight:600;margin-bottom:0.15rem;">${e(x.stack)}</div>` : ''}
+      <div style="font-size:0.73rem;color:#444;">${e(x.desc)}</div>
+    </div>`).join('');
+
+  // ── Achievements ──
+  const achHTML = d.achievements.filter(x=>x.title).map(x => `
+    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:flex-start;">
+      <span style="font-size:1rem;flex-shrink:0;">${x.icon||'🏆'}</span>
+      <div>
+        <div style="font-size:0.78rem;font-weight:700;color:#111;">${e(x.title)}</div>
+        <div style="font-size:0.72rem;color:#555;">${e(x.desc)}</div>
+      </div>
+    </div>`).join('');
+
+  // ── Skills ──
+  const skillsHTML = (d.skills||'').split(',').map(s=>s.trim()).filter(Boolean)
+    .map(s=>`<span style="background:#e8eef8;border-radius:4px;padding:0.18rem 0.55rem;font-size:0.72rem;font-weight:600;color:#2563eb;margin:0.15rem;">${e(s)}</span>`).join('');
+
+  // ── Courses ──
+  const courseHTML = d.courses.filter(x=>x.name).map(x => `
+    <div style="margin-bottom:0.5rem;">
+      <div style="color:#4f8ef7;font-size:0.78rem;font-weight:600;">${e(x.name)}</div>
+      ${x.provider ? `<div style="font-size:0.7rem;color:#555;">${e(x.provider)}</div>` : ''}
+      ${x.desc ? `<div style="font-size:0.7rem;color:#666;">${e(x.desc)}</div>` : ''}
+    </div>`).join('');
+
+  // ── Passions ──
+  const passionHTML = d.passions ? `
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:2px solid #111;padding-bottom:0.2rem;margin-bottom:0.5rem;">PASSIONS</div>
+      <div style="font-size:0.74rem;color:#444;">${e(d.passions)}</div>
+    </div>` : '';
+
+  return `
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<div style="font-family:'DM Sans',sans-serif;background:#fff;color:#111;display:grid;grid-template-columns:1fr 0.72fr;min-height:297mm;font-size:13px;line-height:1.5;">
+
+  <!-- LEFT COLUMN -->
+  <div style="padding:2rem 1.5rem;border-right:1px solid #e5e7eb;">
+    <div style="font-size:2rem;font-weight:800;color:#111;text-transform:uppercase;letter-spacing:-0.02em;line-height:1.1;">${e(d.name)}</div>
+    <div style="color:#4f8ef7;font-weight:600;font-size:0.85rem;margin:0.25rem 0 0.5rem;">${e(d.title)}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:0.75rem;font-size:0.75rem;color:#555;margin-bottom:1.25rem;">
+      ${d.phone ? `<span>📞 ${e(d.phone)}</span>` : ''}
+      ${d.email ? `<span>✉️ ${e(d.email)}</span>` : ''}
+      ${d.link  ? `<span>🔗 ${e(d.link)}</span>`  : ''}
+      ${d.location ? `<span>📍 ${e(d.location)}</span>` : ''}
+    </div>
+
+    ${d.summary ? `
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:2px solid #111;padding-bottom:0.2rem;margin-bottom:0.5rem;">SUMMARY</div>
+      <p style="font-size:0.76rem;color:#444;line-height:1.6;">${e(d.summary)}</p>
+    </div>` : ''}
+
+    ${expHTML ? `
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:2px solid #111;padding-bottom:0.2rem;margin-bottom:0.6rem;">EXPERIENCE</div>
+      ${expHTML}
+    </div>` : ''}
+
+    ${eduHTML ? `
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:2px solid #111;padding-bottom:0.2rem;margin-bottom:0.6rem;">EDUCATION</div>
+      ${eduHTML}
+    </div>` : ''}
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div style="padding:2rem 1.25rem;background:#f9fafb;">
+
+    ${projHTML ? `
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:2px solid #111;padding-bottom:0.2rem;margin-bottom:0.5rem;">PROJECTS</div>
+      ${projHTML}
+    </div>` : ''}
+
+    ${achHTML ? `
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:2px solid #111;padding-bottom:0.2rem;margin-bottom:0.5rem;">ACHIEVEMENTS</div>
+      ${achHTML}
+    </div>` : ''}
+
+    ${skillsHTML ? `
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:2px solid #111;padding-bottom:0.2rem;margin-bottom:0.5rem;">SKILLS</div>
+      <div style="display:flex;flex-wrap:wrap;">${skillsHTML}</div>
+    </div>` : ''}
+
+    ${courseHTML ? `
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:2px solid #111;padding-bottom:0.2rem;margin-bottom:0.5rem;">COURSES</div>
+      ${courseHTML}
+    </div>` : ''}
+
+    ${passionHTML}
+  </div>
+</div>`;
 }
 
 // ── DOWNLOAD PDF ──
