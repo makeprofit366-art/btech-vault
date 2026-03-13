@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Free Resume Builder — BTech Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --card: #1f2335;
+  --border: #2a2d3e;
+  --accent: #4f8ef7;
+  --accent2: #7c5cfc;
+  --text: #e8eaf0;
+  --muted: #7b7f99;
+  --success: #22c55e;
+  --font: 'DM Sans', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--font); background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ── HEADER ── */
+.header {
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:0.75rem 1.25rem;
+  display:flex; align-items:center; gap:0.75rem;
+}
+.header a { color:var(--muted); font-size:0.82rem; text-decoration:none; }
+.header a:hover { color:var(--accent); }
+.logo { font-weight:700; font-size:1rem; background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+/* ── STEPS ── */
+#app { max-width:900px; margin:0 auto; padding:1.5rem 1rem 4rem; }
+
+.step { display:none; }
+.step.active { display:block; animation:fadeIn 0.3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── HERO (Step 0) ── */
+.hero { text-align:center; padding:2rem 0 1rem; }
+.hero h1 { font-family:'DM Serif Display'; font-size:2.2rem; margin-bottom:0.5rem; }
+.hero h1 span { background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero p { color:var(--muted); font-size:0.95rem; margin-bottom:2rem; }
+
+.demo-badge {
+  display:inline-block;
+  background:linear-gradient(135deg,var(--accent)22,var(--accent2)22);
+  border:1px solid var(--accent);
+  border-radius:6px;
+  padding:0.3rem 0.75rem;
+  font-size:0.75rem;
+  color:var(--accent);
+  font-weight:600;
+  margin-bottom:1rem;
+  letter-spacing:0.05em;
+}
+
+/* ── DEMO RESUME PREVIEW ── */
+.demo-wrap {
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  margin-bottom:2rem;
+  font-family:'DM Sans',sans-serif;
+  color:#1a1a2e;
+  font-size:0.78rem;
+  line-height:1.5;
+}
+.resume-inner { display:grid; grid-template-columns:1fr 0.7fr; min-height:600px; }
+.resume-left { padding:1.5rem; border-right:1px solid #e5e7eb; }
+.resume-right { padding:1.5rem; background:#f9fafb; }
+
+.r-name { font-size:1.6rem; font-weight:800; color:#111; letter-spacing:-0.02em; text-transform:uppercase; line-height:1.1; }
+.r-title { color:#4f8ef7; font-weight:600; font-size:0.8rem; margin:0.2rem 0 0.5rem; }
+.r-contact { display:flex; gap:1rem; font-size:0.72rem; color:#555; margin-bottom:1rem; }
+.r-section { margin-bottom:1rem; }
+.r-section-title { font-size:0.8rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:#111; border-bottom:2px solid #111; padding-bottom:0.2rem; margin-bottom:0.5rem; }
+.r-job-title { font-size:0.82rem; font-weight:700; color:#111; }
+.r-company { color:#4f8ef7; font-size:0.75rem; font-weight:600; }
+.r-meta { font-size:0.7rem; color:#777; margin-bottom:0.3rem; }
+.r-bullets { list-style:disc; padding-left:1rem; }
+.r-bullets li { font-size:0.72rem; color:#333; margin-bottom:0.2rem; }
+.r-proj-title { font-size:0.78rem; font-weight:700; color:#111; }
+.r-proj-desc { font-size:0.72rem; color:#444; margin-bottom:0.5rem; }
+.r-skill-row { display:flex; flex-wrap:wrap; gap:0.3rem; margin-bottom:0.3rem; }
+.r-skill { background:#e8eef8; border-radius:4px; padding:0.15rem 0.5rem; font-size:0.7rem; font-weight:600; color:#2563eb; }
+.r-ach { display:flex; gap:0.5rem; margin-bottom:0.4rem; align-items:flex-start; }
+.r-ach-icon { font-size:0.9rem; flex-shrink:0; margin-top:0.1rem; }
+.r-ach-title { font-size:0.75rem; font-weight:700; color:#111; }
+.r-ach-desc { font-size:0.7rem; color:#555; }
+.r-edu-deg { font-size:0.8rem; font-weight:700; color:#111; }
+.r-edu-school { color:#4f8ef7; font-size:0.75rem; font-weight:600; }
+
+/* ── CTA ── */
+.cta-btn {
+  display:block; width:100%; max-width:340px; margin:0 auto;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff; border:none; border-radius:10px;
+  padding:0.9rem; font-size:1rem; font-weight:700;
+  cursor:pointer; font-family:var(--font);
+  box-shadow:0 8px 24px rgba(79,142,247,0.35);
+  transition:transform 0.15s,box-shadow 0.15s;
+}
+.cta-btn:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(79,142,247,0.45); }
+
+/* ── FORM ── */
+.form-header { margin-bottom:1.5rem; }
+.form-header h2 { font-size:1.4rem; font-weight:700; }
+.form-header p { color:var(--muted); font-size:0.85rem; margin-top:0.25rem; }
+
+.form-section {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1.25rem;
+  margin-bottom:1rem;
+}
+.section-label {
+  font-size:0.8rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.07em; color:var(--accent); margin-bottom:1rem;
+  display:flex; align-items:center; gap:0.4rem;
+}
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+.form-grid.one { grid-template-columns:1fr; }
+@media(max-width:540px){ .form-grid { grid-template-columns:1fr; } }
+
+label { font-size:0.78rem; color:var(--muted); font-weight:500; display:block; margin-bottom:0.3rem; }
+input, textarea, select {
+  width:100%; background:var(--surface);
+  border:1px solid var(--border); border-radius:8px;
+  padding:0.55rem 0.75rem; color:var(--text);
+  font-size:0.85rem; font-family:var(--font);
+  outline:none; transition:border-color 0.15s;
+}
+input:focus, textarea:focus { border-color:var(--accent); }
+textarea { resize:vertical; min-height:70px; }
+
+.add-btn {
+  background:var(--surface); border:1px dashed var(--border);
+  border-radius:8px; padding:0.5rem; width:100%;
+  color:var(--accent); font-size:0.82rem; font-weight:600;
+  cursor:pointer; font-family:var(--font);
+  transition:background 0.15s, border-color 0.15s;
+  margin-top:0.5rem;
+}
+.add-btn:hover { background:var(--card); border-color:var(--accent); }
+
+.remove-btn {
+  background:#ff444422; border:none; color:#ff6b6b;
+  border-radius:6px; padding:0.25rem 0.6rem;
+  font-size:0.75rem; cursor:pointer; font-family:var(--font);
+  margin-top:0.4rem;
+}
+
+.repeat-item {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:0.85rem; margin-bottom:0.75rem;
+  position:relative;
+}
+.repeat-item-header {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:0.75rem;
+}
+.repeat-item-num {
+  font-size:0.75rem; font-weight:700; color:var(--accent2);
+  text-transform:uppercase; letter-spacing:0.05em;
+}
+
+.gen-btn {
+  display:block; width:100%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff; border:none; border-radius:10px;
+  padding:0.9rem; font-size:1rem; font-weight:700;
+  cursor:pointer; font-family:var(--font);
+  box-shadow:0 8px 24px rgba(79,142,247,0.3);
+  margin-top:1.5rem;
+  transition:transform 0.15s;
+}
+.gen-btn:hover { transform:translateY(-2px); }
+.gen-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+
+.progress-bar {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:1.5rem; text-align:center;
+  margin-top:1rem; display:none;
+}
+.progress-bar.show { display:block; }
+.progress-text { color:var(--muted); font-size:0.88rem; margin-bottom:1rem; }
+.bar-wrap { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.bar-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:3px; width:0%; transition:width 0.4s ease; }
+
+/* ── RESULT ── */
+#resultResume {
+  background:#fff; border-radius:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  padding:0; overflow:hidden;
+  margin-bottom:1.5rem;
+}
+.result-actions {
+  display:flex; gap:0.75rem; flex-wrap:wrap;
+  margin-bottom:1.5rem;
+}
+.dl-btn {
+  flex:1; min-width:140px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff; border:none; border-radius:10px;
+  padding:0.8rem 1rem; font-size:0.92rem; font-weight:700;
+  cursor:pointer; font-family:var(--font);
+  display:flex; align-items:center; justify-content:center; gap:0.4rem;
+  transition:transform 0.15s;
+}
+.dl-btn:hover { transform:translateY(-2px); }
+.back-btn2 {
+  background:var(--surface); border:1px solid var(--border);
+  color:var(--text); border-radius:10px;
+  padding:0.8rem 1rem; font-size:0.92rem; font-weight:600;
+  cursor:pointer; font-family:var(--font);
+  transition:background 0.15s;
+}
+.back-btn2:hover { background:var(--card); }
+
+/* ── PRINT ── */
+@media print {
+  body * { visibility:hidden !important; }
+  #printArea, #printArea * { visibility:visible !important; }
+  #printArea {
+    position:fixed; inset:0;
+    background:#fff;
+    padding:0; margin:0;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="index.html">← BTech Vault</a>
+  <span style="color:var(--border)">|</span>
+  <span class="logo">Resume Builder</span>
+  <span style="margin-left:auto; font-size:0.75rem; background:#22c55e22; color:#22c55e; padding:0.2rem 0.6rem; border-radius:20px; font-weight:600;">FREE</span>
+</div>
+
+<div id="app">
+
+  <!-- ══ STEP 0: DEMO ══ -->
+  <div class="step active" id="step0">
+    <div class="hero">
+      <div class="demo-badge">✨ AI-POWERED • 100% FREE</div>
+      <h1>Build Your <span>Dream Resume</span><br>in Minutes</h1>
+      <p>Fill in your details → AI generates a professional resume → Download as PDF</p>
+    </div>
+
+    <div class="demo-badge" style="display:block;text-align:center;margin-bottom:0.75rem;">👇 SAMPLE OUTPUT</div>
+
+    <!-- DEMO RESUME -->
+    <div class="demo-wrap">
+      <div class="resume-inner">
+        <!-- LEFT -->
+        <div class="resume-left">
+          <div class="r-name">Addison Harris</div>
+          <div class="r-title">Senior Software Developer | Web Architecture | Cloud Solutions</div>
+          <div class="r-contact">
+            <span>📞 +1-(234)-555-1234</span>
+            <span>🔗 linkedin.com</span>
+          </div>
+
+          <div class="r-section">
+            <div class="r-section-title">Summary</div>
+            <p style="font-size:0.72rem;color:#444;">With over 8 years of experience as a software developer, I specialize in C# and ASP.NET, having a proven track record in developing high-performance, scalable web services.</p>
+          </div>
+
+          <div class="r-section">
+            <div class="r-section-title">Experience</div>
+            <div class="r-job-title">Lead Software Engineer</div>
+            <div class="r-company">TechSolutions Group</div>
+            <div class="r-meta">📅 03/2019 – Present &nbsp;📍 Dallas, Texas</div>
+            <ul class="r-bullets">
+              <li>Designed scalable web service in C# handling 10,000+ transactions/hour, improving efficiency by 20%.</li>
+              <li>Led cross-functional team overhaul, resulting in 25% shorter development cycle.</li>
+            </ul>
+            <div style="margin-top:0.5rem;">
+              <div class="r-job-title">Senior .NET Developer</div>
+              <div class="r-company">Innovatech Solutions</div>
+              <div class="r-meta">📅 07/2015 – 02/2019 &nbsp;📍 Dallas, Texas</div>
+            </div>
+          </div>
+
+          <div class="r-section">
+            <div class="r-section-title">Education</div>
+            <div class="r-edu-deg">Master of Science in Computer Science</div>
+            <div class="r-edu-school">University of Texas at Dallas</div>
+            <div class="r-meta">📅 01/2014 – 01/2016 &nbsp;📍 Dallas, Texas</div>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="resume-right">
+          <div class="r-section">
+            <div class="r-section-title">Projects</div>
+            <div class="r-proj-title">.NET Microservice Architecture</div>
+            <div class="r-proj-desc">Developed a lightweight, scalable microservice using .NET Core, suited for cloud deployment.</div>
+            <div class="r-proj-title">Custom jQuery Plugin for UI</div>
+            <div class="r-proj-desc">Created jQuery plugin to simplify UI interactions in web apps.</div>
+          </div>
+
+          <div class="r-section">
+            <div class="r-section-title">Achievements</div>
+            <div class="r-ach"><span class="r-ach-icon">🏆</span><div><div class="r-ach-title">Best Performance Award</div><div class="r-ach-desc">Reduced load times by 30%.</div></div></div>
+            <div class="r-ach"><span class="r-ach-icon">🥇</span><div><div class="r-ach-title">Project Leader of the Year</div><div class="r-ach-desc">Led mission-critical .NET deployment.</div></div></div>
+          </div>
+
+          <div class="r-section">
+            <div class="r-section-title">Skills</div>
+            <div class="r-skill-row">
+              <span class="r-skill">C#</span><span class="r-skill">ASP.NET</span><span class="r-skill">SQL</span><span class="r-skill">JavaScript</span><span class="r-skill">jQuery</span>
+            </div>
+          </div>
+
+          <div class="r-section">
+            <div class="r-section-title">Courses</div>
+            <div class="r-company" style="font-size:0.75rem;">Certified .NET Developer</div>
+            <div style="font-size:0.7rem;color:#555;margin-bottom:0.3rem;">Advanced C# & .NET by Microsoft</div>
+            <div class="r-company" style="font-size:0.75rem;">Advanced SQL Database Management</div>
+            <div style="font-size:0.7rem;color:#555;">Oracle University</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="cta-btn" onclick="goStep(1)">✨ Create My Resume — Free</button>
+  </div>
+
+  <!-- ══ STEP 1: FORM ══ -->
+  <div class="step" id="step1">
+    <div class="form-header">
+      <h2>📝 Your Details</h2>
+      <p>Fill in your info — AI will generate your resume in this exact style</p>
+    </div>
+
+    <!-- Personal -->
+    <div class="form-section">
+      <div class="section-label">👤 Personal Info</div>
+      <div class="form-grid">
+        <div><label>Full Name *</label><input id="f_name" placeholder="e.g. Ravi Kumar"/></div>
+        <div><label>Job Title / Tagline *</label><input id="f_title" placeholder="e.g. Full Stack Developer | React | Node.js"/></div>
+        <div><label>Phone</label><input id="f_phone" placeholder="+91-9876543210"/></div>
+        <div><label>LinkedIn / Portfolio URL</label><input id="f_link" placeholder="linkedin.com/in/yourname"/></div>
+        <div><label>Email</label><input id="f_email" placeholder="you@email.com"/></div>
+        <div><label>Location</label><input id="f_location" placeholder="Hyderabad, India"/></div>
+      </div>
+      <div style="margin-top:0.75rem;"><label>Professional Summary *</label><textarea id="f_summary" placeholder="Write 3-4 lines about yourself, your experience, and what you bring to the table..."></textarea></div>
+    </div>
+
+    <!-- Experience -->
+    <div class="form-section">
+      <div class="section-label">💼 Work Experience</div>
+      <div id="expList"></div>
+      <button class="add-btn" onclick="addExp()">+ Add Experience</button>
+    </div>
+
+    <!-- Education -->
+    <div class="form-section">
+      <div class="section-label">🎓 Education</div>
+      <div id="eduList"></div>
+      <button class="add-btn" onclick="addEdu()">+ Add Education</button>
+    </div>
+
+    <!-- Projects -->
+    <div class="form-section">
+      <div class="section-label">🚀 Projects</div>
+      <div id="projList"></div>
+      <button class="add-btn" onclick="addProj()">+ Add Project</button>
+    </div>
+
+    <!-- Skills -->
+    <div class="form-section">
+      <div class="section-label">⚡ Skills</div>
+      <div class="form-grid one">
+        <div><label>Skills (comma separated)</label><input id="f_skills" placeholder="Python, React, Node.js, MySQL, Git, Docker"/></div>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="form-section">
+      <div class="section-label">🏆 Achievements</div>
+      <div id="achList"></div>
+      <button class="add-btn" onclick="addAch()">+ Add Achievement</button>
+    </div>
+
+    <!-- Courses / Certifications -->
+    <div class="form-section">
+      <div class="section-label">📜 Courses / Certifications</div>
+      <div id="courseList"></div>
+      <button class="add-btn" onclick="addCourse()">+ Add Course</button>
+    </div>
+
+    <!-- Passions -->
+    <div class="form-section">
+      <div class="section-label">💡 Passions / Interests (optional)</div>
+      <div class="form-grid one">
+        <div><label>What are you passionate about?</label><textarea id="f_passions" placeholder="e.g. Open source development, AI research, hackathons..." style="min-height:55px;"></textarea></div>
+      </div>
+    </div>
+
+    <div id="progressBar" class="progress-bar">
+      <div class="progress-text" id="progressText">🤖 AI is building your resume...</div>
+      <div class="bar-wrap"><div class="bar-fill" id="barFill"></div></div>
+    </div>
+
+    <button class="gen-btn" id="genBtn" onclick="generateResume()">🚀 Generate My Resume</button>
+  </div>
+
+  <!-- ══ STEP 2: RESULT ══ -->
+  <div class="step" id="step2">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+      <div>
+        <h2 style="font-size:1.3rem;font-weight:700;">✅ Your Resume is Ready!</h2>
+        <p style="color:var(--muted);font-size:0.82rem;">Download as PDF or go back to edit</p>
+      </div>
+    </div>
+    <div class="result-actions">
+      <button class="dl-btn" onclick="downloadPDF()">⬇️ Download PDF</button>
+      <button class="back-btn2" onclick="goStep(1)">✏️ Edit Details</button>
+      <button class="back-btn2" onclick="goStep(0)">🏠 Home</button>
+    </div>
+    <div id="resultResume"></div>
+    <div id="printArea" style="display:none;"></div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ── STATE ──
+let expCount=0, eduCount=0, projCount=0, achCount=0, courseCount=0;
+
+function goStep(n) {
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── DYNAMIC ROWS ──
+function addExp() {
+  expCount++;
+  const d = document.createElement('div');
+  d.className = 'repeat-item'; d.id = 'exp'+expCount;
+  d.innerHTML = `
+    <div class="repeat-item-header">
+      <span class="repeat-item-num">Experience #${expCount}</span>
+      <button class="remove-btn" onclick="this.closest('.repeat-item').remove()">✕ Remove</button>
+    </div>
+    <div class="form-grid">
+      <div><label>Job Title</label><input placeholder="e.g. Software Engineer"/></div>
+      <div><label>Company</label><input placeholder="e.g. Google"/></div>
+      <div><label>Start Date</label><input placeholder="Jan 2021"/></div>
+      <div><label>End Date</label><input placeholder="Present"/></div>
+      <div><label>Location</label><input placeholder="Bangalore, India"/></div>
+    </div>
+    <div style="margin-top:0.6rem;"><label>Key Responsibilities / Achievements (one per line)</label>
+    <textarea placeholder="• Built REST APIs using Node.js&#10;• Improved app performance by 40%&#10;• Led team of 5 developers"></textarea></div>`;
+  document.getElementById('expList').appendChild(d);
+}
+
+function addEdu() {
+  eduCount++;
+  const d = document.createElement('div');
+  d.className = 'repeat-item';
+  d.innerHTML = `
+    <div class="repeat-item-header">
+      <span class="repeat-item-num">Education #${eduCount}</span>
+      <button class="remove-btn" onclick="this.closest('.repeat-item').remove()">✕ Remove</button>
+    </div>
+    <div class="form-grid">
+      <div><label>Degree</label><input placeholder="B.Tech in Computer Science"/></div>
+      <div><label>Institution</label><input placeholder="JNTU Hyderabad"/></div>
+      <div><label>Start Year</label><input placeholder="2018"/></div>
+      <div><label>End Year</label><input placeholder="2022"/></div>
+      <div><label>Location</label><input placeholder="Hyderabad"/></div>
+      <div><label>Grade / CGPA (optional)</label><input placeholder="8.5 CGPA"/></div>
+    </div>`;
+  document.getElementById('eduList').appendChild(d);
+}
+
+function addProj() {
+  projCount++;
+  const d = document.createElement('div');
+  d.className = 'repeat-item';
+  d.innerHTML = `
+    <div class="repeat-item-header">
+      <span class="repeat-item-num">Project #${projCount}</span>
+      <button class="remove-btn" onclick="this.closest('.repeat-item').remove()">✕ Remove</button>
+    </div>
+    <div class="form-grid">
+      <div><label>Project Name</label><input placeholder="BTech Vault"/></div>
+      <div><label>Tech Stack</label><input placeholder="React, Firebase, Cloudinary"/></div>
+      <div><label>Link (optional)</label><input placeholder="github.com/..."/></div>
+    </div>
+    <div style="margin-top:0.6rem;"><label>Description</label>
+    <textarea placeholder="What did you build? What problem does it solve?"></textarea></div>`;
+  document.getElementById('projList').appendChild(d);
+}
+
+function addAch() {
+  achCount++;
+  const d = document.createElement('div');
+  d.className = 'repeat-item';
+  d.innerHTML = `
+    <div class="repeat-item-header">
+      <span class="repeat-item-num">Achievement #${achCount}</span>
+      <button class="remove-btn" onclick="this.closest('.repeat-item').remove()">✕ Remove</button>
+    </div>
+    <div class="form-grid">
+      <div><label>Title</label><input placeholder="Best Performer Award"/></div>
+      <div><label>Icon (emoji)</label><input placeholder="🏆" maxlength="5"/></div>
+    </div>
+    <div style="margin-top:0.6rem;"><label>Description</label>
+    <textarea placeholder="Brief description..." style="min-height:50px;"></textarea></div>`;
+  document.getElementById('achList').appendChild(d);
+}
+
+function addCourse() {
+  courseCount++;
+  const d = document.createElement('div');
+  d.className = 'repeat-item';
+  d.innerHTML = `
+    <div class="repeat-item-header">
+      <span class="repeat-item-num">Course #${courseCount}</span>
+      <button class="remove-btn" onclick="this.closest('.repeat-item').remove()">✕ Remove</button>
+    </div>
+    <div class="form-grid">
+      <div><label>Course / Certification Name</label><input placeholder="AWS Certified Developer"/></div>
+      <div><label>Provider</label><input placeholder="Amazon Web Services"/></div>
+    </div>
+    <div style="margin-top:0.6rem;"><label>Description (optional)</label>
+    <textarea placeholder="What you learned..." style="min-height:50px;"></textarea></div>`;
+  document.getElementById('courseList').appendChild(d);
+}
+
+// Add defaults
+addExp(); addEdu(); addProj(); addAch(); addCourse();
+
+// ── COLLECT DATA ──
+function collectData() {
+  const get = id => document.getElementById(id)?.value?.trim() || '';
+
+  const exps = [...document.querySelectorAll('#expList .repeat-item')].map(el => {
+    const ins = el.querySelectorAll('input');
+    const ta = el.querySelector('textarea');
+    return { title:ins[0]?.value||'', company:ins[1]?.value||'', start:ins[2]?.value||'', end:ins[3]?.value||'', location:ins[4]?.value||'', bullets:ta?.value||'' };
+  });
+
+  const edus = [...document.querySelectorAll('#eduList .repeat-item')].map(el => {
+    const ins = el.querySelectorAll('input');
+    return { degree:ins[0]?.value||'', institution:ins[1]?.value||'', start:ins[2]?.value||'', end:ins[3]?.value||'', location:ins[4]?.value||'', grade:ins[5]?.value||'' };
+  });
+
+  const projs = [...document.querySelectorAll('#projList .repeat-item')].map(el => {
+    const ins = el.querySelectorAll('input');
+    const ta = el.querySelector('textarea');
+    return { name:ins[0]?.value||'', stack:ins[1]?.value||'', link:ins[2]?.value||'', desc:ta?.value||'' };
+  });
+
+  const achs = [...document.querySelectorAll('#achList .repeat-item')].map(el => {
+    const ins = el.querySelectorAll('input');
+    const ta = el.querySelector('textarea');
+    return { title:ins[0]?.value||'', icon:ins[1]?.value||'🏆', desc:ta?.value||'' };
+  });
+
+  const courses = [...document.querySelectorAll('#courseList .repeat-item')].map(el => {
+    const ins = el.querySelectorAll('input');
+    const ta = el.querySelector('textarea');
+    return { name:ins[0]?.value||'', provider:ins[1]?.value||'', desc:ta?.value||'' };
+  });
+
+  return {
+    name: get('f_name'), title: get('f_title'), phone: get('f_phone'),
+    link: get('f_link'), email: get('f_email'), location: get('f_location'),
+    summary: get('f_summary'), skills: get('f_skills'), passions: get('f_passions'),
+    experience: exps, education: edus, projects: projs,
+    achievements: achs, courses
+  };
+}
+
+// ── GENERATE ──
+async function generateResume() {
+  const data = collectData();
+  if (!data.name || !data.title || !data.summary) {
+    alert('Please fill in at least: Name, Title, and Summary'); return;
+  }
+
+  const btn = document.getElementById('genBtn');
+  const pb = document.getElementById('progressBar');
+  const bf = document.getElementById('barFill');
+  const pt = document.getElementById('progressText');
+
+  btn.disabled = true;
+  pb.classList.add('show');
+
+  const steps = [
+    [10, '🤖 Reading your details...'],
+    [30, '🎨 Designing layout...'],
+    [60, '✍️ Writing content...'],
+    [85, '🔧 Polishing resume...'],
+    [95, '📄 Almost done...'],
+  ];
+  let si = 0;
+  const interval = setInterval(() => {
+    if (si < steps.length) { bf.style.width = steps[si][0]+'%'; pt.textContent = steps[si][1]; si++; }
+  }, 800);
+
+  const prompt = `You are a professional resume designer. Generate a complete, beautiful HTML resume matching this EXACT template style.
+
+USER DATA:
+${JSON.stringify(data, null, 2)}
+
+OUTPUT RULES:
+- Return ONLY raw HTML (no markdown, no \`\`\`html, no explanation)
+- The HTML must be self-contained with inline <style>
+- Match this exact layout: 2-column (left: name/contact/summary/experience/education, right: projects/achievements/skills/courses/passions)
+- Color scheme: name in bold black uppercase, section titles with thick black underline, company names and links in #4f8ef7 blue
+- Font: use Google Font "DM Sans"
+- Skills as small blue pill badges
+- Achievements with emoji icons
+- Bullet points for experience
+- Professional, clean, ATS-friendly
+- Full page A4 proportions (min-height: 297mm equivalent)
+- All sections from user data must appear
+- If bullets in experience have newlines, render each as a <li>
+- The resume must look EXACTLY like a premium professional resume
+- DO NOT add any wrapper div with dark background — white background only
+- Start HTML with: <div style="font-family:'DM Sans'...`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:4000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const json = await res.json();
+    clearInterval(interval);
+    bf.style.width = '100%';
+    pt.textContent = '✅ Resume ready!';
+
+    const html = json.content?.find(b=>b.type==='text')?.text || '';
+    // strip any accidental markdown fences
+    const clean = html.replace(/```html|```/g,'').trim();
+
+    setTimeout(() => {
+      pb.classList.remove('show');
+      btn.disabled = false;
+      document.getElementById('resultResume').innerHTML = clean;
+      document.getElementById('printArea').innerHTML = clean;
+      goStep(2);
+    }, 600);
+
+  } catch(e) {
+    clearInterval(interval);
+    pb.classList.remove('show');
+    btn.disabled = false;
+    bf.style.width = '0%';
+    alert('Error generating resume. Please try again.\n' + e.message);
+  }
+}
+
+// ── DOWNLOAD PDF ──
+function downloadPDF() {
+  const printArea = document.getElementById('printArea');
+  printArea.style.display = 'block';
+  window.print();
+  setTimeout(() => { printArea.style.display = 'none'; }, 1000);
+}
+</script>
+</body>
+</html>
