@@ -122,6 +122,13 @@
     .spinner{width:18px;height:18px;border:2px solid #e5e7eb;border-top-color:#4f46e5;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;}
     @keyframes spin{to{transform:rotate(360deg);}}
 
+    /* TIP BUTTON */
+    .tip-float{position:fixed;bottom:1.5rem;left:1.25rem;z-index:90;}
+    .tip-btn{background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;border:none;border-radius:50px;padding:0.65rem 1.1rem;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:0.4rem;box-shadow:0 4px 18px rgba(249,115,22,0.45);transition:all 0.2s;animation:tipPulse 2.5s ease-in-out infinite;}
+    .tip-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(249,115,22,0.6);animation:none;}
+    @keyframes tipPulse{0%,100%{box-shadow:0 4px 18px rgba(249,115,22,0.4);}50%{box-shadow:0 4px 28px rgba(249,115,22,0.7);}}
+    @media(max-width:640px){.tip-float{bottom:1.5rem;left:1rem;}.tip-btn{padding:0.55rem 0.9rem;font-size:0.8rem;}}
+
     /* MOBILE */
     @media(max-width:640px){
       .hero h1{font-size:1.3rem;}
@@ -195,6 +202,11 @@
   <button class="fab-main" onclick="window.location.href='dashboard.html'">
     📤 Upload PDF
   </button>
+</div>
+
+<!-- TIP FLOAT BUTTON -->
+<div class="tip-float">
+  <button class="tip-btn" onclick="window.location.href='tip.html'">☕ Support Us</button>
 </div>
 
 <!-- LOGIN MODAL -->
