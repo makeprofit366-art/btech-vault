@@ -3,309 +3,354 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Support Peritto ☕</title>
+  <title>BTech Vault — Free Study PDFs</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <script src="firebase-config.js"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'Inter',sans-serif;background:#f4f5f7;color:#111827;min-height:100vh;}
 
+    /* NAV */
     nav{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 1.25rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
     .logo{font-size:1.15rem;font-weight:800;color:#111827;text-decoration:none;letter-spacing:-0.3px;}
     .logo span{color:#4f46e5;}
-    .back-btn{padding:0.45rem 0.9rem;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;border:1px solid #d1d5db;background:#fff;color:#374151;text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem;transition:all 0.15s;font-family:'Inter',sans-serif;}
-    .back-btn:hover{border-color:#4f46e5;color:#4f46e5;}
+    .nav-actions{display:flex;align-items:center;gap:0.5rem;}
+    .btn{padding:0.45rem 0.9rem;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem;transition:all 0.15s;font-family:'Inter',sans-serif;white-space:nowrap;}
+    .btn-primary{background:#4f46e5;color:#fff;}
+    .btn-primary:hover{background:#4338ca;}
+    .btn-outline{background:#fff;color:#374151;border:1px solid #d1d5db;}
+    .btn-outline:hover{border-color:#4f46e5;color:#4f46e5;}
+    .btn-ghost{background:transparent;color:#6b7280;border:none;padding:0.45rem 0.6rem;}
+    .btn-ghost:hover{background:#f3f4f6;color:#111;}
+    .btn-sm{padding:0.35rem 0.7rem;font-size:0.78rem;}
+    .avatar-img{width:28px;height:28px;border-radius:50%;object-fit:cover;}
 
-    .hero{background:linear-gradient(135deg,#f59e0b 0%,#f97316 100%);padding:2rem 1.25rem;color:#fff;text-align:center;}
-    .hero-icon{font-size:3rem;margin-bottom:0.5rem;}
-    .hero h1{font-size:1.6rem;font-weight:800;margin-bottom:0.4rem;}
-    .hero p{font-size:0.9rem;opacity:0.9;line-height:1.6;max-width:380px;margin:0 auto;}
+    /* ── RESUME BUTTON ── */
+    .btn-resume{
+      background:linear-gradient(135deg,#f59e0b,#ef4444);
+      color:#fff;
+      font-weight:700;
+      border:none;
+      box-shadow:0 2px 8px rgba(245,158,11,0.35);
+      animation:resumePulse 2.5s ease-in-out infinite;
+    }
+    .btn-resume:hover{
+      transform:translateY(-1px);
+      box-shadow:0 4px 14px rgba(245,158,11,0.5);
+      animation:none;
+    }
+    @keyframes resumePulse{
+      0%,100%{box-shadow:0 2px 8px rgba(245,158,11,0.3);}
+      50%{box-shadow:0 2px 16px rgba(245,158,11,0.6);}
+    }
 
-    .container{max-width:480px;margin:0 auto;padding:1.5rem 1.25rem 4rem;}
-    .section{background:#fff;border-radius:16px;border:1.5px solid #e5e7eb;padding:1.5rem;margin-bottom:1rem;}
-    .section-title{font-size:0.82rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1rem;}
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);padding:2rem 1.25rem;color:#fff;}
+    .hero h1{font-size:1.6rem;font-weight:800;line-height:1.2;margin-bottom:0.4rem;letter-spacing:-0.5px;}
+    .hero h1 span{color:#c7d2fe;}
+    .hero p{font-size:0.9rem;color:#c7d2fe;margin-bottom:1.25rem;line-height:1.5;}
+    .hero-stats{display:flex;gap:1.5rem;}
+    .stat{text-align:center;}
+    .stat-num{font-size:1.3rem;font-weight:800;color:#fff;}
+    .stat-label{font-size:0.7rem;color:#c7d2fe;text-transform:uppercase;letter-spacing:0.5px;}
 
-    .amount-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-bottom:0.75rem;}
-    .amount-chip{padding:0.65rem 0.5rem;border-radius:10px;border:2px solid #e5e7eb;background:#f9fafb;font-size:0.95rem;font-weight:700;cursor:pointer;text-align:center;transition:all 0.15s;color:#374151;}
-    .amount-chip:hover{border-color:#f97316;color:#f97316;background:#fff7ed;}
-    .amount-chip.active{border-color:#f97316;background:#fff7ed;color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,0.12);}
-    .custom-wrap{position:relative;}
-    .custom-wrap .rupee{position:absolute;left:0.85rem;top:50%;transform:translateY(-50%);font-weight:700;color:#6b7280;font-size:1rem;}
-    .custom-input{width:100%;padding:0.7rem 1rem 0.7rem 2rem;border:2px solid #e5e7eb;border-radius:10px;font-size:1rem;font-weight:700;font-family:'Inter',sans-serif;outline:none;color:#111;transition:all 0.15s;background:#f9fafb;}
-    .custom-input:focus{border-color:#f97316;background:#fff;box-shadow:0 0 0 3px rgba(249,115,22,0.1);}
-    .custom-input::placeholder{color:#d1d5db;font-weight:500;}
+    /* UPLOAD BANNER */
+    .upload-banner{background:#fff;border-bottom:1px solid #e5e7eb;padding:0.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
+    .upload-banner-text{font-size:0.85rem;color:#374151;font-weight:500;}
+    .upload-banner-text span{color:#4f46e5;font-weight:600;}
 
-    .pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;}
-    .pay-btn{padding:1rem 0.5rem 0.75rem;border-radius:14px;border:2px solid #e5e7eb;background:#fff;cursor:pointer;text-align:center;transition:all 0.18s;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:0.35rem;}
-    .pay-btn:hover{transform:translateY(-2px);}
-    .pay-btn:active{transform:scale(0.97);}
-    .pay-btn.gpay:hover{border-color:#4285f4;box-shadow:0 6px 18px rgba(66,133,244,0.2);}
-    .pay-btn.phonepe:hover{border-color:#5f259f;box-shadow:0 6px 18px rgba(95,37,159,0.2);}
-    .pay-btn.paytm:hover{border-color:#00baf2;box-shadow:0 6px 18px rgba(0,186,242,0.2);}
-    .pay-btn.upi:hover{border-color:#097939;box-shadow:0 6px 18px rgba(9,121,57,0.2);}
-    .pay-logo{height:30px;width:auto;max-width:80px;object-fit:contain;}
-    .pay-name{font-size:0.75rem;font-weight:700;color:#374151;}
-    .pay-sub{font-size:0.65rem;color:#9ca3af;}
+    /* FILTER BAR */
+    .filter-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:0.75rem 1.25rem;display:flex;flex-direction:column;gap:0.6rem;}
+    .search-wrap{position:relative;}
+    .search-wrap input{width:100%;padding:0.6rem 1rem 0.6rem 2.4rem;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.875rem;outline:none;font-family:'Inter',sans-serif;background:#f9fafb;color:#111;transition:all 0.15s;}
+    .search-wrap input:focus{border-color:#4f46e5;background:#fff;box-shadow:0 0 0 3px rgba(79,70,229,0.1);}
+    .search-icon{position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);font-size:0.9rem;color:#9ca3af;}
+    .pills{display:flex;gap:0.4rem;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+    .pills::-webkit-scrollbar{display:none;}
+    .pill{padding:0.3rem 0.8rem;border-radius:20px;font-size:0.78rem;font-weight:500;cursor:pointer;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
+    .pill.active{background:#4f46e5;color:#fff;border-color:#4f46e5;}
 
-    .form-group{margin-bottom:0.85rem;}
-    .form-label{font-size:0.82rem;font-weight:600;color:#374151;margin-bottom:0.35rem;display:block;}
-    .form-input{width:100%;padding:0.65rem 0.85rem;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.875rem;font-family:'Inter',sans-serif;outline:none;color:#111;transition:all 0.15s;background:#f9fafb;}
-    .form-input:focus{border-color:#4f46e5;background:#fff;box-shadow:0 0 0 3px rgba(79,70,229,0.1);}
-    .form-textarea{resize:vertical;min-height:80px;}
-    .submit-btn{width:100%;padding:0.75rem;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;font-size:0.9rem;font-weight:700;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;margin-top:0.25rem;}
-    .submit-btn:hover{opacity:0.92;transform:translateY(-1px);}
-    .submit-btn:active{transform:scale(0.98);}
+    /* GRID */
+    .main{padding:1rem 1.25rem;padding-bottom:6rem;}
+    .grid-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;}
+    .grid-header h2{font-size:0.95rem;font-weight:700;color:#374151;}
+    .grid-header span{font-size:0.78rem;color:#9ca3af;}
+    .pdf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0.85rem;}
 
-    .supporters-list{display:flex;flex-direction:column;gap:0.6rem;}
-    .supporter-card{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:flex-start;gap:0.75rem;animation:fadeIn 0.3s ease;}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
-    .supporter-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#f97316);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
-    .supporter-info{flex:1;min-width:0;}
-    .supporter-name{font-size:0.85rem;font-weight:700;color:#111827;}
-    .supporter-amount{font-size:0.75rem;color:#f97316;font-weight:600;}
-    .supporter-msg{font-size:0.78rem;color:#6b7280;margin-top:0.2rem;line-height:1.4;}
-    .supporter-time{font-size:0.68rem;color:#9ca3af;margin-top:0.15rem;}
-    .empty-supporters{text-align:center;padding:2rem;color:#9ca3af;}
-    .empty-supporters .e-icon{font-size:2rem;margin-bottom:0.5rem;}
+    /* CARD */
+    .card{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:1.1rem;transition:all 0.2s;cursor:pointer;}
+    .card:hover{border-color:#4f46e5;box-shadow:0 4px 20px rgba(79,70,229,0.12);transform:translateY(-2px);}
+    .card-top{display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:0.75rem;}
+    .card-icon{width:42px;height:42px;background:#eef2ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+    .card-info{flex:1;min-width:0;}
+    .card-title{font-size:0.9rem;font-weight:700;color:#111827;line-height:1.3;margin-bottom:0.2rem;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+    .card-subject{font-size:0.75rem;color:#4f46e5;font-weight:600;}
+    .card-details{font-size:0.72rem;color:#6b7280;margin-bottom:0.6rem;line-height:1.5;}
+    .card-tags{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.75rem;}
+    .tag{font-size:0.68rem;padding:0.15rem 0.45rem;border-radius:4px;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb;}
+    .card-actions{display:flex;gap:0.5rem;}
+    .card-actions .btn{flex:1;justify-content:center;padding:0.5rem 0.5rem;font-size:0.8rem;}
 
-    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2937;color:#fff;padding:0.65rem 1.25rem;border-radius:10px;font-size:0.85rem;z-index:999;opacity:0;transition:all 0.3s;white-space:nowrap;max-width:90vw;text-align:center;}
+    /* FAB */
+    .fab{position:fixed;bottom:1.5rem;right:1.25rem;z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem;}
+    .fab-main{background:#4f46e5;color:#fff;border:none;border-radius:16px;padding:0.75rem 1.25rem;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:0.5rem;box-shadow:0 4px 20px rgba(79,70,229,0.4);transition:all 0.2s;}
+    .fab-main:hover{background:#4338ca;transform:translateY(-2px);box-shadow:0 6px 24px rgba(79,70,229,0.5);}
+    .fab-label{background:#1f2937;color:#fff;font-size:0.72rem;padding:0.3rem 0.6rem;border-radius:6px;white-space:nowrap;}
+
+    /* EMPTY */
+    .empty{text-align:center;padding:3.5rem 1rem;color:#9ca3af;grid-column:1/-1;}
+    .empty .e-icon{font-size:2.5rem;margin-bottom:0.75rem;}
+    .empty h3{font-size:1rem;font-weight:600;color:#6b7280;margin-bottom:0.3rem;}
+    .loading{display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:3rem;color:#9ca3af;font-size:0.875rem;grid-column:1/-1;}
+
+    /* MODAL */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+    .overlay.active{opacity:1;pointer-events:all;}
+    .modal{background:#fff;border-radius:16px;padding:2rem;width:100%;max-width:360px;text-align:center;}
+    .modal h2{font-size:1.1rem;font-weight:700;margin-bottom:0.4rem;}
+    .modal p{color:#6b7280;font-size:0.85rem;margin-bottom:1.5rem;line-height:1.5;}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2937;color:#fff;padding:0.65rem 1.25rem;border-radius:10px;font-size:0.85rem;z-index:999;opacity:0;transition:all 0.3s;white-space:nowrap;}
     .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 
+    .spinner{width:18px;height:18px;border:2px solid #e5e7eb;border-top-color:#4f46e5;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* MOBILE */
+    @media(max-width:640px){
+      .hero h1{font-size:1.3rem;}
+      .pdf-grid{grid-template-columns:1fr;}
+      .hide-mobile{display:none;}
+      /* Resume button — icon only on very small screens */
+      .btn-resume .resume-text{display:none;}
+    }
     @media(min-width:641px){
-      .hero{padding:3rem 2rem;}
-      .container{padding:2rem 1.25rem 4rem;}
+      .hero{padding:2.5rem 2rem;}
+      .filter-bar{padding:0.85rem 2rem;flex-direction:row;align-items:center;}
+      .search-wrap{flex:1;max-width:400px;}
+      .main{padding:1.5rem 2rem;padding-bottom:2rem;}
+      .fab{bottom:2rem;right:2rem;}
+      .upload-banner{padding:0.75rem 2rem;}
     }
   </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
   <a href="index.html" class="logo">BTech<span>Vault</span></a>
-  <a href="index.html" class="back-btn">← Back</a>
+  <div class="nav-actions" id="navActions">
+    <div class="spinner"></div>
+  </div>
 </nav>
 
+<!-- HERO -->
 <div class="hero">
-  <div class="hero-icon">☕</div>
-  <h1>Support Peritto</h1>
-  <p>This platform is 100% free. If it helped you crack your supply exams, consider buying me a coffee! 🙏</p>
+  <h1>Find Study PDFs <span>Fast ⚡</span></h1>
+  <p>Notes, PYQs, Lab manuals — all B.Tech study materials in one place. Free.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num" id="totalPdfs">—</div><div class="stat-label">PDFs</div></div>
+    <div class="stat"><div class="stat-num" id="totalSubjects">—</div><div class="stat-label">Subjects</div></div>
+    <div class="stat"><div class="stat-num" id="totalUsers">—</div><div class="stat-label">Contributors</div></div>
+  </div>
 </div>
 
-<div class="container">
-
-  <!-- AMOUNT -->
-  <div class="section">
-    <div class="section-title">💰 Choose Amount</div>
-    <div class="amount-grid">
-      <div class="amount-chip active" onclick="selectAmount(20,this)">₹20</div>
-      <div class="amount-chip" onclick="selectAmount(50,this)">₹50</div>
-      <div class="amount-chip" onclick="selectAmount(100,this)">₹100</div>
-    </div>
-    <div class="custom-wrap">
-      <span class="rupee">₹</span>
-      <input type="number" class="custom-input" id="customAmount" placeholder="Custom amount" min="1" oninput="onCustomInput()"/>
-    </div>
-  </div>
-
-  <!-- PAY WITH -->
-  <div class="section">
-    <div class="section-title">📱 Pay With — Tap to Open App</div>
-    <div class="pay-grid">
-
-      <button class="pay-btn gpay" onclick="payNow('gpay')">
-        <img class="pay-logo"
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png"
-          alt="Google Pay"
-          onerror="this.outerHTML='<span style=font-size:1.6rem>🟦</span>'"/>
-        <div class="pay-name">Google Pay</div>
-        <div class="pay-sub">Opens GPay directly</div>
-      </button>
-
-      <button class="pay-btn phonepe" onclick="payNow('phonepe')">
-        <img class="pay-logo"
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png"
-          alt="PhonePe"
-          onerror="this.outerHTML='<span style=font-size:1.6rem>💜</span>'"/>
-        <div class="pay-name">PhonePe</div>
-        <div class="pay-sub">Opens PhonePe directly</div>
-      </button>
-
-      <button class="pay-btn paytm" onclick="payNow('paytm')">
-        <img class="pay-logo"
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/512px-Paytm_Logo_%28standalone%29.svg.png"
-          alt="Paytm"
-          onerror="this.outerHTML='<span style=font-size:1.6rem>🔵</span>'"/>
-        <div class="pay-name">Paytm</div>
-        <div class="pay-sub">Opens Paytm directly</div>
-      </button>
-
-      <button class="pay-btn upi" onclick="payNow('upi')">
-        <img class="pay-logo"
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/512px-UPI-Logo-vector.svg.png"
-          alt="UPI"
-          onerror="this.outerHTML='<span style=font-size:1.6rem>🟠</span>'"/>
-        <div class="pay-name">Any UPI App</div>
-        <div class="pay-sub">BHIM & others</div>
-      </button>
-
-    </div>
-  </div>
-
-  <!-- MESSAGE -->
-  <div class="section">
-    <div class="section-title">💬 Leave a Message (After Paying)</div>
-    <div class="form-group">
-      <label class="form-label">Your Name</label>
-      <input type="text" class="form-input" id="supporterName" placeholder="e.g. Ravi Kumar" maxlength="40"/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Your Message</label>
-      <textarea class="form-input form-textarea" id="supporterMsg" placeholder="e.g. Peritto helped me pass my supply! 🙏" maxlength="200"></textarea>
-    </div>
-    <button class="submit-btn" onclick="submitMessage()">✅ I've Paid — Post My Message</button>
-  </div>
-
-  <!-- SUPPORTERS WALL -->
-  <div class="section">
-    <div class="section-title">❤️ Supporters Wall</div>
-    <div class="supporters-list" id="supportersList">
-      <div class="empty-supporters"><div class="e-icon">⏳</div><p>Loading...</p></div>
-    </div>
-  </div>
-
+<!-- UPLOAD BANNER -->
+<div class="upload-banner" id="uploadBanner">
+  <div class="upload-banner-text">📤 Have study materials? <span>Share with 1000s of students!</span></div>
+  <a href="dashboard.html" class="btn btn-primary btn-sm" id="uploadBannerBtn">Upload PDF</a>
 </div>
 
-<!-- Hidden iframe: opens UPI app WITHOUT navigating away from page -->
-<iframe id="upiFrame" style="display:none;width:0;height:0;border:none;"></iframe>
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search by title, subject or tag..." oninput="filterPdfs()"/>
+  </div>
+  <div class="pills" id="subjectFilters">
+    <span class="pill active" onclick="filterBySubject('',this)">All</span>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="main">
+  <div class="grid-header">
+    <h2>All PDFs</h2>
+    <span id="pdfCount"></span>
+  </div>
+  <div class="pdf-grid" id="pdfGrid">
+    <div class="loading"><div class="spinner"></div>&nbsp;Loading PDFs...</div>
+  </div>
+</div>
+
+<!-- FAB -->
+<div class="fab" id="fab">
+  <div class="fab-label">Share your notes!</div>
+  <button class="fab-main" onclick="window.location.href='dashboard.html'">
+    📤 Upload PDF
+  </button>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="overlay" id="loginModal">
+  <div class="modal">
+    <div style="font-size:2.5rem;margin-bottom:0.75rem">🔐</div>
+    <h2>Login Required</h2>
+    <p>Login with Google to save PDFs to your account. It's 100% free!</p>
+    <a href="login.html" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:0.5rem;padding:0.65rem">Login / Sign Up Free</a>
+    <button class="btn btn-outline" style="width:100%;justify-content:center;padding:0.65rem" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  const MY_UPI  = 'xyz@ybl';   // ← Replace with your real UPI ID!
-  const MY_NAME = 'Peritto';
+let allPdfs=[], currentUser=null, savedIds=new Set(), activeSubject='';
 
-  let selectedAmount = 20;
+auth.onAuthStateChanged(async(user)=>{
+  currentUser=user;
+  renderNav(user);
+  if(user) await loadSaved();
+  loadPdfs();
+  loadStats();
+});
 
-  function selectAmount(amt, el) {
-    selectedAmount = amt;
-    document.querySelectorAll('.amount-chip').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('customAmount').value = '';
+function renderNav(user){
+  const nav=document.getElementById('navActions');
+  if(user){
+    nav.innerHTML=`
+      <a href="chat.html" class="btn btn-ghost btn-sm">💬</a>
+      <a href="resume-builder.html" class="btn btn-resume btn-sm">📄 <span class="resume-text">Resume</span></a>
+      <img src="${user.photoURL}" class="avatar-img" referrerpolicy="no-referrer"/>
+      <a href="dashboard.html" class="btn btn-outline btn-sm">Dashboard</a>
+      <button class="btn btn-ghost btn-sm hide-mobile" onclick="signOut()">Logout</button>`;
+    document.getElementById('fab').style.display='flex';
+  } else {
+    nav.innerHTML=`
+      <a href="chat.html" class="btn btn-ghost btn-sm hide-mobile">💬</a>
+      <a href="resume-builder.html" class="btn btn-resume btn-sm">📄 <span class="resume-text">Resume</span></a>
+      <a href="login.html" class="btn btn-outline btn-sm">Login</a>
+      <a href="login.html" class="btn btn-primary btn-sm">Sign Up</a>`;
   }
+}
 
-  function onCustomInput() {
-    const val = parseInt(document.getElementById('customAmount').value);
-    if (val > 0) {
-      selectedAmount = val;
-      document.querySelectorAll('.amount-chip').forEach(c => c.classList.remove('active'));
-    }
+async function loadPdfs(){
+  try{
+    const snap=await db.collection('pdfs').where('status','==','active').orderBy('uploadedAt','desc').get();
+    allPdfs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    buildFilters();
+    renderPdfs(allPdfs);
+    document.getElementById('pdfCount').textContent=allPdfs.length+' results';
+  }catch(e){
+    document.getElementById('pdfGrid').innerHTML=`<div class="empty"><div class="e-icon">⚠️</div><h3>Could not load PDFs</h3><p>${e.message}</p></div>`;
   }
+}
 
-  function getAmount() {
-    const custom = parseInt(document.getElementById('customAmount').value);
-    return (custom > 0) ? custom : selectedAmount;
+async function loadStats(){
+  try{
+    const[pdfs,users]=await Promise.all([
+      db.collection('pdfs').where('status','==','active').get(),
+      db.collection('users').get()
+    ]);
+    const subjects=new Set(pdfs.docs.map(d=>d.data().subject).filter(Boolean));
+    document.getElementById('totalPdfs').textContent=pdfs.size;
+    document.getElementById('totalSubjects').textContent=subjects.size;
+    document.getElementById('totalUsers').textContent=users.size;
+  }catch{}
+}
+
+async function loadSaved(){
+  try{
+    const snap=await db.collection('users').doc(currentUser.uid).collection('savedPDFs').get();
+    savedIds=new Set(snap.docs.map(d=>d.id));
+  }catch{}
+}
+
+function renderPdfs(pdfs){
+  const grid=document.getElementById('pdfGrid');
+  if(!pdfs.length){
+    grid.innerHTML=`<div class="empty"><div class="e-icon">📭</div><h3>No PDFs found</h3><p>Try a different search or filter</p></div>`;
+    return;
   }
+  grid.innerHTML=pdfs.map(pdf=>{
+    const saved=savedIds.has(pdf.id);
+    const date=pdf.uploadedAt?new Date(pdf.uploadedAt.seconds*1000).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
+    const tags=(pdf.tags||[]).slice(0,3);
+    const details=[pdf.branch,pdf.year,pdf.college,pdf.regulation].filter(Boolean).join(' · ');
+    return`<div class="card" onclick="window.location.href='viewer.html?id=${pdf.id}'">
+      <div class="card-top">
+        <div class="card-icon">📄</div>
+        <div class="card-info">
+          <div class="card-title">${esc(pdf.title)}</div>
+          <div class="card-subject">📚 ${esc(pdf.subject)}</div>
+        </div>
+      </div>
+      ${details?`<div class="card-details">🏫 ${esc(details)}</div>`:''}
+      <div class="card-details">By ${esc(pdf.uploaderName||'Anonymous')} · ${date}</div>
+      <div class="card-tags">${tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <a href="viewer.html?id=${pdf.id}" class="btn btn-primary">📖 Open PDF</a>
+        <button class="btn btn-outline" id="sv-${pdf.id}" onclick="toggleSave('${pdf.id}',event)" style="${saved?'color:#16a34a;border-color:#16a34a;':''}">
+          ${saved?'✅ Saved':'🔖 Save'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
 
-  // ✅ KEY FIX: use hidden <iframe> to launch UPI app — page stays open!
-  function payNow(method) {
-    const amt = getAmount();
-    if (!amt || amt < 1) { showToast('Please select or enter an amount first!'); return; }
-
-    const pa = encodeURIComponent(MY_UPI);
-    const pn = encodeURIComponent(MY_NAME);
-    const tn = encodeURIComponent('Support Peritto');
-
-    const links = {
-      gpay:    `tez://upi/pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
-      phonepe: `phonepe://pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
-      paytm:   `paytmmp://pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
-      upi:     `upi://pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
-    };
-
-    // Load the UPI link in a hidden iframe — opens app, page stays!
-    document.getElementById('upiFrame').src = links[method] || links.upi;
-
-    setTimeout(() => {
-      showToast('✅ App opened! After paying, scroll down & leave a message 🙏');
-    }, 800);
+async function toggleSave(id,e){
+  e.preventDefault();e.stopPropagation();
+  if(!currentUser){document.getElementById('loginModal').classList.add('active');return;}
+  const ref=db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(id);
+  const btn=document.getElementById('sv-'+id);
+  if(savedIds.has(id)){
+    await ref.delete();savedIds.delete(id);
+    btn.innerHTML='🔖 Save';btn.style.color='';btn.style.borderColor='';
+    showToast('Removed from saved');
+  }else{
+    const pdf=allPdfs.find(p=>p.id===id);
+    await ref.set({savedAt:firebase.firestore.FieldValue.serverTimestamp(),title:pdf.title,subject:pdf.subject,pdfId:id});
+    savedIds.add(id);btn.innerHTML='✅ Saved';btn.style.color='#16a34a';btn.style.borderColor='#16a34a';
+    showToast('PDF saved! 🎉');
   }
+}
 
-  // ✅ Save to Firebase so ALL students can see supporter messages
-  async function submitMessage() {
-    const name = document.getElementById('supporterName').value.trim();
-    const msg  = document.getElementById('supporterMsg').value.trim();
-    const amt  = getAmount();
+function buildFilters(){
+  const subjects=[...new Set(allPdfs.map(p=>p.subject).filter(Boolean))];
+  const c=document.getElementById('subjectFilters');
+  c.innerHTML=`<span class="pill active" onclick="filterBySubject('',this)">All</span>`+
+    subjects.map(s=>`<span class="pill" onclick="filterBySubject('${esc(s)}',this)">${esc(s)}</span>`).join('');
+}
 
-    if (!name && !msg) {
-      showToast('Please enter your name or a message!');
-      return;
-    }
+function filterBySubject(s,el){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');activeSubject=s;filterPdfs();
+}
 
-    try {
-      await db.collection('supporters').add({
-        name:   name || 'Anonymous Student',
-        msg:    msg,
-        amount: amt,
-        time:   firebase.firestore.FieldValue.serverTimestamp()
-      });
-      document.getElementById('supporterName').value = '';
-      document.getElementById('supporterMsg').value  = '';
-      showToast('Thank you so much! 🙏 Your message is live!');
-      loadSupporters();
-      document.getElementById('supportersList').scrollIntoView({ behavior: 'smooth' });
-    } catch(e) {
-      showToast('Could not post. Try again!');
-    }
-  }
+function filterPdfs(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  let f=allPdfs;
+  if(activeSubject)f=f.filter(p=>p.subject===activeSubject);
+  if(q)f=f.filter(p=>
+    (p.title||'').toLowerCase().includes(q)||
+    (p.subject||'').toLowerCase().includes(q)||
+    (p.tags||[]).some(t=>t.toLowerCase().includes(q))||
+    (p.college||'').toLowerCase().includes(q)
+  );
+  renderPdfs(f);
+  document.getElementById('pdfCount').textContent=f.length+' results';
+}
 
-  // ✅ Load from Firebase — every student sees same wall
-  async function loadSupporters() {
-    const list = document.getElementById('supportersList');
-    try {
-      const snap = await db.collection('supporters')
-        .orderBy('time', 'desc')
-        .limit(50)
-        .get();
-
-      if (snap.empty) {
-        list.innerHTML = `<div class="empty-supporters"><div class="e-icon">☕</div><p>Be the first to support!</p></div>`;
-        return;
-      }
-
-      list.innerHTML = snap.docs.map(doc => {
-        const s = doc.data();
-        const date = s.time
-          ? s.time.toDate().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})
-          : 'Just now';
-        return `
-          <div class="supporter-card">
-            <div class="supporter-avatar">☕</div>
-            <div class="supporter-info">
-              <div class="supporter-name">${esc(s.name)} <span class="supporter-amount">· ₹${s.amount}</span></div>
-              ${s.msg ? `<div class="supporter-msg">"${esc(s.msg)}"</div>` : ''}
-              <div class="supporter-time">${date}</div>
-            </div>
-          </div>`;
-      }).join('');
-    } catch(e) {
-      list.innerHTML = `<div class="empty-supporters"><div class="e-icon">☕</div><p>Be the first to support!</p></div>`;
-    }
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3500);
-  }
-
-  function esc(s) {
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  loadSupporters();
+function closeModal(){document.getElementById('loginModal').classList.remove('active');}
+document.getElementById('loginModal').addEventListener('click',e=>{if(e.target.id==='loginModal')closeModal();});
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
 </body>
 </html>
