@@ -6,27 +6,25 @@
   <title>Support Peritto ☕</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'Inter',sans-serif;background:#f4f5f7;color:#111827;min-height:100vh;}
 
-    /* NAV */
     nav{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 1.25rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
     .logo{font-size:1.15rem;font-weight:800;color:#111827;text-decoration:none;letter-spacing:-0.3px;}
     .logo span{color:#4f46e5;}
     .back-btn{padding:0.45rem 0.9rem;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;border:1px solid #d1d5db;background:#fff;color:#374151;text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem;transition:all 0.15s;font-family:'Inter',sans-serif;}
     .back-btn:hover{border-color:#4f46e5;color:#4f46e5;}
 
-    /* HERO */
     .hero{background:linear-gradient(135deg,#f59e0b 0%,#f97316 100%);padding:2rem 1.25rem;color:#fff;text-align:center;}
     .hero-icon{font-size:3rem;margin-bottom:0.5rem;}
     .hero h1{font-size:1.6rem;font-weight:800;margin-bottom:0.4rem;}
     .hero p{font-size:0.9rem;opacity:0.9;line-height:1.6;max-width:380px;margin:0 auto;}
 
-    /* CONTAINER */
     .container{max-width:480px;margin:0 auto;padding:1.5rem 1.25rem 4rem;}
-
-    /* AMOUNT SECTION */
     .section{background:#fff;border-radius:16px;border:1.5px solid #e5e7eb;padding:1.5rem;margin-bottom:1rem;}
     .section-title{font-size:0.82rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1rem;}
 
@@ -34,39 +32,36 @@
     .amount-chip{padding:0.65rem 0.5rem;border-radius:10px;border:2px solid #e5e7eb;background:#f9fafb;font-size:0.95rem;font-weight:700;cursor:pointer;text-align:center;transition:all 0.15s;color:#374151;}
     .amount-chip:hover{border-color:#f97316;color:#f97316;background:#fff7ed;}
     .amount-chip.active{border-color:#f97316;background:#fff7ed;color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,0.12);}
-
     .custom-wrap{position:relative;}
-    .custom-wrap span{position:absolute;left:0.85rem;top:50%;transform:translateY(-50%);font-weight:700;color:#6b7280;font-size:1rem;}
+    .custom-wrap .rupee{position:absolute;left:0.85rem;top:50%;transform:translateY(-50%);font-weight:700;color:#6b7280;font-size:1rem;}
     .custom-input{width:100%;padding:0.7rem 1rem 0.7rem 2rem;border:2px solid #e5e7eb;border-radius:10px;font-size:1rem;font-weight:700;font-family:'Inter',sans-serif;outline:none;color:#111;transition:all 0.15s;background:#f9fafb;}
     .custom-input:focus{border-color:#f97316;background:#fff;box-shadow:0 0 0 3px rgba(249,115,22,0.1);}
     .custom-input::placeholder{color:#d1d5db;font-weight:500;}
 
-    /* PAYMENT METHODS */
-    .pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;}
-    .pay-btn{padding:0.75rem 0.5rem;border-radius:12px;border:2px solid #e5e7eb;background:#fff;cursor:pointer;text-align:center;transition:all 0.15s;font-family:'Inter',sans-serif;}
-    .pay-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.08);}
-    .pay-btn.gpay{border-color:#e5e7eb;}
-    .pay-btn.gpay:hover{border-color:#4285f4;}
-    .pay-btn.phonepe{border-color:#e5e7eb;}
-    .pay-btn.phonepe:hover{border-color:#5f259f;}
-    .pay-btn.paytm{border-color:#e5e7eb;}
-    .pay-btn.paytm:hover{border-color:#00baf2;}
-    .pay-btn.upi{border-color:#e5e7eb;}
-    .pay-btn.upi:hover{border-color:#f97316;}
-    .pay-icon{font-size:1.6rem;margin-bottom:0.2rem;}
-    .pay-name{font-size:0.78rem;font-weight:700;color:#374151;}
-    .pay-sub{font-size:0.68rem;color:#9ca3af;margin-top:0.1rem;}
+    .pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;}
+    .pay-btn{padding:1rem 0.5rem 0.75rem;border-radius:14px;border:2px solid #e5e7eb;background:#fff;cursor:pointer;text-align:center;transition:all 0.18s;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:0.35rem;}
+    .pay-btn:hover{transform:translateY(-2px);}
+    .pay-btn:active{transform:scale(0.97);}
+    .pay-btn.gpay:hover{border-color:#4285f4;box-shadow:0 6px 18px rgba(66,133,244,0.2);}
+    .pay-btn.phonepe:hover{border-color:#5f259f;box-shadow:0 6px 18px rgba(95,37,159,0.2);}
+    .pay-btn.paytm:hover{border-color:#00baf2;box-shadow:0 6px 18px rgba(0,186,242,0.2);}
+    .pay-btn.upi:hover{border-color:#097939;box-shadow:0 6px 18px rgba(9,121,57,0.2);}
+    .pay-logo{height:30px;width:auto;max-width:80px;object-fit:contain;}
+    .pay-name{font-size:0.75rem;font-weight:700;color:#374151;}
+    .pay-sub{font-size:0.65rem;color:#9ca3af;}
 
-    /* MESSAGE FORM */
     .form-group{margin-bottom:0.85rem;}
     .form-label{font-size:0.82rem;font-weight:600;color:#374151;margin-bottom:0.35rem;display:block;}
     .form-input{width:100%;padding:0.65rem 0.85rem;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.875rem;font-family:'Inter',sans-serif;outline:none;color:#111;transition:all 0.15s;background:#f9fafb;}
     .form-input:focus{border-color:#4f46e5;background:#fff;box-shadow:0 0 0 3px rgba(79,70,229,0.1);}
     .form-textarea{resize:vertical;min-height:80px;}
+    .submit-btn{width:100%;padding:0.75rem;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;font-size:0.9rem;font-weight:700;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;margin-top:0.25rem;}
+    .submit-btn:hover{opacity:0.92;transform:translateY(-1px);}
+    .submit-btn:active{transform:scale(0.98);}
 
-    /* SUPPORTERS */
-    .supporters-list{display:flex;flex-direction:column;gap:0.6rem;max-height:280px;overflow-y:auto;}
-    .supporter-card{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:flex-start;gap:0.75rem;}
+    .supporters-list{display:flex;flex-direction:column;gap:0.6rem;}
+    .supporter-card{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:flex-start;gap:0.75rem;animation:fadeIn 0.3s ease;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
     .supporter-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#f97316);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
     .supporter-info{flex:1;min-width:0;}
     .supporter-name{font-size:0.85rem;font-weight:700;color:#111827;}
@@ -76,25 +71,7 @@
     .empty-supporters{text-align:center;padding:2rem;color:#9ca3af;}
     .empty-supporters .e-icon{font-size:2rem;margin-bottom:0.5rem;}
 
-    /* MODAL */
-    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity 0.2s;}
-    .overlay.active{opacity:1;pointer-events:all;}
-    .modal{background:#fff;border-radius:20px;padding:2rem;width:100%;max-width:340px;text-align:center;}
-    .modal-icon{font-size:3rem;margin-bottom:0.75rem;}
-    .modal h2{font-size:1.1rem;font-weight:800;margin-bottom:0.4rem;}
-    .modal p{color:#6b7280;font-size:0.85rem;margin-bottom:1.25rem;line-height:1.5;}
-    .modal-upi{background:#fff7ed;border:2px solid #fed7aa;border-radius:10px;padding:0.85rem;margin-bottom:1.25rem;}
-    .modal-upi .upi-label{font-size:0.72rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;}
-    .modal-upi .upi-id{font-size:1rem;font-weight:800;color:#f97316;letter-spacing:0.5px;}
-    .modal-amount{font-size:1.5rem;font-weight:800;color:#111;margin-bottom:1rem;}
-    .btn{padding:0.65rem 1.25rem;border-radius:10px;font-size:0.875rem;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all 0.15s;width:100%;margin-bottom:0.5rem;}
-    .btn-orange{background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;}
-    .btn-orange:hover{opacity:0.9;}
-    .btn-outline{background:#fff;color:#374151;border:1.5px solid #d1d5db;}
-    .btn-outline:hover{border-color:#374151;}
-
-    /* TOAST */
-    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2937;color:#fff;padding:0.65rem 1.25rem;border-radius:10px;font-size:0.85rem;z-index:999;opacity:0;transition:all 0.3s;white-space:nowrap;}
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2937;color:#fff;padding:0.65rem 1.25rem;border-radius:10px;font-size:0.85rem;z-index:999;opacity:0;transition:all 0.3s;white-space:nowrap;max-width:90vw;text-align:center;}
     .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 
     @media(min-width:641px){
@@ -105,17 +82,15 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="index.html" class="logo">BTech<span>Vault</span></a>
   <a href="index.html" class="back-btn">← Back</a>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-icon">☕</div>
   <h1>Support Peritto</h1>
-  <p>This platform is 100% free for all B.Tech students. If it helped you crack your supply exams, consider buying me a coffee! 🙏</p>
+  <p>This platform is 100% free. If it helped you crack your supply exams, consider buying me a coffee! 🙏</p>
 </div>
 
 <div class="container">
@@ -129,91 +104,89 @@
       <div class="amount-chip" onclick="selectAmount(100,this)">₹100</div>
     </div>
     <div class="custom-wrap">
-      <span>₹</span>
-      <input type="number" class="custom-input" id="customAmount" placeholder="Enter custom amount" min="1" oninput="onCustomInput()"/>
+      <span class="rupee">₹</span>
+      <input type="number" class="custom-input" id="customAmount" placeholder="Custom amount" min="1" oninput="onCustomInput()"/>
     </div>
   </div>
 
   <!-- PAY WITH -->
   <div class="section">
-    <div class="section-title">📱 Pay With</div>
+    <div class="section-title">📱 Pay With — Tap to Open App</div>
     <div class="pay-grid">
-      <button class="pay-btn gpay" onclick="openPayModal('gpay')">
-        <div class="pay-icon">🟦</div>
+
+      <button class="pay-btn gpay" onclick="payNow('gpay')">
+        <img class="pay-logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png"
+          alt="Google Pay"
+          onerror="this.outerHTML='<span style=font-size:1.6rem>🟦</span>'"/>
         <div class="pay-name">Google Pay</div>
-        <div class="pay-sub">GPay UPI</div>
+        <div class="pay-sub">Opens GPay directly</div>
       </button>
-      <button class="pay-btn phonepe" onclick="openPayModal('phonepe')">
-        <div class="pay-icon">💜</div>
+
+      <button class="pay-btn phonepe" onclick="payNow('phonepe')">
+        <img class="pay-logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png"
+          alt="PhonePe"
+          onerror="this.outerHTML='<span style=font-size:1.6rem>💜</span>'"/>
         <div class="pay-name">PhonePe</div>
-        <div class="pay-sub">PhonePe UPI</div>
+        <div class="pay-sub">Opens PhonePe directly</div>
       </button>
-      <button class="pay-btn paytm" onclick="openPayModal('paytm')">
-        <div class="pay-icon">🔵</div>
+
+      <button class="pay-btn paytm" onclick="payNow('paytm')">
+        <img class="pay-logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/512px-Paytm_Logo_%28standalone%29.svg.png"
+          alt="Paytm"
+          onerror="this.outerHTML='<span style=font-size:1.6rem>🔵</span>'"/>
         <div class="pay-name">Paytm</div>
-        <div class="pay-sub">Paytm UPI</div>
+        <div class="pay-sub">Opens Paytm directly</div>
       </button>
-      <button class="pay-btn upi" onclick="openPayModal('upi')">
-        <div class="pay-icon">🟠</div>
+
+      <button class="pay-btn upi" onclick="payNow('upi')">
+        <img class="pay-logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/512px-UPI-Logo-vector.svg.png"
+          alt="UPI"
+          onerror="this.outerHTML='<span style=font-size:1.6rem>🟠</span>'"/>
         <div class="pay-name">Any UPI App</div>
-        <div class="pay-sub">BHIM / Others</div>
+        <div class="pay-sub">BHIM & others</div>
       </button>
+
     </div>
   </div>
 
-  <!-- MESSAGE FORM -->
+  <!-- MESSAGE -->
   <div class="section">
-    <div class="section-title">💬 Leave a Message (Optional)</div>
+    <div class="section-title">💬 Leave a Message (After Paying)</div>
     <div class="form-group">
       <label class="form-label">Your Name</label>
       <input type="text" class="form-input" id="supporterName" placeholder="e.g. Ravi Kumar" maxlength="40"/>
     </div>
     <div class="form-group">
       <label class="form-label">Your Message</label>
-      <textarea class="form-input form-textarea" id="supporterMsg" placeholder="e.g. Peritto helped me pass my supply exam! Thank you so much 🙏" maxlength="200"></textarea>
+      <textarea class="form-input form-textarea" id="supporterMsg" placeholder="e.g. Peritto helped me pass my supply! 🙏" maxlength="200"></textarea>
     </div>
-    <button class="btn btn-orange" onclick="submitMessage()" style="margin-top:0.25rem;">✅ I've Paid — Post My Message</button>
+    <button class="submit-btn" onclick="submitMessage()">✅ I've Paid — Post My Message</button>
   </div>
 
   <!-- SUPPORTERS WALL -->
   <div class="section">
     <div class="section-title">❤️ Supporters Wall</div>
     <div class="supporters-list" id="supportersList">
-      <div class="empty-supporters">
-        <div class="e-icon">☕</div>
-        <p>Be the first to support!</p>
-      </div>
+      <div class="empty-supporters"><div class="e-icon">⏳</div><p>Loading...</p></div>
     </div>
   </div>
 
 </div>
 
-<!-- PAYMENT MODAL -->
-<div class="overlay" id="payModal">
-  <div class="modal">
-    <div class="modal-icon" id="modalIcon">☕</div>
-    <h2 id="modalTitle">Pay with GPay</h2>
-    <p id="modalDesc">Open Google Pay and send the amount to this UPI ID:</p>
-    <div class="modal-amount" id="modalAmount">₹20</div>
-    <div class="modal-upi">
-      <div class="upi-label">UPI ID</div>
-      <div class="upi-id" id="modalUpiId">xyz@ybl</div>
-    </div>
-    <button class="btn btn-orange" onclick="copyUpi()">📋 Copy UPI ID</button>
-    <button class="btn btn-outline" onclick="closeModal()">Close</button>
-  </div>
-</div>
+<!-- Hidden iframe: opens UPI app WITHOUT navigating away from page -->
+<iframe id="upiFrame" style="display:none;width:0;height:0;border:none;"></iframe>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  // ── CONFIG — replace with your real UPI ID ──
-  const MY_UPI = 'xyz@ybl';
+  const MY_UPI  = 'xyz@ybl';   // ← Replace with your real UPI ID!
+  const MY_NAME = 'Peritto';
 
   let selectedAmount = 20;
-
-  // Load supporters from localStorage
-  let supporters = JSON.parse(localStorage.getItem('peritto_supporters') || '[]');
 
   function selectAmount(amt, el) {
     selectedAmount = amt;
@@ -232,101 +205,107 @@
 
   function getAmount() {
     const custom = parseInt(document.getElementById('customAmount').value);
-    return custom > 0 ? custom : selectedAmount;
+    return (custom > 0) ? custom : selectedAmount;
   }
 
-  const payConfig = {
-    gpay:    { icon: '🟦', title: 'Pay with Google Pay',  desc: 'Open Google Pay and send to this UPI ID:' },
-    phonepe: { icon: '💜', title: 'Pay with PhonePe',     desc: 'Open PhonePe and send to this UPI ID:' },
-    paytm:   { icon: '🔵', title: 'Pay with Paytm',       desc: 'Open Paytm and send to this UPI ID:' },
-    upi:     { icon: '🟠', title: 'Pay via Any UPI App',  desc: 'Open your UPI app and send to this UPI ID:' },
-  };
-
-  function openPayModal(method) {
+  // ✅ KEY FIX: use hidden <iframe> to launch UPI app — page stays open!
+  function payNow(method) {
     const amt = getAmount();
     if (!amt || amt < 1) { showToast('Please select or enter an amount first!'); return; }
-    const cfg = payConfig[method];
-    document.getElementById('modalIcon').textContent = cfg.icon;
-    document.getElementById('modalTitle').textContent = cfg.title;
-    document.getElementById('modalDesc').textContent = cfg.desc;
-    document.getElementById('modalAmount').textContent = '₹' + amt;
-    document.getElementById('modalUpiId').textContent = MY_UPI;
-    document.getElementById('payModal').classList.add('active');
+
+    const pa = encodeURIComponent(MY_UPI);
+    const pn = encodeURIComponent(MY_NAME);
+    const tn = encodeURIComponent('Support Peritto');
+
+    const links = {
+      gpay:    `tez://upi/pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
+      phonepe: `phonepe://pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
+      paytm:   `paytmmp://pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
+      upi:     `upi://pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
+    };
+
+    // Load the UPI link in a hidden iframe — opens app, page stays!
+    document.getElementById('upiFrame').src = links[method] || links.upi;
+
+    setTimeout(() => {
+      showToast('✅ App opened! After paying, scroll down & leave a message 🙏');
+    }, 800);
   }
 
-  function closeModal() {
-    document.getElementById('payModal').classList.remove('active');
-  }
-
-  document.getElementById('payModal').addEventListener('click', e => {
-    if (e.target.id === 'payModal') closeModal();
-  });
-
-  function copyUpi() {
-    navigator.clipboard.writeText(MY_UPI).then(() => {
-      showToast('UPI ID copied! 📋');
-    }).catch(() => {
-      showToast('UPI ID: ' + MY_UPI);
-    });
-  }
-
-  function submitMessage() {
-    const name = document.getElementById('supporterName').value.trim() || 'Anonymous Student';
+  // ✅ Save to Firebase so ALL students can see supporter messages
+  async function submitMessage() {
+    const name = document.getElementById('supporterName').value.trim();
     const msg  = document.getElementById('supporterMsg').value.trim();
     const amt  = getAmount();
 
-    if (!msg && name === 'Anonymous Student') {
+    if (!name && !msg) {
       showToast('Please enter your name or a message!');
       return;
     }
 
-    const entry = {
-      name,
-      msg,
-      amount: amt,
-      time: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-    };
-
-    supporters.unshift(entry);
-    localStorage.setItem('peritto_supporters', JSON.stringify(supporters));
-    renderSupporters();
-
-    document.getElementById('supporterName').value = '';
-    document.getElementById('supporterMsg').value  = '';
-    showToast('Thank you so much! 🙏 Your message is posted!');
+    try {
+      await db.collection('supporters').add({
+        name:   name || 'Anonymous Student',
+        msg:    msg,
+        amount: amt,
+        time:   firebase.firestore.FieldValue.serverTimestamp()
+      });
+      document.getElementById('supporterName').value = '';
+      document.getElementById('supporterMsg').value  = '';
+      showToast('Thank you so much! 🙏 Your message is live!');
+      loadSupporters();
+      document.getElementById('supportersList').scrollIntoView({ behavior: 'smooth' });
+    } catch(e) {
+      showToast('Could not post. Try again!');
+    }
   }
 
-  function renderSupporters() {
+  // ✅ Load from Firebase — every student sees same wall
+  async function loadSupporters() {
     const list = document.getElementById('supportersList');
-    if (!supporters.length) {
+    try {
+      const snap = await db.collection('supporters')
+        .orderBy('time', 'desc')
+        .limit(50)
+        .get();
+
+      if (snap.empty) {
+        list.innerHTML = `<div class="empty-supporters"><div class="e-icon">☕</div><p>Be the first to support!</p></div>`;
+        return;
+      }
+
+      list.innerHTML = snap.docs.map(doc => {
+        const s = doc.data();
+        const date = s.time
+          ? s.time.toDate().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})
+          : 'Just now';
+        return `
+          <div class="supporter-card">
+            <div class="supporter-avatar">☕</div>
+            <div class="supporter-info">
+              <div class="supporter-name">${esc(s.name)} <span class="supporter-amount">· ₹${s.amount}</span></div>
+              ${s.msg ? `<div class="supporter-msg">"${esc(s.msg)}"</div>` : ''}
+              <div class="supporter-time">${date}</div>
+            </div>
+          </div>`;
+      }).join('');
+    } catch(e) {
       list.innerHTML = `<div class="empty-supporters"><div class="e-icon">☕</div><p>Be the first to support!</p></div>`;
-      return;
     }
-    list.innerHTML = supporters.map(s => `
-      <div class="supporter-card">
-        <div class="supporter-avatar">☕</div>
-        <div class="supporter-info">
-          <div class="supporter-name">${esc(s.name)} <span class="supporter-amount">· ₹${s.amount}</span></div>
-          ${s.msg ? `<div class="supporter-msg">"${esc(s.msg)}"</div>` : ''}
-          <div class="supporter-time">${s.time}</div>
-        </div>
-      </div>
-    `).join('');
   }
 
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
+    setTimeout(() => t.classList.remove('show'), 3500);
   }
 
   function esc(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  // Init
-  renderSupporters();
+  loadSupporters();
 </script>
 </body>
 </html>
