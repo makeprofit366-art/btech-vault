@@ -6,6 +6,9 @@
   <title>Support Peritto ☕</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <style>
     :root{
       --bg:#0b0d12;--s1:#13161f;--s2:#1a1d28;--border:#252836;
@@ -17,6 +20,7 @@
       background:radial-gradient(ellipse 70% 45% at 15% 5%,rgba(245,158,11,.07) 0%,transparent 65%),
                  radial-gradient(ellipse 55% 40% at 85% 90%,rgba(99,102,241,.07) 0%,transparent 60%);}
 
+    /* NAV */
     nav{position:sticky;top:0;z-index:100;background:rgba(11,13,18,.9);backdrop-filter:blur(14px);
         border-bottom:1px solid var(--border);height:56px;padding:0 1.5rem;
         display:flex;align-items:center;justify-content:space-between;}
@@ -27,33 +31,48 @@
     .back:hover{color:var(--text);border-color:var(--amber);}
 
     /* HERO */
-    .hero{position:relative;z-index:1;text-align:center;padding:2.8rem 1.5rem 1.5rem;}
-    .orb-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.25rem;}
+    .hero{position:relative;z-index:1;text-align:center;padding:2.5rem 1.5rem 1.5rem;}
+    .orb-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.1rem;}
     .orb-wrap::before{content:'';position:absolute;inset:-10px;border-radius:50%;
       border:2px solid rgba(245,158,11,.2);animation:pulse 2.5s ease-in-out infinite;}
     @keyframes pulse{0%,100%{transform:scale(1);opacity:.4;}50%{transform:scale(1.12);opacity:1;}}
-    .orb{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);
-         display:flex;align-items:center;justify-content:center;font-size:2rem;
+    .orb{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);
+         display:flex;align-items:center;justify-content:center;font-size:1.9rem;
          box-shadow:0 0 36px rgba(245,158,11,.3);}
-    .hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.7rem,5vw,2.5rem);font-weight:800;
-             line-height:1.15;margin-bottom:.6rem;
+    .hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:800;
+             line-height:1.15;margin-bottom:.5rem;
              background:linear-gradient(135deg,#fff 0%,#f59e0b 100%);
              -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .hero p{font-size:.9rem;color:var(--muted);max-width:370px;margin:0 auto;line-height:1.65;}
-    .badges{display:flex;justify-content:center;gap:.45rem;flex-wrap:wrap;margin-top:1rem;}
-    .badge{font-size:.7rem;color:var(--muted);padding:.28rem .7rem;border-radius:20px;
+    .hero p{font-size:.88rem;color:var(--muted);max-width:360px;margin:0 auto;line-height:1.65;}
+    .badges{display:flex;justify-content:center;gap:.45rem;flex-wrap:wrap;margin-top:.85rem;}
+    .badge{font-size:.68rem;color:var(--muted);padding:.25rem .65rem;border-radius:20px;
            background:var(--s1);border:1px solid var(--border);}
 
     /* WRAP */
-    .wrap{position:relative;z-index:1;max-width:440px;margin:0 auto;padding:1.5rem 1.25rem 5rem;}
+    .wrap{position:relative;z-index:1;max-width:440px;margin:0 auto;padding:1.25rem 1.25rem 5rem;}
 
     /* CARD */
     .card{background:var(--s1);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:.85rem;}
 
-    /* AMOUNT */
-    .amt-sec{padding:1.35rem 1.5rem .9rem;border-bottom:1px solid var(--border);}
+    /* SECTION LABEL */
     .sec-lbl{font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:.75rem;}
-    .amt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin-bottom:.75rem;}
+
+    /* NAME / MESSAGE FORM */
+    .form-sec{padding:1.35rem 1.5rem;border-bottom:1px solid var(--border);}
+    .field{margin-bottom:.65rem;}
+    .field:last-child{margin-bottom:0;}
+    .field input,.field textarea{
+      width:100%;padding:.62rem .95rem;
+      background:var(--s2);border:1.5px solid var(--border);border-radius:10px;
+      font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);
+      outline:none;transition:all .18s;resize:none;
+    }
+    .field input:focus,.field textarea:focus{border-color:var(--amber);background:rgba(245,158,11,.04);}
+    .field input::placeholder,.field textarea::placeholder{color:var(--muted);}
+
+    /* AMOUNT */
+    .amt-sec{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);}
+    .amt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin-bottom:.7rem;}
     .ab{background:var(--s2);border:1.5px solid var(--border);border-radius:10px;
         padding:.6rem .3rem;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;
         color:var(--muted);cursor:pointer;transition:all .18s;text-align:center;}
@@ -62,37 +81,82 @@
     .cust{position:relative;}
     .cust .pre{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);
                font-size:.95rem;color:var(--muted);font-weight:600;pointer-events:none;}
-    .cust input{width:100%;padding:.62rem 1rem .62rem 1.9rem;background:var(--s2);
-                border:1.5px solid var(--border);border-radius:10px;
-                font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);
-                outline:none;transition:all .18s;}
-    .cust input:focus{border-color:var(--amber);background:rgba(245,158,11,.04);}
-    .cust input::placeholder{color:var(--muted);}
+    .cust input{padding:.62rem 1rem .62rem 1.9rem;}
 
     /* APPS */
     .apps-sec{padding:1.25rem 1.5rem;}
-    .apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;}
-    .app{display:flex;flex-direction:column;align-items:center;gap:.55rem;
-         padding:1.1rem .5rem .85rem;border-radius:16px;border:1.5px solid var(--border);
+    .apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-bottom:.85rem;}
+    .app{display:flex;flex-direction:column;align-items:center;gap:.5rem;
+         padding:1rem .5rem .8rem;border-radius:16px;border:1.5px solid var(--border);
          background:var(--s2);cursor:pointer;text-decoration:none;transition:all .22s;}
-    .app:hover{transform:translateY(-4px);}
+    .app:hover{transform:translateY(-3px);}
     .app:active{transform:scale(.97);}
-    .app.gpay:hover{border-color:#4285f4;box-shadow:0 8px 28px rgba(66,133,244,.2);}
-    .app.phonepe:hover{border-color:#6500a3;box-shadow:0 8px 28px rgba(101,0,163,.25);}
-    .app.paytm:hover{border-color:#00bae8;box-shadow:0 8px 28px rgba(0,186,232,.2);}
-    .app-ico{width:52px;height:52px;border-radius:14px;overflow:hidden;flex-shrink:0;}
-    .app-lbl{font-size:.75rem;font-weight:600;}
+    .app.gpay:hover{border-color:#4285f4;box-shadow:0 8px 24px rgba(66,133,244,.2);}
+    .app.phonepe:hover{border-color:#6500a3;box-shadow:0 8px 24px rgba(101,0,163,.25);}
+    .app.paytm:hover{border-color:#00bae8;box-shadow:0 8px 24px rgba(0,186,232,.2);}
+    .app-ico{width:48px;height:48px;border-radius:13px;overflow:hidden;flex-shrink:0;}
+    .app-lbl{font-size:.73rem;font-weight:600;}
     .app.gpay .app-lbl{color:#4285f4;}
     .app.phonepe .app-lbl{color:#a855f7;}
     .app.paytm .app-lbl{color:#00bae8;}
 
+    /* I PAID BUTTON */
+    .paid-btn{
+      width:100%;padding:.85rem;
+      background:linear-gradient(135deg,#22c55e,#16a34a);
+      border:none;border-radius:13px;
+      font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;
+      color:#fff;cursor:pointer;transition:all .2s;
+      display:flex;align-items:center;justify-content:center;gap:.5rem;
+      box-shadow:0 4px 18px rgba(34,197,94,.25);
+    }
+    .paid-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(34,197,94,.4);}
+    .paid-btn:active{transform:scale(.98);}
+    .paid-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 
+    /* SUPPORTERS WALL */
+    .wall-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+    .wall-head{padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);
+               display:flex;align-items:center;justify-content:space-between;}
+    .wall-head h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;}
+    .wall-count{font-size:.75rem;color:var(--amber);font-weight:600;}
+    .wall-list{padding:.75rem 1rem;}
+    .supporter{
+      display:flex;align-items:flex-start;gap:.75rem;
+      padding:.85rem .5rem;border-bottom:1px solid var(--border);
+      animation:fadeIn .4s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+    .supporter:last-child{border-bottom:none;}
+    .sup-avatar{
+      width:38px;height:38px;border-radius:50%;
+      background:linear-gradient(135deg,#f59e0b,#ef4444);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1rem;font-weight:700;color:#fff;flex-shrink:0;font-family:'Syne',sans-serif;
+    }
+    .sup-info{flex:1;min-width:0;}
+    .sup-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.2rem;}
+    .sup-name{font-size:.88rem;font-weight:600;color:var(--text);}
+    .sup-amt{font-size:.78rem;font-weight:700;color:var(--amber);}
+    .sup-msg{font-size:.8rem;color:var(--muted);line-height:1.5;word-break:break-word;}
+    .sup-time{font-size:.68rem;color:var(--border);margin-top:.2rem;}
+
+    .wall-empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);}
+    .wall-empty .ei{font-size:2rem;margin-bottom:.5rem;}
+    .wall-empty p{font-size:.82rem;}
+
+    .wall-loading{text-align:center;padding:2rem;color:var(--muted);font-size:.82rem;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+
+    /* SPINNER */
+    .spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
+    @keyframes spin{to{transform:rotate(360deg);}}
 
     /* TOAST */
     .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(60px);
            padding:.6rem 1.3rem;border-radius:50px;font-size:.83rem;font-weight:600;
            z-index:999;opacity:0;transition:all .3s;white-space:nowrap;color:#fff;}
-    .toast.info{background:#3b82f6;}
+    .toast.green{background:var(--success);}
+    .toast.blue{background:#3b82f6;}
     .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 
     @media(max-width:380px){.amt-grid{grid-template-columns:repeat(2,1fr);}}
@@ -117,7 +181,20 @@
 </div>
 
 <div class="wrap">
+
+  <!-- MAIN CARD -->
   <div class="card">
+
+    <!-- Name & Message -->
+    <div class="form-sec">
+      <div class="sec-lbl">✏️ Your Details</div>
+      <div class="field">
+        <input type="text" id="supName" placeholder="Your name (e.g. Ravi Kumar)" maxlength="40"/>
+      </div>
+      <div class="field">
+        <textarea id="supMsg" rows="2" placeholder="Leave a message (optional)..." maxlength="120"></textarea>
+      </div>
+    </div>
 
     <!-- Amount -->
     <div class="amt-sec">
@@ -134,7 +211,7 @@
       </div>
     </div>
 
-    <!-- Apps -->
+    <!-- Pay Apps + I Paid -->
     <div class="apps-sec">
       <div class="sec-lbl" style="margin-bottom:.85rem">Pay with</div>
       <div class="apps-grid">
@@ -142,12 +219,12 @@
         <!-- GPay -->
         <a class="app gpay" href="#" onclick="pay('gpay');return false;">
           <div class="app-ico">
-            <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" width="52" height="52">
-              <rect width="52" height="52" rx="14" fill="#fff"/>
-              <path d="M26 22c1.8 0 3.1.7 3.8 1.4l2.8-2.8C30.7 18.8 28.6 18 26 18c-3.8 0-7 2.2-8.6 5.4l3.3 2.5C21.5 23.6 23.6 22 26 22z" fill="#EA4335"/>
-              <path d="M17 26c0-.7.1-1.4.3-2l-3.3-2.5C13.4 22.8 13 24.3 13 26s.4 3.2 1 4.5L17.4 28C17.1 27.4 17 26.7 17 26z" fill="#FBBC05"/>
-              <path d="M26 34c-2.4 0-4.5-1.6-5.3-3.9L17.4 32c1.6 3.2 4.9 5.4 8.6 5.4 2.5 0 4.5-.8 6-2.3l-3-2.3C28.2 33.5 27.2 34 26 34z" fill="#34A853"/>
-              <path d="M38 26c0-.7-.1-1.4-.2-2H26v4.2h6.8c-.3 1.5-1.1 2.7-2.3 3.5l3 2.3C35.8 32 38 29.3 38 26z" fill="#4285F4"/>
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+              <rect width="48" height="48" rx="13" fill="#fff"/>
+              <path d="M24 20.5c1.7 0 2.9.6 3.6 1.3l2.6-2.6C28.5 17.6 26.5 17 24 17c-3.6 0-6.7 2-8.2 5l3.1 2.4C19.7 21.9 21.7 20.5 24 20.5z" fill="#EA4335"/>
+              <path d="M15.5 24c0-.7.1-1.3.3-1.9l-3.1-2.4C12 21 11.5 22.4 11.5 24s.4 3 1.1 4.3l3.1-2.4c-.2-.6-.3-1.2-.3-1.9z" fill="#FBBC05"/>
+              <path d="M24 31.5c-2.3 0-4.3-1.5-5-3.6L15.8 30c1.5 3 4.6 5 8.2 5 2.4 0 4.3-.8 5.8-2.1l-2.8-2.2C26.2 31.2 25.2 31.5 24 31.5z" fill="#34A853"/>
+              <path d="M36 24c0-.6-.1-1.3-.2-1.9H24v4h6.6c-.3 1.4-1.1 2.5-2.2 3.2l2.8 2.2C33.7 29.6 36 27.1 36 24z" fill="#4285F4"/>
             </svg>
           </div>
           <span class="app-lbl">GPay</span>
@@ -156,14 +233,12 @@
         <!-- PhonePe -->
         <a class="app phonepe" href="#" onclick="pay('phonepe');return false;">
           <div class="app-ico">
-            <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" width="52" height="52">
-              <rect width="52" height="52" rx="14" fill="#5f259f"/>
-              <!-- P shape -->
-              <path d="M14 12h12c5.5 0 9.5 3.8 9.5 9.5S31.5 31 26 31h-7v9h-5V12z" fill="#fff"/>
-              <ellipse cx="25" cy="21.5" rx="4" ry="5" fill="#5f259f"/>
-              <!-- Pe circle -->
-              <circle cx="37" cy="37" r="7.5" fill="#fff"/>
-              <text x="37" y="41" text-anchor="middle" font-family="Arial" font-size="7.5" font-weight="900" fill="#5f259f">Pe</text>
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+              <rect width="48" height="48" rx="13" fill="#5f259f"/>
+              <path d="M13 11h11c5 0 8.5 3.4 8.5 8.5S29 28 24 28h-6v8h-5V11z" fill="#fff"/>
+              <ellipse cx="23" cy="19.5" rx="3.5" ry="4.5" fill="#5f259f"/>
+              <circle cx="35" cy="35" r="7" fill="#fff"/>
+              <text x="35" y="39" text-anchor="middle" font-family="Arial" font-size="7" font-weight="900" fill="#5f259f">Pe</text>
             </svg>
           </div>
           <span class="app-lbl">PhonePe</span>
@@ -172,29 +247,45 @@
         <!-- Paytm -->
         <a class="app paytm" href="#" onclick="pay('paytm');return false;">
           <div class="app-ico">
-            <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" width="52" height="52">
-              <rect width="52" height="52" rx="14" fill="#00bae8"/>
-              <rect x="6" y="17" width="40" height="18" rx="5" fill="#fff"/>
-              <text x="26" y="30" text-anchor="middle" font-family="Arial Black,Arial" font-size="10.5" font-weight="900" fill="#00bae8">Paytm</text>
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+              <rect width="48" height="48" rx="13" fill="#00bae8"/>
+              <rect x="5" y="16" width="38" height="16" rx="4" fill="#fff"/>
+              <text x="24" y="28" text-anchor="middle" font-family="Arial Black,Arial" font-size="9.5" font-weight="900" fill="#00bae8">Paytm</text>
             </svg>
           </div>
           <span class="app-lbl">Paytm</span>
         </a>
 
       </div>
+
+      <!-- I PAID BUTTON -->
+      <button class="paid-btn" id="paidBtn" onclick="iPaid()">
+        ✅ I Paid — Add me to Supporters!
+      </button>
     </div>
   </div>
 
+  <!-- SUPPORTERS WALL -->
+  <div class="wall-card">
+    <div class="wall-head">
+      <h3>💛 Supporters Wall</h3>
+      <span class="wall-count" id="wallCount"></span>
+    </div>
+    <div class="wall-list" id="wallList">
+      <div class="wall-loading"><div class="spin"></div> Loading supporters...</div>
+    </div>
+  </div>
 
 </div>
 
-<div class="toast info" id="toast"></div>
+<div class="toast" id="toast"></div>
 
 <script>
   const UPI = 'kirankumarr929@okaxis';
-  const NAME = encodeURIComponent('Peritto');
-  const NOTE = encodeURIComponent('Supporting Peritto');
+  const PNAME = encodeURIComponent('Peritto');
+  const NOTE  = encodeURIComponent('Supporting Peritto');
   let amt = 20;
+  let payClicked = false;
 
   function pick(v, el) {
     amt = v;
@@ -212,27 +303,112 @@
     const a = amt || 20;
     const pa = encodeURIComponent(UPI);
     let url;
-    if (app === 'gpay')    url = `gpay://upi/pay?pa=${pa}&pn=${NAME}&am=${a}&cu=INR&tn=${NOTE}`;
-    else if (app === 'phonepe') url = `phonepe://pay?pa=${pa}&pn=${NAME}&am=${a}&cu=INR&tn=${NOTE}`;
-    else if (app === 'paytm')   url = `paytmmp://pay?pa=${pa}&pn=${NAME}&am=${a}&cu=INR&tn=${NOTE}`;
+    if (app === 'gpay')     url = `gpay://upi/pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
+    else if (app === 'phonepe') url = `phonepe://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
+    else if (app === 'paytm')   url = `paytmmp://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
 
+    payClicked = true;
     window.location.href = url;
 
-    // Fallback: if app not installed, open generic UPI link
     setTimeout(() => {
       if (document.hasFocus()) {
-        window.location.href = `upi://pay?pa=${pa}&pn=${NAME}&am=${a}&cu=INR&tn=${NOTE}`;
-        showToast('📱 Opening payment app...');
+        window.location.href = `upi://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
+        showToast('📱 Opening payment app...', 'blue');
       }
     }, 1500);
   }
 
-  function showToast(msg) {
+  async function iPaid() {
+    const name = document.getElementById('supName').value.trim();
+    const msg  = document.getElementById('supMsg').value.trim();
+
+    if (!name) {
+      showToast('👆 Please enter your name first!', 'blue');
+      document.getElementById('supName').focus();
+      return;
+    }
+
+    const btn = document.getElementById('paidBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spin"></div> Saving...';
+
+    try {
+      await db.collection('supporters').add({
+        name: name,
+        message: msg || '',
+        amount: amt || 20,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      showToast('🎉 Thank you! You\'re on the wall!', 'green');
+      document.getElementById('supName').value = '';
+      document.getElementById('supMsg').value = '';
+      btn.innerHTML = '✅ I Paid — Add me to Supporters!';
+      btn.disabled = false;
+    } catch(e) {
+      showToast('⚠️ Error saving. Try again!', 'blue');
+      btn.innerHTML = '✅ I Paid — Add me to Supporters!';
+      btn.disabled = false;
+    }
+  }
+
+  // Load supporters wall
+  function loadSupporters() {
+    db.collection('supporters')
+      .orderBy('createdAt', 'desc')
+      .limit(50)
+      .onSnapshot(snap => {
+        const list = document.getElementById('wallList');
+        const count = document.getElementById('wallCount');
+        count.textContent = snap.size ? `${snap.size} supporters` : '';
+
+        if (!snap.size) {
+          list.innerHTML = `<div class="wall-empty"><div class="ei">☕</div><p>Be the first to support Peritto!</p></div>`;
+          return;
+        }
+
+        list.innerHTML = snap.docs.map(doc => {
+          const d = doc.data();
+          const initial = (d.name || '?')[0].toUpperCase();
+          const time = d.createdAt ? timeAgo(d.createdAt.toDate()) : '';
+          return `<div class="supporter">
+            <div class="sup-avatar">${esc(initial)}</div>
+            <div class="sup-info">
+              <div class="sup-top">
+                <span class="sup-name">${esc(d.name)}</span>
+                <span class="sup-amt">₹${d.amount || '?'}</span>
+              </div>
+              ${d.message ? `<div class="sup-msg">"${esc(d.message)}"</div>` : ''}
+              <div class="sup-time">${time}</div>
+            </div>
+          </div>`;
+        }).join('');
+      }, () => {
+        document.getElementById('wallList').innerHTML =
+          `<div class="wall-empty"><div class="ei">⚠️</div><p>Could not load supporters.</p></div>`;
+      });
+  }
+
+  function timeAgo(date) {
+    const s = Math.floor((Date.now() - date) / 1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return `${Math.floor(s/60)}m ago`;
+    if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+    return `${Math.floor(s/86400)}d ago`;
+  }
+
+  function showToast(msg, type = 'green') {
     const t = document.getElementById('toast');
+    t.className = `toast ${type}`;
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
   }
+
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  loadSupporters();
 </script>
 </body>
 </html>
