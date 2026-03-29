@@ -53,11 +53,9 @@
 
     /* CARD */
     .card{background:var(--s1);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:.85rem;}
-
-    /* SECTION LABEL */
     .sec-lbl{font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:.75rem;}
 
-    /* NAME / MESSAGE FORM */
+    /* FORM */
     .form-sec{padding:1.35rem 1.5rem;border-bottom:1px solid var(--border);}
     .field{margin-bottom:.65rem;}
     .field:last-child{margin-bottom:0;}
@@ -81,11 +79,11 @@
     .cust{position:relative;}
     .cust .pre{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);
                font-size:.95rem;color:var(--muted);font-weight:600;pointer-events:none;}
-    .cust input{padding:.62rem 1rem .62rem 1.9rem;}
+    .cust input{padding:.62rem 1rem .62rem 1.9rem !important;}
 
     /* APPS */
     .apps-sec{padding:1.25rem 1.5rem;}
-    .apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-bottom:.85rem;}
+    .apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;}
     .app{display:flex;flex-direction:column;align-items:center;gap:.5rem;
          padding:1rem .5rem .8rem;border-radius:16px;border:1.5px solid var(--border);
          background:var(--s2);cursor:pointer;text-decoration:none;transition:all .22s;}
@@ -100,19 +98,44 @@
     .app.phonepe .app-lbl{color:#a855f7;}
     .app.paytm .app-lbl{color:#00bae8;}
 
-    /* I PAID BUTTON */
-    .paid-btn{
-      width:100%;padding:.85rem;
-      background:linear-gradient(135deg,#22c55e,#16a34a);
-      border:none;border-radius:13px;
-      font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;
-      color:#fff;cursor:pointer;transition:all .2s;
-      display:flex;align-items:center;justify-content:center;gap:.5rem;
-      box-shadow:0 4px 18px rgba(34,197,94,.25);
+    /* DONE POPUP */
+    .popup-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;
+      display:flex;align-items:flex-end;justify-content:center;
+      opacity:0;pointer-events:none;transition:opacity .3s;
     }
-    .paid-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(34,197,94,.4);}
-    .paid-btn:active{transform:scale(.98);}
-    .paid-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+    .popup-overlay.open{opacity:1;pointer-events:all;}
+    .popup{
+      background:var(--s1);border:1px solid var(--border);
+      border-radius:24px 24px 0 0;padding:2rem 1.5rem 2.5rem;
+      width:100%;max-width:480px;
+      transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .popup-overlay.open .popup{transform:translateY(0);}
+    .popup-icon{font-size:2.5rem;text-align:center;margin-bottom:.75rem;}
+    .popup h2{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;text-align:center;margin-bottom:.4rem;}
+    .popup p{font-size:.85rem;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:1.5rem;}
+    .popup-amt{
+      background:var(--s2);border:1px solid var(--border);border-radius:12px;
+      padding:.75rem 1rem;text-align:center;margin-bottom:1.25rem;
+      font-size:.88rem;color:var(--muted);
+    }
+    .popup-amt span{color:var(--amber);font-weight:700;font-size:1.1rem;}
+    .popup-btns{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
+    .btn-yes{
+      padding:.8rem;border-radius:12px;border:none;
+      background:linear-gradient(135deg,#22c55e,#16a34a);
+      font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:#fff;
+      cursor:pointer;transition:all .2s;
+    }
+    .btn-yes:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(34,197,94,.35);}
+    .btn-yes:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+    .btn-no{
+      padding:.8rem;border-radius:12px;border:1.5px solid var(--border);
+      background:transparent;font-family:'DM Sans',sans-serif;font-size:.88rem;
+      font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;
+    }
+    .btn-no:hover{border-color:var(--amber);color:var(--text);}
 
     /* SUPPORTERS WALL */
     .wall-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
@@ -120,7 +143,7 @@
                display:flex;align-items:center;justify-content:space-between;}
     .wall-head h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;}
     .wall-count{font-size:.75rem;color:var(--amber);font-weight:600;}
-    .wall-list{padding:.75rem 1rem;}
+    .wall-list{padding:.5rem 1rem;}
     .supporter{
       display:flex;align-items:flex-start;gap:.75rem;
       padding:.85rem .5rem;border-bottom:1px solid var(--border);
@@ -139,16 +162,14 @@
     .sup-name{font-size:.88rem;font-weight:600;color:var(--text);}
     .sup-amt{font-size:.78rem;font-weight:700;color:var(--amber);}
     .sup-msg{font-size:.8rem;color:var(--muted);line-height:1.5;word-break:break-word;}
-    .sup-time{font-size:.68rem;color:var(--border);margin-top:.2rem;}
-
+    .sup-time{font-size:.68rem;color:var(--border);margin-top:.25rem;}
     .wall-empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);}
     .wall-empty .ei{font-size:2rem;margin-bottom:.5rem;}
     .wall-empty p{font-size:.82rem;}
-
     .wall-loading{text-align:center;padding:2rem;color:var(--muted);font-size:.82rem;display:flex;align-items:center;justify-content:center;gap:.5rem;}
 
     /* SPINNER */
-    .spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
+    .spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0;}
     @keyframes spin{to{transform:rotate(360deg);}}
 
     /* TOAST */
@@ -182,7 +203,6 @@
 
 <div class="wrap">
 
-  <!-- MAIN CARD -->
   <div class="card">
 
     <!-- Name & Message -->
@@ -211,12 +231,11 @@
       </div>
     </div>
 
-    <!-- Pay Apps + I Paid -->
+    <!-- App Buttons -->
     <div class="apps-sec">
       <div class="sec-lbl" style="margin-bottom:.85rem">Pay with</div>
       <div class="apps-grid">
 
-        <!-- GPay -->
         <a class="app gpay" href="#" onclick="pay('gpay');return false;">
           <div class="app-ico">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
@@ -230,7 +249,6 @@
           <span class="app-lbl">GPay</span>
         </a>
 
-        <!-- PhonePe -->
         <a class="app phonepe" href="#" onclick="pay('phonepe');return false;">
           <div class="app-ico">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
@@ -244,7 +262,6 @@
           <span class="app-lbl">PhonePe</span>
         </a>
 
-        <!-- Paytm -->
         <a class="app paytm" href="#" onclick="pay('paytm');return false;">
           <div class="app-ico">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
@@ -257,11 +274,6 @@
         </a>
 
       </div>
-
-      <!-- I PAID BUTTON -->
-      <button class="paid-btn" id="paidBtn" onclick="iPaid()">
-        ✅ I Paid — Add me to Supporters!
-      </button>
     </div>
   </div>
 
@@ -272,20 +284,33 @@
       <span class="wall-count" id="wallCount"></span>
     </div>
     <div class="wall-list" id="wallList">
-      <div class="wall-loading"><div class="spin"></div> Loading supporters...</div>
+      <div class="wall-loading"><div class="spin"></div> Loading...</div>
     </div>
   </div>
 
 </div>
 
+<!-- DONE POPUP (bottom sheet) -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup">
+    <div class="popup-icon">🎉</div>
+    <h2>Payment Done?</h2>
+    <p>Did you complete the payment? Click "Yes" to appear on our Supporters Wall!</p>
+    <div class="popup-amt">You sent <span id="popupAmt">₹20</span> to Peritto ☕</div>
+    <div class="popup-btns">
+      <button class="btn-yes" id="btnYes" onclick="confirmPaid()">✅ Yes, I Paid!</button>
+      <button class="btn-no" onclick="closePopup()">Not yet</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-  const UPI = 'kirankumarr929@okaxis';
+  const UPI  = 'xyd@ybl';
   const PNAME = encodeURIComponent('Peritto');
   const NOTE  = encodeURIComponent('Supporting Peritto');
   let amt = 20;
-  let payClicked = false;
 
   function pick(v, el) {
     amt = v;
@@ -300,37 +325,60 @@
   }
 
   function pay(app) {
-    const a = amt || 20;
-    const pa = encodeURIComponent(UPI);
-    let url;
-    if (app === 'gpay')     url = `gpay://upi/pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
-    else if (app === 'phonepe') url = `phonepe://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
-    else if (app === 'paytm')   url = `paytmmp://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
-
-    payClicked = true;
-    window.location.href = url;
-
-    setTimeout(() => {
-      if (document.hasFocus()) {
-        window.location.href = `upi://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
-        showToast('📱 Opening payment app...', 'blue');
-      }
-    }, 1500);
-  }
-
-  async function iPaid() {
     const name = document.getElementById('supName').value.trim();
-    const msg  = document.getElementById('supMsg').value.trim();
-
     if (!name) {
       showToast('👆 Please enter your name first!', 'blue');
       document.getElementById('supName').focus();
       return;
     }
 
-    const btn = document.getElementById('paidBtn');
+    const a  = amt || 20;
+    const pa = encodeURIComponent(UPI);
+    let url;
+    if (app === 'gpay')         url = `gpay://upi/pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
+    else if (app === 'phonepe') url = `phonepe://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
+    else if (app === 'paytm')   url = `paytmmp://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
+
+    // Open app
+    window.location.href = url;
+
+    // After user comes back to browser — show done popup
+    const onVisible = () => {
+      if (!document.hidden) {
+        document.removeEventListener('visibilitychange', onVisible);
+        setTimeout(showDonePopup, 400);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+
+    // Fallback: show popup after 4s even if visibilitychange didn't fire
+    setTimeout(() => {
+      document.removeEventListener('visibilitychange', onVisible);
+      showDonePopup();
+    }, 4000);
+  }
+
+  function showDonePopup() {
+    document.getElementById('popupAmt').textContent = '₹' + (amt || 20);
+    document.getElementById('popupOverlay').classList.add('open');
+  }
+
+  function closePopup() {
+    document.getElementById('popupOverlay').classList.remove('open');
+  }
+
+  // Close popup on overlay click
+  document.getElementById('popupOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closePopup();
+  });
+
+  async function confirmPaid() {
+    const name = document.getElementById('supName').value.trim();
+    const msg  = document.getElementById('supMsg').value.trim();
+    const btn  = document.getElementById('btnYes');
+
     btn.disabled = true;
-    btn.innerHTML = '<div class="spin"></div> Saving...';
+    btn.innerHTML = '<div class="spin" style="border-top-color:#fff;border-color:rgba(255,255,255,.3)"></div>';
 
     try {
       await db.collection('supporters').add({
@@ -339,25 +387,26 @@
         amount: amt || 20,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
+      closePopup();
       showToast('🎉 Thank you! You\'re on the wall!', 'green');
       document.getElementById('supName').value = '';
       document.getElementById('supMsg').value = '';
-      btn.innerHTML = '✅ I Paid — Add me to Supporters!';
+      btn.innerHTML = '✅ Yes, I Paid!';
       btn.disabled = false;
     } catch(e) {
-      showToast('⚠️ Error saving. Try again!', 'blue');
-      btn.innerHTML = '✅ I Paid — Add me to Supporters!';
+      showToast('⚠️ Error. Please try again!', 'blue');
+      btn.innerHTML = '✅ Yes, I Paid!';
       btn.disabled = false;
     }
   }
 
-  // Load supporters wall
-  function loadSupporters() {
+  // Real-time supporters wall
+  function loadWall() {
     db.collection('supporters')
       .orderBy('createdAt', 'desc')
       .limit(50)
       .onSnapshot(snap => {
-        const list = document.getElementById('wallList');
+        const list  = document.getElementById('wallList');
         const count = document.getElementById('wallCount');
         count.textContent = snap.size ? `${snap.size} supporters` : '';
 
@@ -368,10 +417,10 @@
 
         list.innerHTML = snap.docs.map(doc => {
           const d = doc.data();
-          const initial = (d.name || '?')[0].toUpperCase();
+          const init = (d.name || '?')[0].toUpperCase();
           const time = d.createdAt ? timeAgo(d.createdAt.toDate()) : '';
           return `<div class="supporter">
-            <div class="sup-avatar">${esc(initial)}</div>
+            <div class="sup-avatar">${esc(init)}</div>
             <div class="sup-info">
               <div class="sup-top">
                 <span class="sup-name">${esc(d.name)}</span>
@@ -384,14 +433,14 @@
         }).join('');
       }, () => {
         document.getElementById('wallList').innerHTML =
-          `<div class="wall-empty"><div class="ei">⚠️</div><p>Could not load supporters.</p></div>`;
+          `<div class="wall-empty"><div class="ei">⚠️</div><p>Could not load. Refresh page.</p></div>`;
       });
   }
 
   function timeAgo(date) {
     const s = Math.floor((Date.now() - date) / 1000);
-    if (s < 60) return 'just now';
-    if (s < 3600) return `${Math.floor(s/60)}m ago`;
+    if (s < 60)    return 'just now';
+    if (s < 3600)  return `${Math.floor(s/60)}m ago`;
     if (s < 86400) return `${Math.floor(s/3600)}h ago`;
     return `${Math.floor(s/86400)}d ago`;
   }
@@ -408,7 +457,7 @@
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  loadSupporters();
+  loadWall();
 </script>
 </body>
 </html>
