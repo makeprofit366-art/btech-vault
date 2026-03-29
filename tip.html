@@ -98,7 +98,20 @@
     .app.phonepe .app-lbl{color:#a855f7;}
     .app.paytm .app-lbl{color:#00bae8;}
 
-    /* DONE POPUP */
+    /* PAY NOW BUTTON */
+    .pay-now-btn{
+      width:100%;padding:.95rem;
+      background:linear-gradient(135deg,#f59e0b,#ef4444);
+      border:none;border-radius:14px;
+      font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;
+      color:#fff;cursor:pointer;transition:all .2s;
+      box-shadow:0 4px 20px rgba(245,158,11,.3);
+      display:block;text-align:center;
+    }
+    .pay-now-btn:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(245,158,11,.45);}
+    .pay-now-btn:active{transform:scale(.98);}
+    .pay-note{font-size:.7rem;color:var(--muted);text-align:center;margin-top:.6rem;margin-bottom:.75rem;}
+    .pay-logos{display:flex;justify-content:center;gap:.5rem;align-items:center;}
     .popup-overlay{
       position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;
       display:flex;align-items:flex-end;justify-content:center;
@@ -225,54 +238,44 @@
         <button class="ab" onclick="pick(50,this)">₹50</button>
         <button class="ab" onclick="pick(100,this)">₹100</button>
       </div>
-      <div class="cust">
-        <span class="pre">₹</span>
-        <input type="number" id="cin" placeholder="Custom amount" min="1" value="20" oninput="customPick()"/>
-      </div>
     </div>
 
-    <!-- App Buttons -->
+    <!-- Pay Button -->
     <div class="apps-sec">
-      <div class="sec-lbl" style="margin-bottom:.85rem">Pay with</div>
-      <div class="apps-grid">
-
-        <a class="app gpay" href="#" onclick="pay('gpay');return false;">
-          <div class="app-ico">
-            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
-              <rect width="48" height="48" rx="13" fill="#fff"/>
-              <path d="M24 20.5c1.7 0 2.9.6 3.6 1.3l2.6-2.6C28.5 17.6 26.5 17 24 17c-3.6 0-6.7 2-8.2 5l3.1 2.4C19.7 21.9 21.7 20.5 24 20.5z" fill="#EA4335"/>
-              <path d="M15.5 24c0-.7.1-1.3.3-1.9l-3.1-2.4C12 21 11.5 22.4 11.5 24s.4 3 1.1 4.3l3.1-2.4c-.2-.6-.3-1.2-.3-1.9z" fill="#FBBC05"/>
-              <path d="M24 31.5c-2.3 0-4.3-1.5-5-3.6L15.8 30c1.5 3 4.6 5 8.2 5 2.4 0 4.3-.8 5.8-2.1l-2.8-2.2C26.2 31.2 25.2 31.5 24 31.5z" fill="#34A853"/>
-              <path d="M36 24c0-.6-.1-1.3-.2-1.9H24v4h6.6c-.3 1.4-1.1 2.5-2.2 3.2l2.8 2.2C33.7 29.6 36 27.1 36 24z" fill="#4285F4"/>
-            </svg>
-          </div>
-          <span class="app-lbl">GPay</span>
-        </a>
-
-        <a class="app phonepe" href="#" onclick="pay('phonepe');return false;">
-          <div class="app-ico">
-            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
-              <rect width="48" height="48" rx="13" fill="#5f259f"/>
-              <path d="M13 11h11c5 0 8.5 3.4 8.5 8.5S29 28 24 28h-6v8h-5V11z" fill="#fff"/>
-              <ellipse cx="23" cy="19.5" rx="3.5" ry="4.5" fill="#5f259f"/>
-              <circle cx="35" cy="35" r="7" fill="#fff"/>
-              <text x="35" y="39" text-anchor="middle" font-family="Arial" font-size="7" font-weight="900" fill="#5f259f">Pe</text>
-            </svg>
-          </div>
-          <span class="app-lbl">PhonePe</span>
-        </a>
-
-        <a class="app paytm" href="#" onclick="pay('paytm');return false;">
-          <div class="app-ico">
-            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
-              <rect width="48" height="48" rx="13" fill="#00bae8"/>
-              <rect x="5" y="16" width="38" height="16" rx="4" fill="#fff"/>
-              <text x="24" y="28" text-anchor="middle" font-family="Arial Black,Arial" font-size="9.5" font-weight="900" fill="#00bae8">Paytm</text>
-            </svg>
-          </div>
-          <span class="app-lbl">Paytm</span>
-        </a>
-
+      <button class="pay-now-btn" onclick="payNow()">
+        ☕ Support Peritto — ₹<span id="btnAmt">20</span>
+      </button>
+      <div class="pay-note">Powered by Razorpay · GPay, PhonePe, Paytm, Cards accepted</div>
+      <div class="pay-logos">
+        <!-- GPay -->
+        <svg width="36" height="36" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="48" rx="10" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>
+          <path d="M24 20.5c1.7 0 2.9.6 3.6 1.3l2.6-2.6C28.5 17.6 26.5 17 24 17c-3.6 0-6.7 2-8.2 5l3.1 2.4C19.7 21.9 21.7 20.5 24 20.5z" fill="#EA4335"/>
+          <path d="M15.5 24c0-.7.1-1.3.3-1.9l-3.1-2.4C12 21 11.5 22.4 11.5 24s.4 3 1.1 4.3l3.1-2.4c-.2-.6-.3-1.2-.3-1.9z" fill="#FBBC05"/>
+          <path d="M24 31.5c-2.3 0-4.3-1.5-5-3.6L15.8 30c1.5 3 4.6 5 8.2 5 2.4 0 4.3-.8 5.8-2.1l-2.8-2.2C26.2 31.2 25.2 31.5 24 31.5z" fill="#34A853"/>
+          <path d="M36 24c0-.6-.1-1.3-.2-1.9H24v4h6.6c-.3 1.4-1.1 2.5-2.2 3.2l2.8 2.2C33.7 29.6 36 27.1 36 24z" fill="#4285F4"/>
+        </svg>
+        <!-- PhonePe -->
+        <svg width="36" height="36" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="48" rx="10" fill="#5f259f"/>
+          <path d="M13 11h11c5 0 8.5 3.4 8.5 8.5S29 28 24 28h-6v8h-5V11z" fill="#fff"/>
+          <ellipse cx="23" cy="19.5" rx="3.5" ry="4.5" fill="#5f259f"/>
+          <circle cx="35" cy="35" r="7" fill="#fff"/>
+          <text x="35" y="39" text-anchor="middle" font-family="Arial" font-size="7" font-weight="900" fill="#5f259f">Pe</text>
+        </svg>
+        <!-- Paytm -->
+        <svg width="36" height="36" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="48" rx="10" fill="#00bae8"/>
+          <rect x="5" y="16" width="38" height="16" rx="4" fill="#fff"/>
+          <text x="24" y="28" text-anchor="middle" font-family="Arial Black,Arial" font-size="9.5" font-weight="900" fill="#00bae8">Paytm</text>
+        </svg>
+        <!-- Card -->
+        <svg width="36" height="36" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="48" rx="10" fill="#1f2937"/>
+          <rect x="6" y="14" width="36" height="20" rx="4" fill="#374151"/>
+          <rect x="6" y="20" width="36" height="6" fill="#111827"/>
+          <rect x="10" y="28" width="10" height="3" rx="1" fill="#9ca3af"/>
+        </svg>
       </div>
     </div>
   </div>
@@ -307,61 +310,44 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const UPI  = 'kirankumarr929-1@okaxis';
-  const PNAME = encodeURIComponent('Peritto');
-  const NOTE  = encodeURIComponent('Supporting Peritto');
+  const LINKS = {
+    10:  'https://rzp.io/rzp/Jk9iA0n',
+    20:  'https://rzp.io/rzp/xw8m8CdA',
+    50:  'https://rzp.io/rzp/V0JFsfrC',
+    100: 'https://rzp.io/rzp/YxLHyQs'
+  };
   let amt = 20;
 
   function pick(v, el) {
     amt = v;
     document.querySelectorAll('.ab').forEach(b => b.classList.remove('on'));
     el.classList.add('on');
-    document.getElementById('cin').value = v;
+    document.getElementById('btnAmt').textContent = v;
   }
 
-  function customPick() {
-    amt = parseInt(document.getElementById('cin').value) || 0;
-    document.querySelectorAll('.ab').forEach(b => b.classList.remove('on'));
-  }
-
-  function pay(app) {
+  function payNow() {
     const name = document.getElementById('supName').value.trim();
     if (!name) {
       showToast('👆 Please enter your name first!', 'blue');
       document.getElementById('supName').focus();
       return;
     }
+    const link = LINKS[amt];
+    if (!link) { showToast('⚠️ Please select an amount!', 'blue'); return; }
 
-    const a  = amt || 20;
-    const pa = encodeURIComponent(UPI);
-    const upiBase = `upi://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
+    window.open(link, '_blank');
 
-    let url;
-    if (app === 'gpay')
-      url = `intent://upi/pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}#Intent;scheme=gpay;package=com.google.android.apps.nbu.paisa.user;end`;
-    else if (app === 'phonepe')
-      url = `phonepe://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
-    else if (app === 'paytm')
-      url = `intent://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}#Intent;scheme=paytmmp;package=net.one97.paytm;end`;
-
-    // Try intent, fallback to plain upi://
-    window.location.href = url;
-    setTimeout(() => { if (document.hasFocus()) window.location.href = upiBase; }, 1500);
-
-    // After user comes back to browser — show done popup
     const onVisible = () => {
       if (!document.hidden) {
         document.removeEventListener('visibilitychange', onVisible);
-        setTimeout(showDonePopup, 400);
+        setTimeout(showDonePopup, 600);
       }
     };
     document.addEventListener('visibilitychange', onVisible);
-
-    // Fallback: show popup after 4s even if visibilitychange didn't fire
     setTimeout(() => {
       document.removeEventListener('visibilitychange', onVisible);
       showDonePopup();
-    }, 4000);
+    }, 6000);
   }
 
   function showDonePopup() {
