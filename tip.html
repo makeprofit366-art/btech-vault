@@ -334,13 +334,19 @@
 
     const a  = amt || 20;
     const pa = encodeURIComponent(UPI);
-    let url;
-    if (app === 'gpay')         url = `gpay://upi/pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
-    else if (app === 'phonepe') url = `phonepe://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
-    else if (app === 'paytm')   url = `paytmmp://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
+    const upiBase = `upi://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}`;
 
-    // Open app
+    let url;
+    if (app === 'gpay')
+      url = `intent://upi/pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}#Intent;scheme=gpay;package=com.google.android.apps.nbu.paisa.user;end`;
+    else if (app === 'phonepe')
+      url = `intent://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}#Intent;scheme=phonepe;package=com.phonepe.app;end`;
+    else if (app === 'paytm')
+      url = `intent://pay?pa=${pa}&pn=${PNAME}&am=${a}&cu=INR&tn=${NOTE}#Intent;scheme=paytmmp;package=net.one97.paytm;end`;
+
+    // Try intent, fallback to plain upi://
     window.location.href = url;
+    setTimeout(() => { if (document.hasFocus()) window.location.href = upiBase; }, 1500);
 
     // After user comes back to browser — show done popup
     const onVisible = () => {
