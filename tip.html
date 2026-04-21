@@ -20,7 +20,7 @@
       background:radial-gradient(ellipse 70% 45% at 15% 5%,rgba(245,158,11,.07) 0%,transparent 65%),
                  radial-gradient(ellipse 55% 40% at 85% 90%,rgba(99,102,241,.07) 0%,transparent 60%);}
 
-    nav{position:sticky;top:0;z-index:100;background:rgba(11,13,18,.9);backdrop-filter:blur(14px);
+    nav{position:sticky;top:0;z-index:100;background:rgba(11,13,18,.92);backdrop-filter:blur(14px);
         border-bottom:1px solid var(--border);height:56px;padding:0 1.5rem;
         display:flex;align-items:center;justify-content:space-between;}
     .logo{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);text-decoration:none;}
@@ -29,11 +29,11 @@
           text-decoration:none;padding:.38rem .8rem;border:1px solid var(--border);border-radius:8px;transition:all .2s;}
     .back:hover{color:var(--text);border-color:var(--amber);}
 
-    .hero{position:relative;z-index:1;text-align:center;padding:2.5rem 1.5rem 1.5rem;}
+    .hero{position:relative;z-index:1;text-align:center;padding:2.5rem 1.5rem 1.2rem;}
     .orb-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.1rem;}
     .orb-wrap::before{content:'';position:absolute;inset:-10px;border-radius:50%;
-      border:2px solid rgba(245,158,11,.2);animation:pulse 2.5s ease-in-out infinite;}
-    @keyframes pulse{0%,100%{transform:scale(1);opacity:.4;}50%{transform:scale(1.12);opacity:1;}}
+      border:2px solid rgba(245,158,11,.2);animation:orbpulse 2.5s ease-in-out infinite;}
+    @keyframes orbpulse{0%,100%{transform:scale(1);opacity:.4;}50%{transform:scale(1.12);opacity:1;}}
     .orb{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);
          display:flex;align-items:center;justify-content:center;font-size:1.9rem;
          box-shadow:0 0 36px rgba(245,158,11,.3);}
@@ -46,27 +46,16 @@
     .badge{font-size:.68rem;color:var(--muted);padding:.25rem .65rem;border-radius:20px;
            background:var(--s1);border:1px solid var(--border);}
 
-    /* LIVE TICKER — shows latest supporter */
-    .live-ticker{
-      position:relative;z-index:1;
-      margin:0 auto 0;max-width:440px;padding:0 1.25rem;
-    }
-    .ticker-inner{
-      display:flex;align-items:center;gap:.6rem;
+    .ticker-wrap{position:relative;z-index:1;max-width:440px;margin:.8rem auto 0;padding:0 1.25rem;display:none;}
+    .ticker-inner{display:flex;align-items:center;gap:.6rem;
       background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);
-      border-radius:50px;padding:.45rem .9rem;
-      font-size:.8rem;color:var(--muted);
-      overflow:hidden;
-    }
-    .ticker-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;
+      border-radius:50px;padding:.45rem .9rem;font-size:.8rem;color:var(--muted);}
+    .t-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;
       animation:blink 1.4s ease-in-out infinite;}
     @keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
-    .ticker-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .ticker-text strong{color:var(--amber);}
-    #tickerWrap{display:none;}
 
     .wrap{position:relative;z-index:1;max-width:440px;margin:0 auto;padding:1.25rem 1.25rem 5rem;}
-
     .card{background:var(--s1);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:.85rem;}
     .sec-lbl{font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:.75rem;}
 
@@ -77,20 +66,21 @@
       width:100%;padding:.62rem .95rem;
       background:var(--s2);border:1.5px solid var(--border);border-radius:10px;
       font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);
-      outline:none;transition:all .18s;resize:none;
+      outline:none;transition:border-color .18s;resize:none;
     }
-    .field input:focus,.field textarea:focus{border-color:var(--amber);background:rgba(245,158,11,.04);}
+    .field input:focus,.field textarea:focus{border-color:var(--amber);}
     .field input::placeholder,.field textarea::placeholder{color:var(--muted);}
+    .field input.error{border-color:#ef4444 !important;box-shadow:0 0 0 3px rgba(239,68,68,.15);}
 
     .amt-sec{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);}
-    .amt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin-bottom:.7rem;}
+    .amt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;}
     .ab{background:var(--s2);border:1.5px solid var(--border);border-radius:10px;
-        padding:.6rem .3rem;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;
-        color:var(--muted);cursor:pointer;transition:all .18s;text-align:center;}
+        padding:.65rem .3rem;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;
+        color:var(--muted);cursor:pointer;transition:all .18s;text-align:center;user-select:none;}
     .ab:hover{border-color:var(--amber);color:var(--amber);}
     .ab.on{background:rgba(245,158,11,.1);border-color:var(--amber);color:var(--amber);}
 
-    .apps-sec{padding:1.25rem 1.5rem;}
+    .pay-sec{padding:1.25rem 1.5rem;}
     .pay-now-btn{
       width:100%;padding:.95rem;
       background:linear-gradient(135deg,#f59e0b,#ef4444);
@@ -102,12 +92,11 @@
     }
     .pay-now-btn:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(245,158,11,.45);}
     .pay-now-btn:active{transform:scale(.98);}
-    .pay-note{font-size:.7rem;color:var(--muted);text-align:center;margin-top:.6rem;margin-bottom:.75rem;}
+    .pay-note{font-size:.7rem;color:var(--muted);text-align:center;margin-top:.6rem;margin-bottom:.7rem;}
     .pay-logos{display:flex;justify-content:center;gap:.5rem;align-items:center;}
 
-    /* POPUP */
     .popup-overlay{
-      position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;
+      position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:300;
       display:flex;align-items:flex-end;justify-content:center;
       opacity:0;pointer-events:none;transition:opacity .3s;
     }
@@ -116,105 +105,74 @@
       background:var(--s1);border:1px solid var(--border);
       border-radius:24px 24px 0 0;padding:2rem 1.5rem 2.5rem;
       width:100%;max-width:480px;
-      transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+      transform:translateY(100%);transition:transform .38s cubic-bezier(.34,1.4,.64,1);
     }
     .popup-overlay.open .popup{transform:translateY(0);}
     .popup-icon{font-size:2.5rem;text-align:center;margin-bottom:.75rem;}
-    .popup h2{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;text-align:center;margin-bottom:.4rem;}
+    .popup h2{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:.4rem;}
     .popup p{font-size:.85rem;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:1.5rem;}
-    .popup-amt{
-      background:var(--s2);border:1px solid var(--border);border-radius:12px;
-      padding:.75rem 1rem;text-align:center;margin-bottom:1.25rem;
-      font-size:.88rem;color:var(--muted);
-    }
-    .popup-amt span{color:var(--amber);font-weight:700;font-size:1.1rem;}
+    .popup-amt-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;
+      padding:.75rem 1rem;text-align:center;margin-bottom:1.25rem;font-size:.88rem;color:var(--muted);}
+    .popup-amt-box span{color:var(--amber);font-weight:700;font-size:1.15rem;}
     .popup-btns{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
-    .btn-yes{
-      padding:.8rem;border-radius:12px;border:none;
+    .btn-yes{padding:.85rem;border-radius:12px;border:none;
       background:linear-gradient(135deg,#22c55e,#16a34a);
       font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:#fff;
-      cursor:pointer;transition:all .2s;
-    }
+      cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.4rem;}
     .btn-yes:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(34,197,94,.35);}
-    .btn-yes:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-    .btn-no{
-      padding:.8rem;border-radius:12px;border:1.5px solid var(--border);
+    .btn-yes:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+    .btn-no{padding:.85rem;border-radius:12px;border:1.5px solid var(--border);
       background:transparent;font-family:'DM Sans',sans-serif;font-size:.88rem;
-      font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;
-    }
+      font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
     .btn-no:hover{border-color:var(--amber);color:var(--text);}
 
-    /* ── SUPPORTERS WALL ── */
     .wall-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
-    .wall-head{
-      padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);
-      display:flex;align-items:center;justify-content:space-between;
-    }
-    .wall-head h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:.5rem;}
-    .live-badge{
-      font-size:.6rem;font-weight:700;color:#22c55e;
+    .wall-head{padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);
+               display:flex;align-items:center;justify-content:space-between;}
+    .wall-head h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;
+                  display:flex;align-items:center;gap:.5rem;}
+    .live-badge{font-size:.6rem;font-weight:700;color:#22c55e;
       background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);
       padding:.18rem .5rem;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;
-      display:flex;align-items:center;gap:.3rem;
-    }
-    .live-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:blink 1.2s ease-in-out infinite;}
+      display:inline-flex;align-items:center;gap:.3rem;}
+    .l-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:blink 1.2s ease-in-out infinite;}
     .wall-count{font-size:.75rem;color:var(--amber);font-weight:600;}
     .wall-list{padding:.5rem 1rem;}
-
-    /* supporter row */
-    .supporter{
-      display:flex;align-items:flex-start;gap:.75rem;
-      padding:.85rem .5rem;border-bottom:1px solid var(--border);
-    }
+    .supporter{display:flex;align-items:flex-start;gap:.75rem;
+               padding:.85rem .5rem;border-bottom:1px solid var(--border);}
     .supporter:last-child{border-bottom:none;}
-
-    /* NEW: slide-in animation for fresh entries */
-    .supporter.new-entry{
-      animation:slideIn .5s cubic-bezier(.34,1.56,.64,1) forwards;
-      background:rgba(245,158,11,.05);border-radius:10px;
-    }
-    @keyframes slideIn{
-      from{opacity:0;transform:translateX(-16px);}
-      to{opacity:1;transform:translateX(0);}
-    }
-    /* fade out the highlight after 3s */
-    .supporter.new-entry.fade-bg{
-      transition:background 1.5s ease;
-      background:transparent;
-    }
-
-    .sup-avatar{
-      width:38px;height:38px;border-radius:50%;
-      background:linear-gradient(135deg,#f59e0b,#ef4444);
-      display:flex;align-items:center;justify-content:center;
-      font-size:1rem;font-weight:700;color:#fff;flex-shrink:0;font-family:'Syne',sans-serif;
-    }
+    @keyframes slideIn{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:none;}}
+    .sup-new{animation:slideIn .45s cubic-bezier(.34,1.4,.64,1) forwards;
+             background:rgba(245,158,11,.06);border-radius:10px;}
+    .sup-new.fade-bg{transition:background 1.8s ease;background:transparent;}
+    .sup-av{width:40px;height:40px;border-radius:50%;
+            background:linear-gradient(135deg,#f59e0b,#ef4444);
+            display:flex;align-items:center;justify-content:center;
+            font-size:1.05rem;font-weight:700;color:#fff;flex-shrink:0;font-family:'Syne',sans-serif;}
     .sup-info{flex:1;min-width:0;}
     .sup-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.2rem;}
     .sup-name{font-size:.88rem;font-weight:600;color:var(--text);}
-    .sup-amt{
-      font-size:.75rem;font-weight:700;color:#22c55e;
-      background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);
-      padding:.1rem .45rem;border-radius:20px;
-    }
-    .sup-msg{font-size:.8rem;color:var(--muted);line-height:1.5;word-break:break-word;}
-    .sup-time{font-size:.68rem;color:#3a3f52;margin-top:.25rem;}
-
+    .sup-amt{font-size:.73rem;font-weight:700;color:#22c55e;
+             background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);
+             padding:.12rem .45rem;border-radius:20px;}
+    .sup-msg{font-size:.8rem;color:var(--muted);line-height:1.5;word-break:break-word;margin-top:.15rem;}
+    .sup-time{font-size:.68rem;color:#3a3f52;margin-top:.22rem;}
     .wall-empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);}
     .wall-empty .ei{font-size:2rem;margin-bottom:.5rem;}
     .wall-empty p{font-size:.82rem;}
-    .wall-loading{text-align:center;padding:2rem;color:var(--muted);font-size:.82rem;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+    .wall-loading{text-align:center;padding:2rem;color:var(--muted);font-size:.82rem;
+                  display:flex;align-items:center;justify-content:center;gap:.5rem;}
 
-    .spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0;}
+    .spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--amber);
+          border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0;}
     @keyframes spin{to{transform:rotate(360deg);}}
-
     .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(60px);
-           padding:.6rem 1.3rem;border-radius:50px;font-size:.83rem;font-weight:600;
-           z-index:999;opacity:0;transition:all .3s;white-space:nowrap;color:#fff;}
-    .toast.green{background:var(--success);}
+           padding:.6rem 1.4rem;border-radius:50px;font-size:.84rem;font-weight:600;
+           z-index:999;opacity:0;transition:all .3s;white-space:nowrap;color:#fff;pointer-events:none;}
+    .toast.green{background:#16a34a;}
     .toast.blue{background:#3b82f6;}
+    .toast.red{background:#dc2626;}
     .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
-
     @media(max-width:380px){.amt-grid{grid-template-columns:repeat(2,1fr);}}
   </style>
 </head>
@@ -236,29 +194,25 @@
   </div>
 </div>
 
-<!-- LIVE TICKER: shows most recent supporter -->
-<div class="live-ticker" id="tickerWrap">
+<div class="ticker-wrap" id="tickerWrap">
   <div class="ticker-inner">
-    <div class="ticker-dot"></div>
+    <div class="t-dot"></div>
     <div class="ticker-text" id="tickerText"></div>
   </div>
 </div>
 
 <div class="wrap">
-
   <div class="card">
-    <!-- Name & Message -->
     <div class="form-sec">
       <div class="sec-lbl">✏️ Your Details</div>
       <div class="field">
-        <input type="text" id="supName" placeholder="Your name (e.g. Ravi Kumar)" maxlength="40"/>
+        <input type="text" id="supName" placeholder="Your name (e.g. Ravi Kumar)" maxlength="40" autocomplete="name"/>
       </div>
       <div class="field">
         <textarea id="supMsg" rows="2" placeholder="Leave a message (optional)..." maxlength="120"></textarea>
       </div>
     </div>
 
-    <!-- Amount -->
     <div class="amt-sec">
       <div class="sec-lbl">☕ Choose Amount</div>
       <div class="amt-grid">
@@ -269,65 +223,38 @@
       </div>
     </div>
 
-    <!-- Pay Button -->
-    <div class="apps-sec">
+    <div class="pay-sec">
       <button class="pay-now-btn" onclick="payNow()">
         ☕ Support Peritto — ₹<span id="btnAmt">20</span>
       </button>
-      <div class="pay-note">Powered by Razorpay · GPay, PhonePe, Paytm, Cards accepted</div>
+      <div class="pay-note">Powered by Razorpay · GPay, PhonePe, Paytm, Cards &amp; UPI accepted</div>
       <div class="pay-logos">
-        <svg width="36" height="36" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-          <rect width="48" height="48" rx="10" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>
-          <path d="M24 20.5c1.7 0 2.9.6 3.6 1.3l2.6-2.6C28.5 17.6 26.5 17 24 17c-3.6 0-6.7 2-8.2 5l3.1 2.4C19.7 21.9 21.7 20.5 24 20.5z" fill="#EA4335"/>
-          <path d="M15.5 24c0-.7.1-1.3.3-1.9l-3.1-2.4C12 21 11.5 22.4 11.5 24s.4 3 1.1 4.3l3.1-2.4c-.2-.6-.3-1.2-.3-1.9z" fill="#FBBC05"/>
-          <path d="M24 31.5c-2.3 0-4.3-1.5-5-3.6L15.8 30c1.5 3 4.6 5 8.2 5 2.4 0 4.3-.8 5.8-2.1l-2.8-2.2C26.2 31.2 25.2 31.5 24 31.5z" fill="#34A853"/>
-          <path d="M36 24c0-.6-.1-1.3-.2-1.9H24v4h6.6c-.3 1.4-1.1 2.5-2.2 3.2l2.8 2.2C33.7 29.6 36 27.1 36 24z" fill="#4285F4"/>
-        </svg>
-        <svg width="36" height="36" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-          <rect width="48" height="48" rx="10" fill="#5f259f"/>
-          <path d="M13 11h11c5 0 8.5 3.4 8.5 8.5S29 28 24 28h-6v8h-5V11z" fill="#fff"/>
-          <ellipse cx="23" cy="19.5" rx="3.5" ry="4.5" fill="#5f259f"/>
-          <circle cx="35" cy="35" r="7" fill="#fff"/>
-          <text x="35" y="39" text-anchor="middle" font-family="Arial" font-size="7" font-weight="900" fill="#5f259f">Pe</text>
-        </svg>
-        <svg width="36" height="36" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-          <rect width="48" height="48" rx="10" fill="#00bae8"/>
-          <rect x="5" y="16" width="38" height="16" rx="4" fill="#fff"/>
-          <text x="24" y="28" text-anchor="middle" font-family="Arial Black,Arial" font-size="9.5" font-weight="900" fill="#00bae8">Paytm</text>
-        </svg>
-        <svg width="36" height="36" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-          <rect width="48" height="48" rx="10" fill="#1f2937"/>
-          <rect x="6" y="14" width="36" height="20" rx="4" fill="#374151"/>
-          <rect x="6" y="20" width="36" height="6" fill="#111827"/>
-          <rect x="10" y="28" width="10" height="3" rx="1" fill="#9ca3af"/>
-        </svg>
+        <svg width="36" height="36" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#fff" stroke="#e5e7eb" stroke-width="1"/><path d="M24 20.5c1.7 0 2.9.6 3.6 1.3l2.6-2.6C28.5 17.6 26.5 17 24 17c-3.6 0-6.7 2-8.2 5l3.1 2.4C19.7 21.9 21.7 20.5 24 20.5z" fill="#EA4335"/><path d="M15.5 24c0-.7.1-1.3.3-1.9l-3.1-2.4C12 21 11.5 22.4 11.5 24s.4 3 1.1 4.3l3.1-2.4c-.2-.6-.3-1.2-.3-1.9z" fill="#FBBC05"/><path d="M24 31.5c-2.3 0-4.3-1.5-5-3.6L15.8 30c1.5 3 4.6 5 8.2 5 2.4 0 4.3-.8 5.8-2.1l-2.8-2.2C26.2 31.2 25.2 31.5 24 31.5z" fill="#34A853"/><path d="M36 24c0-.6-.1-1.3-.2-1.9H24v4h6.6c-.3 1.4-1.1 2.5-2.2 3.2l2.8 2.2C33.7 29.6 36 27.1 36 24z" fill="#4285F4"/></svg>
+        <svg width="36" height="36" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#5f259f"/><path d="M13 11h11c5 0 8.5 3.4 8.5 8.5S29 28 24 28h-6v8h-5V11z" fill="#fff"/><ellipse cx="23" cy="19.5" rx="3.5" ry="4.5" fill="#5f259f"/><circle cx="35" cy="35" r="7" fill="#fff"/><text x="35" y="39" text-anchor="middle" font-family="Arial" font-size="7" font-weight="900" fill="#5f259f">Pe</text></svg>
+        <svg width="36" height="36" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#00bae8"/><rect x="5" y="16" width="38" height="16" rx="4" fill="#fff"/><text x="24" y="28" text-anchor="middle" font-family="Arial Black,Arial" font-size="9.5" font-weight="900" fill="#00bae8">Paytm</text></svg>
+        <svg width="36" height="36" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#1f2937"/><rect x="6" y="14" width="36" height="20" rx="4" fill="#374151"/><rect x="6" y="20" width="36" height="6" fill="#111827"/><rect x="10" y="28" width="10" height="3" rx="1" fill="#9ca3af"/></svg>
       </div>
     </div>
   </div>
 
-  <!-- SUPPORTERS WALL -->
   <div class="wall-card">
     <div class="wall-head">
-      <h3>
-        💛 Supporters Wall
-        <span class="live-badge"><span class="live-dot"></span>LIVE</span>
-      </h3>
+      <h3>💛 Supporters Wall <span class="live-badge"><span class="l-dot"></span>LIVE</span></h3>
       <span class="wall-count" id="wallCount"></span>
     </div>
     <div class="wall-list" id="wallList">
-      <div class="wall-loading"><div class="spin"></div>&nbsp;Loading supporters...</div>
+      <div class="wall-loading"><div class="spin"></div>&nbsp;Loading...</div>
     </div>
   </div>
-
 </div>
 
-<!-- DONE POPUP -->
+<!-- POPUP -->
 <div class="popup-overlay" id="popupOverlay">
   <div class="popup">
     <div class="popup-icon">🎉</div>
     <h2>Payment Done?</h2>
-    <p>Did you complete the payment? Click "Yes" to appear on our Supporters Wall!</p>
-    <div class="popup-amt">You sent <span id="popupAmt">₹20</span> to Peritto ☕</div>
+    <p>Did you complete the payment? Tap "Yes, I Paid!" to appear on our Supporters Wall!</p>
+    <div class="popup-amt-box">You sent <span id="popupAmt">₹20</span> to Peritto ☕</div>
     <div class="popup-btns">
       <button class="btn-yes" id="btnYes" onclick="confirmPaid()">✅ Yes, I Paid!</button>
       <button class="btn-no" onclick="closePopup()">Not yet</button>
@@ -338,188 +265,215 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const LINKS = {
-    10:  'https://rzp.io/rzp/Jk9iA0n',
-    20:  'https://rzp.io/rzp/xw8m8CdA',
-    50:  'https://rzp.io/rzp/V0JFsfrC',
-    100: 'https://rzp.io/rzp/YxLHyQs'
-  };
-  let amt = 20;
-  let knownIds = new Set();     // track IDs already rendered
-  let isFirstLoad = true;       // skip animation on initial render
+const LINKS = {
+  10:  'https://rzp.io/rzp/Jk9iA0n',
+  20:  'https://rzp.io/rzp/xw8m8CdA',
+  50:  'https://rzp.io/rzp/V0JFsfrC',
+  100: 'https://rzp.io/rzp/YxLHyQs'
+};
 
-  function pick(v, el) {
-    amt = v;
-    document.querySelectorAll('.ab').forEach(b => b.classList.remove('on'));
-    el.classList.add('on');
-    document.getElementById('btnAmt').textContent = v;
+let selectedAmt = 20;
+let popupShown  = false;
+let visHandler  = null;
+let fallbackTimer = null;
+let knownIds    = new Set();
+let firstLoad   = true;
+
+function pick(v, el) {
+  selectedAmt = v;
+  document.querySelectorAll('.ab').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('btnAmt').textContent = v;
+}
+
+function payNow() {
+  const nameEl = document.getElementById('supName');
+  const name = nameEl.value.trim();
+  if (!name) {
+    nameEl.classList.add('error');
+    nameEl.focus();
+    showToast('👆 Enter your name first!', 'blue');
+    setTimeout(() => nameEl.classList.remove('error'), 2500);
+    return;
   }
+  const link = LINKS[selectedAmt];
+  if (!link) { showToast('⚠️ Select an amount!', 'blue'); return; }
 
-  function payNow() {
-    const name = document.getElementById('supName').value.trim();
-    if (!name) {
-      showToast('👆 Please enter your name first!', 'blue');
-      document.getElementById('supName').focus();
-      return;
+  // Clean up any previous listeners/timers
+  popupShown = false;
+  if (visHandler) { document.removeEventListener('visibilitychange', visHandler); visHandler = null; }
+  if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+
+  window.open(link, '_blank');
+
+  visHandler = function() {
+    if (!document.hidden && !popupShown) {
+      popupShown = true;
+      document.removeEventListener('visibilitychange', visHandler);
+      visHandler = null;
+      if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+      setTimeout(showDonePopup, 600);
     }
-    const link = LINKS[amt];
-    if (!link) { showToast('⚠️ Please select an amount!', 'blue'); return; }
+  };
+  document.addEventListener('visibilitychange', visHandler);
 
-    window.open(link, '_blank');
-
-    const onVisible = () => {
-      if (!document.hidden) {
-        document.removeEventListener('visibilitychange', onVisible);
-        setTimeout(showDonePopup, 600);
-      }
-    };
-    document.addEventListener('visibilitychange', onVisible);
-    setTimeout(() => {
-      document.removeEventListener('visibilitychange', onVisible);
+  fallbackTimer = setTimeout(() => {
+    fallbackTimer = null;
+    if (!popupShown) {
+      popupShown = true;
+      if (visHandler) { document.removeEventListener('visibilitychange', visHandler); visHandler = null; }
       showDonePopup();
-    }, 6000);
+    }
+  }, 9000);
+}
+
+function showDonePopup() {
+  document.getElementById('popupAmt').textContent = '₹' + selectedAmt;
+  document.getElementById('popupOverlay').classList.add('open');
+}
+
+function closePopup() {
+  document.getElementById('popupOverlay').classList.remove('open');
+  popupShown = false;
+}
+
+document.getElementById('popupOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closePopup();
+});
+
+async function confirmPaid() {
+  const name = document.getElementById('supName').value.trim();
+  const msg  = document.getElementById('supMsg').value.trim();
+  const btn  = document.getElementById('btnYes');
+  if (!name) { showToast('Enter your name!', 'red'); closePopup(); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin" style="border-top-color:#fff;border-color:rgba(255,255,255,.25);width:18px;height:18px;"></div>';
+
+  try {
+    await db.collection('supporters').add({
+      name,
+      message: msg,
+      amount: selectedAmt,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    closePopup();
+    showToast('🎉 You\'re on the wall! Thank you!', 'green');
+    document.getElementById('supName').value = '';
+    document.getElementById('supMsg').value  = '';
+  } catch(err) {
+    console.error(err);
+    showToast('⚠️ Could not save. Try again.', 'red');
+  } finally {
+    btn.innerHTML = '✅ Yes, I Paid!';
+    btn.disabled  = false;
+  }
+}
+
+/* ── Live Wall ──
+   Primary: onSnapshot with orderBy createdAt desc
+   Fallback on index error: get() without orderBy, client-sort
+*/
+function renderDocs(docs, listEl, countEl, isSnap) {
+  if (!docs.length) {
+    listEl.innerHTML = `<div class="wall-empty"><div class="ei">☕</div><p>Be the first to support Peritto!</p></div>`;
+    countEl.textContent = '';
+    document.getElementById('tickerWrap').style.display = 'none';
+    return;
   }
 
-  function showDonePopup() {
-    document.getElementById('popupAmt').textContent = '₹' + (amt || 20);
-    document.getElementById('popupOverlay').classList.add('open');
-  }
-
-  function closePopup() {
-    document.getElementById('popupOverlay').classList.remove('open');
-  }
-
-  document.getElementById('popupOverlay').addEventListener('click', function(e) {
-    if (e.target === this) closePopup();
+  const sorted = [...docs].sort((a,b) => {
+    const ta = (a.data ? a.data() : a).createdAt?.seconds || 0;
+    const tb = (b.data ? b.data() : b).createdAt?.seconds || 0;
+    return tb - ta;
   });
 
-  async function confirmPaid() {
-    const name = document.getElementById('supName').value.trim();
-    const msg  = document.getElementById('supMsg').value.trim();
-    const btn  = document.getElementById('btnYes');
-
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spin" style="border-top-color:#fff;border-color:rgba(255,255,255,.3)"></div>';
-
-    try {
-      await db.collection('supporters').add({
-        name: name,
-        message: msg || '',
-        amount: amt || 20,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      closePopup();
-      showToast('🎉 You\'re on the wall!', 'green');
-      document.getElementById('supName').value = '';
-      document.getElementById('supMsg').value = '';
-      btn.innerHTML = '✅ Yes, I Paid!';
-      btn.disabled = false;
-    } catch(e) {
-      showToast('⚠️ Error. Please try again!', 'blue');
-      btn.innerHTML = '✅ Yes, I Paid!';
-      btn.disabled = false;
-    }
+  const newIds = new Set();
+  if (isSnap) {
+    sorted.forEach(doc => { if (!knownIds.has(doc.id)) newIds.add(doc.id); });
   }
 
-  /* ── LIVE WALL ──
-     onSnapshot fires whenever supporters collection changes.
-     New entries get a slide-in animation + background highlight.
-  */
-  function loadWall() {
-    db.collection('supporters')
-      .orderBy('createdAt', 'desc')
-      .limit(50)
-      .onSnapshot(snap => {
-        const list  = document.getElementById('wallList');
-        const count = document.getElementById('wallCount');
+  countEl.textContent = sorted.length + (sorted.length === 1 ? ' supporter' : ' supporters');
 
-        if (!snap.size) {
-          knownIds.clear();
-          isFirstLoad = false;
-          list.innerHTML = `<div class="wall-empty"><div class="ei">☕</div><p>Be the first to support Peritto!</p></div>`;
-          count.textContent = '';
-          document.getElementById('tickerWrap').style.display = 'none';
-          return;
-        }
+  listEl.innerHTML = sorted.map(doc => {
+    const d    = doc.data ? doc.data() : doc;
+    const id   = doc.id;
+    const init = (d.name || '?')[0].toUpperCase();
+    const time = d.createdAt ? timeAgo(d.createdAt.toDate()) : '';
+    const isNew = !firstLoad && newIds.has(id);
+    return `<div class="supporter${isNew?' sup-new':''}" id="sup-${id}">
+      <div class="sup-av">${esc(init)}</div>
+      <div class="sup-info">
+        <div class="sup-top">
+          <span class="sup-name">${esc(d.name)}</span>
+          <span class="sup-amt">+₹${d.amount||'?'}</span>
+        </div>
+        ${d.message ? `<div class="sup-msg">"${esc(d.message)}"</div>` : ''}
+        <div class="sup-time">${time}</div>
+      </div>
+    </div>`;
+  }).join('');
 
-        count.textContent = snap.size + ' supporters';
+  if (!firstLoad && newIds.size) {
+    newIds.forEach(id => setTimeout(() => {
+      const el = document.getElementById('sup-' + id);
+      if (el) el.classList.add('fade-bg');
+    }, 3000));
+  }
 
-        // Find newly added IDs (not in knownIds)
-        const newIds = new Set();
-        snap.docs.forEach(doc => {
-          if (!knownIds.has(doc.id)) newIds.add(doc.id);
+  const latest = (sorted[0].data ? sorted[0].data() : sorted[0]);
+  if (latest) {
+    document.getElementById('tickerText').innerHTML =
+      `<strong>${esc(latest.name)}</strong> just supported with ₹${latest.amount} ☕`;
+    document.getElementById('tickerWrap').style.display = 'block';
+  }
+
+  if (isSnap) sorted.forEach(doc => knownIds.add(doc.id));
+  firstLoad = false;
+}
+
+function loadWall() {
+  const list  = document.getElementById('wallList');
+  const count = document.getElementById('wallCount');
+
+  db.collection('supporters')
+    .orderBy('createdAt', 'desc')
+    .limit(100)
+    .onSnapshot(snap => {
+      renderDocs(snap.docs, list, count, true);
+    }, err => {
+      // Index missing or permission error — fall back to simple get()
+      console.warn('onSnapshot error, falling back:', err.message);
+      db.collection('supporters').limit(100).get()
+        .then(snap2 => renderDocs(snap2.docs, list, count, false))
+        .catch(() => {
+          list.innerHTML = `<div class="wall-empty"><div class="ei">⚠️</div><p>Could not load. Please refresh.</p></div>`;
         });
+    });
+}
 
-        // Re-render full list
-        list.innerHTML = snap.docs.map(doc => {
-          const d    = doc.data();
-          const init = (d.name || '?')[0].toUpperCase();
-          const time = d.createdAt ? timeAgo(d.createdAt.toDate()) : '';
-          const isNew = !isFirstLoad && newIds.has(doc.id);
-          return `<div class="supporter${isNew ? ' new-entry' : ''}" id="sup-${doc.id}">
-            <div class="sup-avatar">${esc(init)}</div>
-            <div class="sup-info">
-              <div class="sup-top">
-                <span class="sup-name">${esc(d.name)}</span>
-                <span class="sup-amt">+₹${d.amount || '?'}</span>
-              </div>
-              ${d.message ? `<div class="sup-msg">"${esc(d.message)}"</div>` : ''}
-              <div class="sup-time">${time}</div>
-            </div>
-          </div>`;
-        }).join('');
+function timeAgo(date) {
+  const s = Math.floor((Date.now() - date) / 1000);
+  if (s < 5)     return 'just now';
+  if (s < 60)    return s + 's ago';
+  if (s < 3600)  return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
 
-        // Fade out the highlight on new entries after 3s
-        if (!isFirstLoad && newIds.size) {
-          newIds.forEach(id => {
-            setTimeout(() => {
-              const el = document.getElementById('sup-' + id);
-              if (el) el.classList.add('fade-bg');
-            }, 3000);
-          });
-        }
+function showToast(msg, type='green') {
+  const t = document.getElementById('toast');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
 
-        // Update live ticker with most recent supporter
-        const latest = snap.docs[0]?.data();
-        if (latest) {
-          const ticker = document.getElementById('tickerWrap');
-          document.getElementById('tickerText').innerHTML =
-            `<strong>${esc(latest.name)}</strong> just supported with ₹${latest.amount} ☕`;
-          ticker.style.display = 'block';
-        }
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
-        // Register all current IDs as known
-        snap.docs.forEach(doc => knownIds.add(doc.id));
-        isFirstLoad = false;
-
-      }, err => {
-        console.error('Wall error:', err);
-        document.getElementById('wallList').innerHTML =
-          `<div class="wall-empty"><div class="ei">⚠️</div><p>Could not load. Refresh page.</p></div>`;
-      });
-  }
-
-  function timeAgo(date) {
-    const s = Math.floor((Date.now() - date) / 1000);
-    if (s < 60)    return 'just now';
-    if (s < 3600)  return `${Math.floor(s/60)}m ago`;
-    if (s < 86400) return `${Math.floor(s/3600)}h ago`;
-    return `${Math.floor(s/86400)}d ago`;
-  }
-
-  function showToast(msg, type = 'green') {
-    const t = document.getElementById('toast');
-    t.className = `toast ${type}`;
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
-
-  function esc(s) {
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  loadWall();
+loadWall();
 </script>
 </body>
 </html>
