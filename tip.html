@@ -3,152 +3,239 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Support Peritto ☕</title>
+  <title>Support BTechVault ☕</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
   <style>
-    :root{--bg:#0b0d12;--s1:#13161f;--s2:#1a1d28;--border:#252836;--amber:#f59e0b;--text:#f0f2f8;--muted:#7a8099;}
+    :root{--bg:#0b0d12;--s1:#13161f;--s2:#1a1d28;--border:#252836;--amber:#f59e0b;--text:#f0f2f8;--muted:#7a8099;--green:#22c55e;}
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-      background:radial-gradient(ellipse 70% 45% at 15% 5%,rgba(245,158,11,.07) 0%,transparent 65%),
-                 radial-gradient(ellipse 55% 40% at 85% 90%,rgba(99,102,241,.07) 0%,transparent 60%);}
-    nav{position:sticky;top:0;z-index:100;background:rgba(11,13,18,.92);backdrop-filter:blur(14px);
-        border-bottom:1px solid var(--border);height:56px;padding:0 1.5rem;
-        display:flex;align-items:center;justify-content:space-between;}
-    .logo{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);text-decoration:none;}
-    .logo em{color:var(--amber);font-style:normal;}
-    .back{display:flex;align-items:center;gap:.35rem;font-size:.8rem;color:var(--muted);
-          text-decoration:none;padding:.38rem .8rem;border:1px solid var(--border);border-radius:8px;transition:all .2s;}
-    .back:hover{color:var(--text);border-color:var(--amber);}
+    body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+      background:
+        radial-gradient(ellipse 70% 45% at 15% 5%,rgba(245,158,11,.07) 0%,transparent 65%),
+        radial-gradient(ellipse 55% 40% at 85% 90%,rgba(99,102,241,.07) 0%,transparent 60%);
+    }
+
+    /* NAV */
+    nav{
+      position:sticky;top:0;z-index:100;
+      background:rgba(11,13,18,.92);backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--border);
+      height:58px;padding:0 1.5rem;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .logo{
+      text-decoration:none;display:flex;align-items:center;gap:0.4rem;
+    }
+    .logo-mark{
+      width:30px;height:30px;
+      background:linear-gradient(135deg,#4338ca,#7c3aed);
+      border-radius:9px;display:flex;align-items:center;justify-content:center;
+      font-size:0.85rem;position:relative;overflow:hidden;flex-shrink:0;
+    }
+    .logo-mark::after{
+      content:'';position:absolute;top:-50%;left:-60%;width:60%;height:200%;
+      background:rgba(255,255,255,0.3);transform:skewX(-20deg);
+      animation:logoShine 3s ease-in-out infinite;
+    }
+    @keyframes logoShine{0%,100%{left:-60%;opacity:0;}40%{opacity:1;}60%{left:120%;opacity:0;}}
+    .logo-text{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--text);}
+    .logo-text em{font-style:normal;color:var(--amber);}
+    .back-btn{
+      display:flex;align-items:center;gap:.35rem;
+      font-size:.8rem;color:var(--muted);
+      text-decoration:none;padding:.38rem .8rem;
+      border:1px solid var(--border);border-radius:8px;transition:all .2s;
+    }
+    .back-btn:hover{color:var(--text);border-color:var(--amber);}
+
+    /* HERO */
     .hero{position:relative;z-index:1;text-align:center;padding:2.5rem 1.5rem 1.2rem;}
     .orb-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.1rem;}
-    .orb-wrap::before{content:'';position:absolute;inset:-10px;border-radius:50%;
-      border:2px solid rgba(245,158,11,.2);animation:orbpulse 2.5s ease-in-out infinite;}
+    .orb-wrap::before{
+      content:'';position:absolute;inset:-10px;border-radius:50%;
+      border:2px solid rgba(245,158,11,.2);animation:orbpulse 2.5s ease-in-out infinite;
+    }
     @keyframes orbpulse{0%,100%{transform:scale(1);opacity:.4;}50%{transform:scale(1.12);opacity:1;}}
-    .orb{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);
-         display:flex;align-items:center;justify-content:center;font-size:1.9rem;box-shadow:0 0 36px rgba(245,158,11,.3);}
-    .hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:.5rem;
-             background:linear-gradient(135deg,#fff 0%,#f59e0b 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .orb{
+      width:68px;height:68px;border-radius:50%;
+      background:linear-gradient(135deg,#f59e0b,#ef4444);
+      display:flex;align-items:center;justify-content:center;font-size:1.9rem;
+      box-shadow:0 0 36px rgba(245,158,11,.3);
+    }
+    .hero h1{
+      font-family:'Syne',sans-serif;
+      font-size:clamp(1.6rem,5vw,2.4rem);
+      font-weight:800;line-height:1.15;margin-bottom:.5rem;
+      background:linear-gradient(135deg,#fff 0%,#f59e0b 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
     .hero p{font-size:.88rem;color:var(--muted);max-width:360px;margin:0 auto;line-height:1.65;}
     .badges{display:flex;justify-content:center;gap:.45rem;flex-wrap:wrap;margin-top:.85rem;}
     .badge{font-size:.68rem;color:var(--muted);padding:.25rem .65rem;border-radius:20px;background:var(--s1);border:1px solid var(--border);}
+
+    /* LIVE TICKER */
     .ticker-wrap{position:relative;z-index:1;max-width:440px;margin:.8rem auto 0;padding:0 1.25rem;display:none;}
-    .ticker-inner{display:flex;align-items:center;gap:.6rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);
-      border-radius:50px;padding:.45rem .9rem;font-size:.8rem;color:var(--muted);}
+    .ticker-inner{
+      display:flex;align-items:center;gap:.6rem;
+      background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);
+      border-radius:50px;padding:.45rem .9rem;font-size:.8rem;color:var(--muted);
+    }
     .t-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;animation:blink 1.4s ease-in-out infinite;}
     @keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
     .ticker-text strong{color:var(--amber);}
+
+    /* FORM CARD */
     .wrap{position:relative;z-index:1;max-width:440px;margin:0 auto;padding:1.25rem 1.25rem 5rem;}
     .card{background:var(--s1);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:.85rem;}
-    .sec-lbl{font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:.75rem;}
+    .sec-lbl{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:.75rem;}
     .form-sec{padding:1.35rem 1.5rem;border-bottom:1px solid var(--border);}
     .field{margin-bottom:.65rem;}
     .field:last-child{margin-bottom:0;}
-    .field input,.field textarea{width:100%;padding:.62rem .95rem;background:var(--s2);border:1.5px solid var(--border);border-radius:10px;
-      font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border-color .18s;resize:none;}
+    .field input,.field textarea{
+      width:100%;padding:.65rem 1rem;
+      background:var(--s2);border:1.5px solid var(--border);border-radius:10px;
+      font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--text);
+      outline:none;transition:border-color .18s;resize:none;
+    }
     .field input:focus,.field textarea:focus{border-color:var(--amber);}
     .field input::placeholder,.field textarea::placeholder{color:var(--muted);}
-    .field input.error{border-color:#ef4444 !important;box-shadow:0 0 0 3px rgba(239,68,68,.15);}
+    .field input.shake{animation:shake .35s ease;}
+    @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+
+    /* AMOUNT */
     .amt-sec{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);}
     .amt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin-bottom:.65rem;}
-    .ab{background:var(--s2);border:1.5px solid var(--border);border-radius:10px;padding:.65rem .3rem;
-        font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;color:var(--muted);
-        cursor:pointer;transition:all .18s;text-align:center;user-select:none;}
+    .ab{
+      background:var(--s2);border:1.5px solid var(--border);border-radius:10px;
+      padding:.65rem .3rem;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600;
+      color:var(--muted);cursor:pointer;transition:all .18s;text-align:center;user-select:none;
+    }
     .ab:hover{border-color:var(--amber);color:var(--amber);}
     .ab.on{background:rgba(245,158,11,.1);border-color:var(--amber);color:var(--amber);}
     .custom-wrap{position:relative;}
-    .custom-pre{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;font-size:.9rem;pointer-events:none;}
-    .custom-input{width:100%;padding:.62rem .95rem .62rem 1.8rem;background:var(--s2);border:1.5px solid var(--border);border-radius:10px;
-      font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border-color .18s;}
+    .custom-pre{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;pointer-events:none;}
+    .custom-input{
+      width:100%;padding:.62rem 1rem .62rem 1.8rem;
+      background:var(--s2);border:1.5px solid var(--border);border-radius:10px;
+      font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border-color .18s;
+    }
     .custom-input:focus{border-color:var(--amber);}
     .custom-input::placeholder{color:var(--muted);}
     .custom-input::-webkit-inner-spin-button,.custom-input::-webkit-outer-spin-button{-webkit-appearance:none;}
+
+    /* PAY BUTTON */
     .pay-sec{padding:1.25rem 1.5rem;}
-    .pay-now-btn{width:100%;padding:.95rem;background:linear-gradient(135deg,#f59e0b,#ef4444);border:none;border-radius:14px;
-      font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:#fff;cursor:pointer;transition:all .2s;
-      box-shadow:0 4px 20px rgba(245,158,11,.3);display:block;text-align:center;}
+    .pay-now-btn{
+      width:100%;padding:.95rem;
+      background:linear-gradient(135deg,#f59e0b,#ef4444);border:none;border-radius:14px;
+      font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:#fff;
+      cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(245,158,11,.3);
+      display:flex;align-items:center;justify-content:center;gap:0.5rem;
+    }
     .pay-now-btn:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(245,158,11,.45);}
     .pay-now-btn:active{transform:scale(.98);}
+    .pay-now-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
     .pay-note{font-size:.7rem;color:var(--muted);text-align:center;margin-top:.6rem;margin-bottom:.7rem;}
     .pay-logos{display:flex;justify-content:center;gap:.5rem;align-items:center;}
-    .popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:300;
-      display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
-    .popup-overlay.open{opacity:1;pointer-events:all;}
-    .popup{background:var(--s1);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:2rem 1.5rem 2.5rem;
-      width:100%;max-width:480px;transform:translateY(100%);transition:transform .38s cubic-bezier(.34,1.4,.64,1);}
-    .popup-overlay.open .popup{transform:translateY(0);}
-    .popup-icon{font-size:2.5rem;text-align:center;margin-bottom:.75rem;}
-    .popup h2{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:.4rem;}
-    .popup p{font-size:.85rem;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:1.5rem;}
-    .popup-amt-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:.75rem 1rem;
-      text-align:center;margin-bottom:1.25rem;font-size:.88rem;color:var(--muted);}
-    .popup-amt-box span{color:var(--amber);font-weight:700;font-size:1.15rem;}
-    .popup-btns{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
-    .btn-yes{padding:.85rem;border-radius:12px;border:none;background:linear-gradient(135deg,#22c55e,#16a34a);
-      font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;
-      display:flex;align-items:center;justify-content:center;gap:.4rem;}
-    .btn-yes:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(34,197,94,.35);}
-    .btn-yes:disabled{opacity:.55;cursor:not-allowed;transform:none;}
-    .btn-no{padding:.85rem;border-radius:12px;border:1.5px solid var(--border);background:transparent;
-      font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
-    .btn-no:hover{border-color:var(--amber);color:var(--text);}
+
+    /* ── SUPPORTERS WALL ── */
     .wall-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
-    .wall-head{padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .wall-head{
+      padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+    }
     .wall-head h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:.5rem;}
-    .live-badge{font-size:.6rem;font-weight:700;color:#22c55e;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);
-      padding:.18rem .5rem;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;display:inline-flex;align-items:center;gap:.3rem;}
-    .l-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:blink 1.2s ease-in-out infinite;}
+    .live-badge{
+      font-size:.6rem;font-weight:700;color:var(--green);
+      background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);
+      padding:.18rem .5rem;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;
+      display:inline-flex;align-items:center;gap:.3rem;
+    }
+    .l-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.2s ease-in-out infinite;}
     .wall-count{font-size:.75rem;color:var(--amber);font-weight:600;}
     .wall-list{padding:.5rem 1rem;}
-    .supporter{display:flex;align-items:flex-start;gap:.75rem;padding:.85rem .5rem;border-bottom:1px solid var(--border);}
+    .supporter{
+      display:flex;align-items:flex-start;gap:.75rem;
+      padding:.85rem .5rem;border-bottom:1px solid var(--border);
+    }
     .supporter:last-child{border-bottom:none;}
     @keyframes slideIn{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:none;}}
     .sup-new{animation:slideIn .45s cubic-bezier(.34,1.4,.64,1) forwards;background:rgba(245,158,11,.06);border-radius:10px;}
     .sup-new.fade-bg{transition:background 1.8s ease;background:transparent;}
-    .sup-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);
-            display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:700;color:#fff;flex-shrink:0;font-family:'Syne',sans-serif;}
+    .sup-av{
+      width:40px;height:40px;border-radius:50%;
+      background:linear-gradient(135deg,#f59e0b,#ef4444);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.05rem;font-weight:700;color:#fff;flex-shrink:0;font-family:'Syne',sans-serif;
+    }
     .sup-info{flex:1;min-width:0;}
     .sup-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.2rem;}
     .sup-name{font-size:.88rem;font-weight:600;color:var(--text);}
-    .sup-amt{font-size:.73rem;font-weight:700;color:#22c55e;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);padding:.12rem .45rem;border-radius:20px;}
+    .sup-amt{
+      font-size:.73rem;font-weight:700;color:var(--green);
+      background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);
+      padding:.12rem .45rem;border-radius:20px;
+    }
     .sup-msg{font-size:.8rem;color:var(--muted);line-height:1.5;word-break:break-word;margin-top:.15rem;}
     .sup-time{font-size:.68rem;color:#3a3f52;margin-top:.22rem;}
     .wall-empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);}
     .wall-empty .ei{font-size:2rem;margin-bottom:.5rem;}
     .wall-empty p{font-size:.82rem;}
     .wall-loading{text-align:center;padding:2rem;color:var(--muted);font-size:.82rem;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+
+    /* SUCCESS BANNER */
+    .success-banner{
+      display:none;
+      background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);
+      border-radius:14px;padding:1rem 1.25rem;margin-bottom:1rem;
+      align-items:center;gap:.75rem;
+    }
+    .success-banner.show{display:flex;}
+    .success-banner p{font-size:.85rem;color:var(--green);font-weight:600;line-height:1.5;}
+
     .spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0;}
     @keyframes spin{to{transform:rotate(360deg);}}
-    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(60px);padding:.6rem 1.4rem;border-radius:50px;
-           font-size:.84rem;font-weight:600;z-index:999;opacity:0;transition:all .3s;white-space:nowrap;color:#fff;pointer-events:none;}
+    .toast{
+      position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(60px);
+      padding:.6rem 1.4rem;border-radius:50px;font-size:.84rem;font-weight:600;
+      z-index:999;opacity:0;transition:all .3s;white-space:nowrap;color:#fff;pointer-events:none;
+    }
     .toast.green{background:#16a34a;}.toast.blue{background:#3b82f6;}.toast.red{background:#dc2626;}
     .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
     @media(max-width:380px){.amt-grid{grid-template-columns:repeat(2,1fr);}}
   </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <a href="index.html" class="logo">Peritto<em>.</em></a>
-  <a href="index.html" class="back">← Back</a>
+  <a href="index.html" class="logo">
+    <div class="logo-mark">📚</div>
+    <div class="logo-text">BTech<em>Vault</em></div>
+  </a>
+  <a href="index.html" class="back-btn">← Back</a>
 </nav>
 
+<!-- HERO -->
 <div class="hero">
   <div class="orb-wrap"><div class="orb">☕</div></div>
-  <h1>Support Peritto</h1>
+  <h1>Support BTechVault</h1>
   <p>We keep all study materials 100% free. Your support helps us stay online &amp; grow!</p>
   <div class="badges">
     <span class="badge">🔒 100% Secure</span>
-    <span class="badge">⚡ Instant Payment</span>
+    <span class="badge">⚡ Instant</span>
     <span class="badge">❤️ Free Forever</span>
   </div>
 </div>
 
+<!-- LIVE TICKER -->
 <div class="ticker-wrap" id="tickerWrap">
   <div class="ticker-inner">
     <div class="t-dot"></div>
@@ -157,8 +244,15 @@
 </div>
 
 <div class="wrap">
-  <div class="card">
 
+  <!-- SUCCESS BANNER (shows after pay) -->
+  <div class="success-banner" id="successBanner">
+    <span style="font-size:1.5rem;">🎉</span>
+    <p>You're on the wall! Complete payment on the Razorpay page that opened. Thank you!</p>
+  </div>
+
+  <div class="card">
+    <!-- DETAILS -->
     <div class="form-sec">
       <div class="sec-lbl">✏️ Your Details</div>
       <div class="field">
@@ -169,6 +263,7 @@
       </div>
     </div>
 
+    <!-- AMOUNT -->
     <div class="amt-sec">
       <div class="sec-lbl">☕ Choose Amount</div>
       <div class="amt-grid">
@@ -183,20 +278,26 @@
       </div>
     </div>
 
+    <!-- PAY -->
     <div class="pay-sec">
-      <button class="pay-now-btn" onclick="payNow()">
-        ☕ Support Peritto — ₹<span id="btnAmt">20</span>
+      <button class="pay-now-btn" id="payBtn" onclick="payNow()">
+        ☕ Support — ₹<span id="btnAmt">20</span>
       </button>
       <div class="pay-note">Powered by Razorpay · GPay, PhonePe, Paytm, UPI &amp; Cards accepted</div>
       <div class="pay-logos">
+        <!-- GPay -->
         <svg width="36" height="36" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#fff" stroke="#e5e7eb" stroke-width="1"/><path d="M24 20.5c1.7 0 2.9.6 3.6 1.3l2.6-2.6C28.5 17.6 26.5 17 24 17c-3.6 0-6.7 2-8.2 5l3.1 2.4C19.7 21.9 21.7 20.5 24 20.5z" fill="#EA4335"/><path d="M15.5 24c0-.7.1-1.3.3-1.9l-3.1-2.4C12 21 11.5 22.4 11.5 24s.4 3 1.1 4.3l3.1-2.4c-.2-.6-.3-1.2-.3-1.9z" fill="#FBBC05"/><path d="M24 31.5c-2.3 0-4.3-1.5-5-3.6L15.8 30c1.5 3 4.6 5 8.2 5 2.4 0 4.3-.8 5.8-2.1l-2.8-2.2C26.2 31.2 25.2 31.5 24 31.5z" fill="#34A853"/><path d="M36 24c0-.6-.1-1.3-.2-1.9H24v4h6.6c-.3 1.4-1.1 2.5-2.2 3.2l2.8 2.2C33.7 29.6 36 27.1 36 24z" fill="#4285F4"/></svg>
+        <!-- PhonePe -->
         <svg width="36" height="36" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#5f259f"/><path d="M13 11h11c5 0 8.5 3.4 8.5 8.5S29 28 24 28h-6v8h-5V11z" fill="#fff"/><ellipse cx="23" cy="19.5" rx="3.5" ry="4.5" fill="#5f259f"/><circle cx="35" cy="35" r="7" fill="#fff"/><text x="35" y="39" text-anchor="middle" font-family="Arial" font-size="7" font-weight="900" fill="#5f259f">Pe</text></svg>
+        <!-- Paytm -->
         <svg width="36" height="36" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#00bae8"/><rect x="5" y="16" width="38" height="16" rx="4" fill="#fff"/><text x="24" y="28" text-anchor="middle" font-family="Arial Black,Arial" font-size="9.5" font-weight="900" fill="#00bae8">Paytm</text></svg>
+        <!-- Card -->
         <svg width="36" height="36" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#1f2937"/><rect x="6" y="14" width="36" height="20" rx="4" fill="#374151"/><rect x="6" y="20" width="36" height="6" fill="#111827"/><rect x="10" y="28" width="10" height="3" rx="1" fill="#9ca3af"/></svg>
       </div>
     </div>
   </div>
 
+  <!-- SUPPORTERS WALL -->
   <div class="wall-card">
     <div class="wall-head">
       <h3>💛 Supporters Wall <span class="live-badge"><span class="l-dot"></span>LIVE</span></h3>
@@ -208,33 +309,18 @@
   </div>
 </div>
 
-<div class="popup-overlay" id="popupOverlay">
-  <div class="popup">
-    <div class="popup-icon">🎉</div>
-    <h2>Payment Done?</h2>
-    <p>Did you complete the payment on Razorpay? Tap Yes to appear on our Supporters Wall!</p>
-    <div class="popup-amt-box">You sent <span id="popupAmt">₹20</span> to Peritto ☕</div>
-    <div class="popup-btns">
-      <button class="btn-yes" id="btnYes" onclick="confirmPaid()">✅ Yes, I Paid!</button>
-      <button class="btn-no" onclick="closePopup()">Not yet</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── Single Razorpay Payment Page — user enters any amount ── */
-const PAYMENT_LINK = 'https://rzp.io/rzp/g8UGcklN';
+/* ── Config ── */
+const PAYMENT_LINK = 'https://rzp.io/rzp/g8UGcklN'; // Replace with your Razorpay link
 
-let selectedAmt   = 20;
-let popupShown    = false;
-let visHandler    = null;
-let fallbackTimer = null;
-let knownIds      = new Set();
-let firstLoad     = true;
+let selectedAmt = 20;
+let knownIds    = new Set();
+let firstLoad   = true;
+let saving      = false;
 
-/* Amount quick-pick buttons */
+/* ── Amount pick ── */
 function pick(v, el) {
   selectedAmt = v;
   document.querySelectorAll('.ab').forEach(b => b.classList.remove('on'));
@@ -243,7 +329,6 @@ function pick(v, el) {
   document.getElementById('customInput').value = '';
 }
 
-/* Custom amount input */
 function onCustomAmt(el) {
   const v = parseInt(el.value) || 0;
   if (v > 0) {
@@ -253,131 +338,88 @@ function onCustomAmt(el) {
   }
 }
 
-/* Pay Now */
-function payNow() {
+/* ── PAY NOW — saves to Firestore immediately, then opens Razorpay ── */
+async function payNow() {
+  if (saving) return;
+
   const nameEl = document.getElementById('supName');
   const name   = nameEl.value.trim();
 
+  /* Validate name */
   if (!name) {
-    nameEl.classList.add('error');
+    nameEl.classList.add('shake');
+    setTimeout(() => nameEl.classList.remove('shake'), 400);
     nameEl.focus();
     showToast('👆 Enter your name first!', 'blue');
-    setTimeout(() => nameEl.classList.remove('error'), 2500);
     return;
   }
+
+  /* Validate amount */
   if (!selectedAmt || selectedAmt < 1) {
     showToast('⚠️ Choose or enter an amount!', 'blue');
     return;
   }
 
-  /* Reset flags & clean old listeners */
-  popupShown = false;
-  if (visHandler)    { document.removeEventListener('visibilitychange', visHandler); visHandler = null; }
-  if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
-
-  /* Open Razorpay payment page */
-  window.open(PAYMENT_LINK, '_blank');
-
-  /* Show popup when user switches back to this tab */
-  visHandler = function () {
-    if (!document.hidden && !popupShown) {
-      popupShown = true;
-      document.removeEventListener('visibilitychange', visHandler);
-      visHandler = null;
-      clearTimeout(fallbackTimer); fallbackTimer = null;
-      setTimeout(showDonePopup, 800);
-    }
-  };
-  document.addEventListener('visibilitychange', visHandler);
-
-  /* Safety fallback after 12s */
-  fallbackTimer = setTimeout(() => {
-    fallbackTimer = null;
-    if (!popupShown) {
-      popupShown = true;
-      if (visHandler) { document.removeEventListener('visibilitychange', visHandler); visHandler = null; }
-      showDonePopup();
-    }
-  }, 12000);
-}
-
-function showDonePopup() {
-  document.getElementById('popupAmt').textContent = '₹' + selectedAmt;
-  document.getElementById('popupOverlay').classList.add('open');
-}
-
-function closePopup() {
-  document.getElementById('popupOverlay').classList.remove('open');
-  popupShown = false;
-}
-
-document.getElementById('popupOverlay').addEventListener('click', function (e) {
-  if (e.target === this) closePopup();
-});
-
-/* Confirm paid → save to Firestore */
-async function confirmPaid() {
-  const name = document.getElementById('supName').value.trim();
-  const msg  = document.getElementById('supMsg').value.trim();
-  const btn  = document.getElementById('btnYes');
-
-  if (!name) { showToast('Enter your name!', 'red'); closePopup(); return; }
-
+  saving = true;
+  const btn = document.getElementById('payBtn');
   btn.disabled = true;
-  btn.innerHTML = '<div class="spin" style="border-top-color:#fff;border-color:rgba(255,255,255,.25);width:18px;height:18px;"></div>';
+  btn.innerHTML = '<div class="spin" style="border-top-color:#fff;border-color:rgba(255,255,255,.25);width:18px;height:18px;margin:0 auto;"></div>';
 
   try {
+    /* ── Save to Firestore FIRST ── */
+    const msg = document.getElementById('supMsg').value.trim();
     await db.collection('supporters').add({
       name,
       message: msg,
       amount:  selectedAmt,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    closePopup();
+
+    /* Show success banner */
+    document.getElementById('successBanner').classList.add('show');
     showToast('🎉 You\'re on the wall! Thank you!', 'green');
-    /* Clear form */
+
+    /* Reset form */
     document.getElementById('supName').value  = '';
     document.getElementById('supMsg').value   = '';
     document.getElementById('customInput').value = '';
-    /* Reset to default ₹20 */
     selectedAmt = 20;
     document.querySelectorAll('.ab').forEach(b => b.classList.remove('on'));
     document.querySelectorAll('.ab')[1].classList.add('on');
     document.getElementById('btnAmt').textContent = '20';
+
+    /* Then open Razorpay */
+    window.open(PAYMENT_LINK, '_blank');
+
   } catch (err) {
     console.error(err);
-    showToast('⚠️ Could not save. Try again.', 'red');
+    showToast('⚠️ Error saving. Please try again.', 'red');
   } finally {
-    btn.innerHTML = '✅ Yes, I Paid!';
-    btn.disabled  = false;
+    btn.disabled = false;
+    btn.innerHTML = '☕ Support — ₹<span id="btnAmt">' + selectedAmt + '</span>';
+    saving = false;
   }
 }
 
-/* ── Live Supporters Wall ──
-   Uses onSnapshot for realtime. Falls back to simple get() if
-   Firestore index is missing (no composite index needed now).
-*/
+/* ── Supporters Wall (realtime) ── */
 function renderWall(docs) {
   const list  = document.getElementById('wallList');
   const count = document.getElementById('wallCount');
 
   if (!docs || !docs.length) {
-    list.innerHTML  = `<div class="wall-empty"><div class="ei">☕</div><p>Be the first to support Peritto!</p></div>`;
+    list.innerHTML  = `<div class="wall-empty"><div class="ei">☕</div><p>Be the first to support!</p></div>`;
     count.textContent = '';
     document.getElementById('tickerWrap').style.display = 'none';
-    knownIds.clear();
-    firstLoad = false;
+    knownIds.clear(); firstLoad = false;
     return;
   }
 
-  /* Client-side sort by createdAt desc — works even without Firestore index */
   const sorted = [...docs].sort((a, b) => {
-    const d  = typeof a.data === 'function' ? a.data() : a;
-    const d2 = typeof b.data === 'function' ? b.data() : b;
-    return (d2.createdAt?.seconds || 0) - (d.createdAt?.seconds || 0);
+    const da = typeof a.data === 'function' ? a.data() : a;
+    const db_ = typeof b.data === 'function' ? b.data() : b;
+    return (db_.createdAt?.seconds || 0) - (da.createdAt?.seconds || 0);
   });
 
-  /* Find new entries */
   const newIds = new Set();
   if (!firstLoad) {
     sorted.forEach(doc => { if (!knownIds.has(doc.id)) newIds.add(doc.id); });
@@ -404,7 +446,6 @@ function renderWall(docs) {
     </div>`;
   }).join('');
 
-  /* Fade out highlights after 3s */
   newIds.forEach(id => {
     setTimeout(() => {
       const el = document.getElementById('sup-' + id);
@@ -412,33 +453,28 @@ function renderWall(docs) {
     }, 3000);
   });
 
-  /* Live ticker */
   const latest = typeof sorted[0].data === 'function' ? sorted[0].data() : sorted[0];
   document.getElementById('tickerText').innerHTML =
     `<strong>${esc(latest.name)}</strong> just supported with ₹${latest.amount} ☕`;
   document.getElementById('tickerWrap').style.display = 'block';
 
-  /* Register all IDs */
   sorted.forEach(doc => knownIds.add(doc.id));
   firstLoad = false;
 }
 
 function loadWall() {
-  const list = document.getElementById('wallList');
-
-  /* Try realtime listener first */
   db.collection('supporters')
     .orderBy('createdAt', 'desc')
     .limit(100)
     .onSnapshot(
       snap => renderWall(snap.docs),
-      err  => {
-        /* Index missing → fallback to unordered get() */
-        console.warn('onSnapshot failed, using get():', err.code);
+      err => {
+        console.warn('onSnapshot failed, fallback:', err.code);
         db.collection('supporters').limit(100).get()
           .then(snap => renderWall(snap.docs))
           .catch(() => {
-            list.innerHTML = `<div class="wall-empty"><div class="ei">⚠️</div><p>Could not load. Please refresh.</p></div>`;
+            document.getElementById('wallList').innerHTML =
+              `<div class="wall-empty"><div class="ei">⚠️</div><p>Could not load. Please refresh.</p></div>`;
           });
       }
     );
@@ -446,9 +482,9 @@ function loadWall() {
 
 function timeAgo(date) {
   const s = Math.floor((Date.now() - date) / 1000);
-  if (s < 5)     return 'just now';
-  if (s < 60)    return s + 's ago';
-  if (s < 3600)  return Math.floor(s / 60) + 'm ago';
+  if (s < 5) return 'just now';
+  if (s < 60) return s + 's ago';
+  if (s < 3600) return Math.floor(s / 60) + 'm ago';
   if (s < 86400) return Math.floor(s / 3600) + 'h ago';
   return Math.floor(s / 86400) + 'd ago';
 }
