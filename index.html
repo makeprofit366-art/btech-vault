@@ -2,8 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>BTech Vault — Free Study PDFs</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#4f46e5"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="BTechVault"/>
+  <link rel="apple-touch-icon" href="icons/icon-192.png"/>
+
+  <!-- SEO -->
+  <meta name="description" content="Free B.Tech study materials — Notes, PYQs, Lab manuals. Download PDFs for all branches."/>
+  <meta property="og:title" content="BTechVault — Free Study PDFs"/>
+  <meta property="og:description" content="Free B.Tech study materials for all branches. Notes, PYQs, Lab manuals."/>
+  <meta property="og:type" content="website"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -14,6 +29,34 @@
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'Inter',sans-serif;background:#f4f5f7;color:#111827;min-height:100vh;display:flex;flex-direction:column;}
+
+    /* PWA INSTALL BANNER */
+    .pwa-banner{
+      display:none;
+      background:linear-gradient(135deg,#4f46e5,#7c3aed);
+      color:#fff;
+      padding:0.75rem 1.25rem;
+      align-items:center;
+      gap:0.75rem;
+    }
+    .pwa-banner.show{display:flex;}
+    .pwa-banner-icon{font-size:1.5rem;flex-shrink:0;}
+    .pwa-banner-text{flex:1;min-width:0;}
+    .pwa-banner-title{font-size:0.85rem;font-weight:700;line-height:1.2;}
+    .pwa-banner-sub{font-size:0.72rem;opacity:0.85;margin-top:1px;}
+    .pwa-install-btn{
+      background:#fff;color:#4f46e5;
+      border:none;border-radius:8px;
+      padding:0.4rem 0.85rem;
+      font-size:0.78rem;font-weight:800;
+      cursor:pointer;white-space:nowrap;
+      font-family:'Inter',sans-serif;
+      flex-shrink:0;
+    }
+    .pwa-close{
+      background:transparent;border:none;color:rgba(255,255,255,0.7);
+      font-size:1.1rem;cursor:pointer;padding:0.2rem;flex-shrink:0;
+    }
 
     /* ══════════════════════════════════════
        ANIMATED LOGO
@@ -363,6 +406,17 @@
   </div>
 </nav>
 
+<!-- ═══════════════════════════════ PWA INSTALL BANNER ══════════════════════ -->
+<div class="pwa-banner" id="pwaBanner">
+  <div class="pwa-banner-icon">📲</div>
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title">Install BTechVault App!</div>
+    <div class="pwa-banner-sub">Home screen lo add cheyyi — fast & offline access!</div>
+  </div>
+  <button class="pwa-install-btn" id="pwaInstallBtn">Install</button>
+  <button class="pwa-close" onclick="dismissPWA()">✕</button>
+</div>
+
 <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
 <div class="hero">
   <div class="hero-content">
@@ -433,11 +487,11 @@
       <h4>Contact Us</h4>
       <div class="footer-contact-item">
         <span class="ci-icon">📧</span>
-        <a href="mailto:kirankumarchennamsetti452@gmail.com">support@btechvault.in</a>
+        <a href="mailto:support@btechvault.in">support@btechvault.in</a>
       </div>
       <div class="footer-contact-item">
         <span class="ci-icon">📩</span>
-        <a href="mailto:kirankumarchennamsetti452@gmail.com">contribute@btechvault.in</a>
+        <a href="mailto:contribute@btechvault.in">contribute@btechvault.in</a>
       </div>
       <div class="footer-contact-item">
         <span class="ci-icon">💡</span>
@@ -451,7 +505,7 @@
 
   <div class="footer-bottom">
     <div class="footer-bottom-text">
-      © 2026 <a href="index.html">BTechVault</a>. All rights reserved. Free forever for students.
+      © 2025 <a href="index.html">BTechVault</a>. All rights reserved. Free forever for students.
     </div>
     <div style="display:flex;align-items:center;gap:1rem;">
       <div class="footer-social">
@@ -459,7 +513,7 @@
         <a href="#" class="social-icon" title="Telegram">✈️</a>
         <a href="#" class="social-icon" title="LinkedIn">💼</a>
       </div>
-      <span class="made-with">Made with <span>♥</span> for B tech students</span>
+      <span class="made-with">Made with <span>♥</span> for students</span>
     </div>
   </div>
 </footer>
@@ -631,6 +685,43 @@ function closeModal(){document.getElementById('loginModal').classList.remove('ac
 document.getElementById('loginModal').addEventListener('click',e=>{if(e.target.id==='loginModal')closeModal();});
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── PWA SERVICE WORKER ──
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW failed:', err));
+  });
+}
+
+// ── PWA INSTALL PROMPT ──
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show banner only if not dismissed before
+  if(!localStorage.getItem('pwaDismissed')){
+    document.getElementById('pwaBanner').classList.add('show');
+  }
+});
+
+document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('pwaBanner').classList.remove('show');
+  if(outcome === 'accepted') showToast('App installed! 🎉');
+});
+
+function dismissPWA(){
+  document.getElementById('pwaBanner').classList.remove('show');
+  localStorage.setItem('pwaDismissed','1');
+}
+
+// Hide banner if already installed
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwaBanner').classList.remove('show');
+});
 </script>
 </body>
 </html>
