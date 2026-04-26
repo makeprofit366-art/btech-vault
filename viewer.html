@@ -1,269 +1,520 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0f0f1a"/>
   <title>PDF Viewer — BTech Vault</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <script src="firebase-config.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Inter',sans-serif; background:#1a1a2e; color:#fff; height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
 
-    /* ── NAV ── */
-    nav {
-      background:#111827;
-      border-bottom:1px solid #374151;
-      padding:0.5rem 0.75rem;
+  <style>
+    :root{
+      --bg:       #0f0f1a;
+      --surface:  #171726;
+      --border:   #252540;
+      --accent:   #6c63ff;
+      --accent2:  #a78bfa;
+      --text:     #f0f0ff;
+      --muted:    #7070a0;
+      --success:  #22c55e;
+      --warn:     #f59e0b;
+      --danger:   #ef4444;
+      --wa:       #25d366;
+      --radius:   14px;
+      --safe-b:   env(safe-area-inset-bottom, 0px);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    html,body{height:100%;overflow:hidden;}
+    body{
+      font-family:'Outfit',sans-serif;
+      background:var(--bg);
+      color:var(--text);
       display:flex;
       flex-direction:column;
-      gap:0.45rem;
+      height:100dvh;
+    }
+
+    /* ══════════════ TOP BAR ══════════════ */
+    .topbar{
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+      padding:0.55rem 0.85rem;
+      display:flex;
+      align-items:center;
+      gap:0.65rem;
       flex-shrink:0;
+      min-height:54px;
     }
-
-    /* Row 1: Back + Title */
-    .nav-row1 {
-      display:flex;
-      align-items:center;
-      gap:0.5rem;
-      min-width:0;
-    }
-
-    /* Row 2: Action buttons */
-    .nav-row2 {
-      display:flex;
-      gap:0.4rem;
-      flex-wrap:nowrap;
-      overflow-x:auto;
-      -webkit-overflow-scrolling:touch;
-      scrollbar-width:none;
-      padding-bottom:2px;
-    }
-    .nav-row2::-webkit-scrollbar { display:none; }
-
-    .btn {
-      padding:0.38rem 0.75rem;
-      border-radius:6px;
-      font-size:0.78rem;
-      font-weight:600;
+    .back-btn{
+      width:36px;height:36px;
+      background:var(--border);
+      border:none;border-radius:10px;
+      color:var(--text);
+      font-size:1rem;
       cursor:pointer;
-      border:none;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+      transition:background 0.15s;
+    }
+    .back-btn:active{background:var(--accent);}
+    .topbar-info{flex:1;min-width:0;}
+    .topbar-title{
+      font-size:0.88rem;font-weight:700;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      color:var(--text);
+      line-height:1.3;
+    }
+    .topbar-meta{
+      font-size:0.68rem;color:var(--muted);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      margin-top:1px;
+    }
+    .topbar-open{
+      background:var(--warn);
+      color:#fff;
+      border:none;border-radius:10px;
+      padding:0.4rem 0.7rem;
+      font-size:0.78rem;font-weight:700;
+      font-family:'Outfit',sans-serif;
+      cursor:pointer;
       text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      gap:0.25rem;
-      transition:all 0.15s;
-      font-family:'Inter',sans-serif;
+      display:flex;align-items:center;gap:0.3rem;
       white-space:nowrap;
       flex-shrink:0;
+      transition:all 0.15s;
     }
-    .btn-back    { background:#374151; color:#e5e7eb; }
-    .btn-save    { background:#4f46e5; color:#fff; }
-    .btn-saved   { background:#065f46; color:#6ee7b7; }
-    .btn-whatsapp{ background:#25d366; color:#fff; }
-    .btn-link    { background:#374151; color:#e5e7eb; }
-    .btn-open    { background:#f59e0b; color:#fff; }
-    .btn-login   { background:#4f46e5; color:#fff; }
+    .topbar-open:active{filter:brightness(0.9);}
 
-    .pdf-info { flex:1; min-width:0; }
-    .pdf-title { font-size:0.88rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .pdf-meta  { font-size:0.7rem; color:#9ca3af; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    /* ══════════════ ACTION STRIP ══════════════ */
+    .action-strip{
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+      display:flex;
+      align-items:stretch;
+      flex-shrink:0;
+      overflow:hidden;
+    }
+    .action-btn{
+      flex:1;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:0.2rem;
+      padding:0.55rem 0.25rem;
+      background:transparent;
+      border:none;
+      border-right:1px solid var(--border);
+      color:var(--muted);
+      font-family:'Outfit',sans-serif;
+      font-size:0.68rem;font-weight:600;
+      cursor:pointer;
+      transition:all 0.15s;
+      text-decoration:none;
+    }
+    .action-btn:last-child{border-right:none;}
+    .action-btn .ab-icon{font-size:1.1rem;line-height:1;}
+    .action-btn:active{background:rgba(108,99,255,0.12);color:var(--text);}
+    .action-btn.saved .ab-icon{color:var(--success);}
+    .action-btn.saved{color:var(--success);}
 
-    /* ── VIEWER ── */
-    .viewer-area {
+    /* ══════════════ VIEWER AREA ══════════════ */
+    .viewer-wrap{
       flex:1;
       overflow-y:auto;
-      background:#525659;
+      overflow-x:hidden;
+      background:#2a2a2a;
       display:flex;
       flex-direction:column;
       align-items:center;
-      /* bottom padding so canvas isn't hidden behind floating nav */
-      padding:0.75rem 0.75rem 90px;
+      /* bottom padding = page nav height + safe area */
+      padding:0 0 88px;
+      -webkit-overflow-scrolling:touch;
+      scroll-behavior:smooth;
     }
 
-    .center { display:flex; align-items:center; justify-content:center; height:100%; flex-direction:column; gap:1rem; color:#9ca3af; width:100%; }
-    .spinner { width:32px; height:32px; border:3px solid #374151; border-top-color:#4f46e5; border-radius:50%; animation:spin 0.7s linear infinite; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    /* loading / error state */
+    .viewer-state{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:1rem;color:var(--muted);
+      min-height:200px;width:100%;padding:2rem;
+      text-align:center;
+    }
+    .spinner{
+      width:36px;height:36px;
+      border:3px solid var(--border);
+      border-top-color:var(--accent);
+      border-radius:50%;
+      animation:spin 0.7s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
 
-    #pdfCanvas { max-width:100%; background:#fff; box-shadow:0 4px 20px rgba(0,0,0,0.5); border-radius:4px; }
+    #pdfCanvas{
+      width:100%;
+      max-width:100%;
+      display:block;
+      background:#fff;
+      /* no side margins — true full-width */
+    }
 
-    /* ── FLOATING PAGE NAV — fixed, easy thumb reach ── */
-    .page-nav {
+    /* Page transition flash */
+    .page-flash{animation:flashIn 0.2s ease;}
+    @keyframes flashIn{from{opacity:0.4;}to{opacity:1;}}
+
+    /* ══════════════ FLOATING PAGE NAV ══════════════ */
+    .page-nav{
       position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      z-index:60;
-      background:#111827;
-      border-top:1px solid #374151;
-      padding:0.55rem 1rem;
-      display:none;          /* shown via JS */
+      bottom:0;left:0;right:0;
+      z-index:80;
+      background:rgba(23,23,38,0.96);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      border-top:1px solid var(--border);
+      padding:0.6rem 1rem;
+      padding-bottom:calc(0.6rem + var(--safe-b));
+      display:none;
       align-items:center;
       justify-content:space-between;
-      gap:0.5rem;
-      /* safe area for phones with home indicator */
-      padding-bottom:calc(0.55rem + env(safe-area-inset-bottom));
+      gap:0.75rem;
     }
+    .page-nav.visible{display:flex;}
 
-    .page-nav-center {
-      display:flex;
-      align-items:center;
-      gap:0.6rem;
-    }
-
-    .page-btn {
-      background:#374151;
-      color:#fff;
-      border:none;
-      width:44px;
-      height:44px;
-      border-radius:10px;
+    .pn-btn{
+      width:48px;height:48px;
+      background:var(--border);
+      border:none;border-radius:12px;
+      color:var(--text);
+      font-size:1.2rem;
       cursor:pointer;
-      font-size:1.1rem;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      transition:background 0.15s;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+      transition:all 0.12s;
       -webkit-tap-highlight-color:transparent;
+    }
+    .pn-btn:active{background:var(--accent);transform:scale(0.92);}
+    .pn-btn:disabled{opacity:0.3;pointer-events:none;}
+
+    .pn-center{
+      display:flex;flex-direction:column;align-items:center;gap:0.3rem;flex:1;
+    }
+    .pn-info{
+      font-size:0.85rem;font-weight:700;color:var(--text);
+      letter-spacing:0.5px;
+    }
+    .pn-progress{
+      width:100%;height:3px;background:var(--border);border-radius:4px;overflow:hidden;
+    }
+    .pn-progress-fill{
+      height:100%;background:var(--accent);border-radius:4px;
+      transition:width 0.3s ease;
+      width:0%;
+    }
+
+    /* Jump bar */
+    .pn-jump-wrap{display:flex;align-items:center;gap:0.4rem;}
+    .pn-jump{
+      background:var(--bg);border:1px solid var(--border);
+      border-radius:8px;color:var(--text);
+      font-size:0.8rem;font-family:'Outfit',sans-serif;
+      width:46px;padding:0.3rem;text-align:center;outline:none;
+    }
+    .pn-jump:focus{border-color:var(--accent);}
+    .pn-jump-go{
+      background:var(--accent);color:#fff;border:none;
+      border-radius:8px;padding:0.3rem 0.55rem;
+      font-size:0.75rem;font-weight:700;
+      font-family:'Outfit',sans-serif;cursor:pointer;
+    }
+    .pn-jump-go:active{filter:brightness(0.85);}
+
+    /* ══════════════ COMMENTS SHEET ══════════════ */
+    /* triggered by comment button — slides up */
+    .comments-overlay{
+      position:fixed;inset:0;
+      background:rgba(0,0,0,0.55);
+      z-index:90;
+      opacity:0;pointer-events:none;
+      transition:opacity 0.25s;
+    }
+    .comments-overlay.open{opacity:1;pointer-events:all;}
+
+    .comments-sheet{
+      position:fixed;
+      bottom:0;left:0;right:0;
+      z-index:95;
+      background:var(--surface);
+      border-radius:20px 20px 0 0;
+      border-top:1px solid var(--border);
+      padding:0 0 calc(1rem + var(--safe-b));
+      max-height:82dvh;
+      display:flex;flex-direction:column;
+      transform:translateY(100%);
+      transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);
+    }
+    .comments-sheet.open{transform:translateY(0);}
+
+    .sheet-handle-row{
+      display:flex;align-items:center;justify-content:center;
+      padding:0.75rem 1rem 0.4rem;
+      flex-shrink:0;
+      position:relative;
+    }
+    .sheet-handle{
+      width:40px;height:4px;
+      background:var(--border);border-radius:4px;
+    }
+    .sheet-close{
+      position:absolute;right:1rem;
+      background:var(--border);border:none;
+      width:28px;height:28px;border-radius:50%;
+      color:var(--muted);font-size:0.9rem;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .sheet-close:active{background:var(--danger);color:#fff;}
+
+    .sheet-title{
+      font-size:1rem;font-weight:700;
+      padding:0.25rem 1rem 0.75rem;
+      border-bottom:1px solid var(--border);
       flex-shrink:0;
     }
-    .page-btn:active { background:#4f46e5; }
 
-    /* Big prev/next tap zones on sides */
-    .page-btn-big {
-      width:52px;
-      height:52px;
-      border-radius:12px;
-      font-size:1.3rem;
-      background:#1f2937;
-      border:1px solid #374151;
+    .comments-list{
+      flex:1;overflow-y:auto;
+      padding:0.85rem 1rem;
+      display:flex;flex-direction:column;gap:0.85rem;
+      -webkit-overflow-scrolling:touch;
     }
-    .page-btn-big:active { background:#4f46e5; border-color:#4f46e5; }
 
-    .page-info { color:#e5e7eb; font-size:0.85rem; font-family:'Inter',sans-serif; font-weight:600; min-width:70px; text-align:center; }
+    .comment-item{display:flex;gap:0.7rem;align-items:flex-start;}
+    .comment-avatar{
+      width:34px;height:34px;border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex;align-items:center;justify-content:center;
+      font-size:0.75rem;font-weight:800;color:#fff;
+      flex-shrink:0;
+    }
+    .comment-body{flex:1;}
+    .comment-name{font-size:0.75rem;font-weight:700;color:var(--accent2);margin-bottom:0.2rem;}
+    .comment-text{font-size:0.85rem;color:var(--text);line-height:1.55;}
+    .comment-time{font-size:0.68rem;color:var(--muted);margin-top:0.2rem;}
 
-    /* Quick jump input */
-    .page-jump {
-      background:#1f2937;
-      border:1px solid #374151;
-      border-radius:6px;
-      color:#e5e7eb;
-      font-size:0.82rem;
-      font-family:'Inter',sans-serif;
-      width:44px;
-      padding:0.25rem 0.3rem;
-      text-align:center;
+    .comments-empty{
+      text-align:center;color:var(--muted);
+      font-size:0.85rem;padding:2rem 1rem;
+    }
+    .comments-empty .ce-icon{font-size:2rem;margin-bottom:0.5rem;}
+
+    /* Comment input bar */
+    .comment-input-bar{
+      border-top:1px solid var(--border);
+      padding:0.75rem 1rem;
+      padding-bottom:calc(0.75rem + var(--safe-b));
+      display:flex;gap:0.6rem;align-items:center;
+      flex-shrink:0;
+      background:var(--surface);
+    }
+    .comment-input-bar input{
+      flex:1;
+      background:var(--bg);
+      border:1.5px solid var(--border);
+      border-radius:12px;
+      padding:0.65rem 0.9rem;
+      color:var(--text);
+      font-size:0.875rem;
+      font-family:'Outfit',sans-serif;
       outline:none;
     }
-    .page-jump:focus { border-color:#4f46e5; }
-
-    /* ── COMMENTS ── */
-    .comments-section { background:#111827; border-top:1px solid #374151; padding:1.25rem 1rem; flex-shrink:0; }
-    .comments-title { font-size:0.95rem; font-weight:600; color:#e5e7eb; margin-bottom:1rem; }
-    .comment-input-row { display:flex; gap:0.5rem; margin-bottom:1rem; }
-    .comment-input { flex:1; background:#1f2937; border:1px solid #374151; border-radius:8px; padding:0.6rem 0.85rem; color:#e5e7eb; font-size:0.85rem; font-family:'Inter',sans-serif; outline:none; }
-    .comment-input:focus { border-color:#4f46e5; }
-    .comment-submit { background:#4f46e5; color:#fff; border:none; border-radius:8px; padding:0.6rem 1rem; font-size:0.85rem; cursor:pointer; font-family:'Inter',sans-serif; white-space:nowrap; }
-    .comment-item { display:flex; gap:0.75rem; margin-bottom:0.85rem; }
-    .comment-avatar { width:32px; height:32px; border-radius:50%; background:#4f46e5; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; color:#fff; flex-shrink:0; }
-    .comment-body { flex:1; }
-    .comment-name { font-size:0.78rem; font-weight:600; color:#9ca3af; margin-bottom:0.2rem; }
-    .comment-text { font-size:0.85rem; color:#e5e7eb; line-height:1.5; }
-    .comment-time { font-size:0.72rem; color:#6b7280; margin-top:0.2rem; }
-    .youtube-box { background:#1f2937; border:1px solid #374151; border-radius:8px; padding:0.75rem 1rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.75rem; text-decoration:none; }
-    .youtube-box:hover { border-color:#ef4444; }
-    .yt-icon { font-size:1.4rem; }
-    .yt-text { font-size:0.85rem; color:#e5e7eb; font-weight:500; }
-    .yt-sub { font-size:0.75rem; color:#9ca3af; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px; }
-
-    /* ── TOAST ── */
-    .toast {
-      position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(10px);
-      background:#1f2937; border:1px solid #374151; border-radius:8px;
-      padding:0.55rem 1.1rem; font-size:0.82rem; color:#e5e7eb;
-      opacity:0; transition:all 0.25s; z-index:999; pointer-events:none; white-space:nowrap;
+    .comment-input-bar input:focus{border-color:var(--accent);}
+    .comment-input-bar input::placeholder{color:var(--muted);}
+    .comment-post-btn{
+      width:42px;height:42px;
+      background:var(--accent);border:none;border-radius:12px;
+      color:#fff;font-size:1.1rem;
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+      transition:all 0.12s;
     }
-    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    .comment-post-btn:active{transform:scale(0.88);filter:brightness(0.85);}
+    .comment-login-prompt{
+      flex:1;text-align:center;font-size:0.82rem;color:var(--muted);
+    }
+    .comment-login-prompt a{color:var(--accent);font-weight:600;text-decoration:none;}
 
-    /* ── MODAL ── */
-    .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.2s; }
-    .overlay.active { opacity:1; pointer-events:all; }
-    .modal { background:#1f2937; border:1px solid #374151; border-radius:12px; padding:1.75rem; width:100%; max-width:340px; text-align:center; }
-    .modal h2 { font-size:1rem; font-weight:700; margin-bottom:0.4rem; }
-    .modal p { color:#9ca3af; font-size:0.85rem; margin-bottom:1.25rem; }
+    /* ══════════════ YOUTUBE CARD ══════════════ */
+    .yt-card{
+      margin:0.85rem 1rem 0;
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:0.75rem 1rem;
+      display:flex;align-items:center;gap:0.75rem;
+      text-decoration:none;
+      transition:border-color 0.15s;
+    }
+    .yt-card:active{border-color:#ef4444;}
+    .yt-icon{font-size:1.5rem;flex-shrink:0;}
+    .yt-text{font-size:0.85rem;font-weight:600;color:var(--text);}
+    .yt-url{font-size:0.72rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;}
+
+    /* ══════════════ TOAST ══════════════ */
+    .toast{
+      position:fixed;
+      bottom:calc(80px + var(--safe-b) + 12px);
+      left:50%;
+      transform:translateX(-50%) translateY(12px);
+      background:rgba(23,23,38,0.95);
+      border:1px solid var(--border);
+      backdrop-filter:blur(8px);
+      border-radius:10px;
+      padding:0.55rem 1.2rem;
+      font-size:0.82rem;font-weight:600;
+      color:var(--text);
+      opacity:0;
+      transition:all 0.25s;
+      z-index:999;
+      pointer-events:none;
+      white-space:nowrap;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* ══════════════ MODAL ══════════════ */
+    .overlay-modal{
+      position:fixed;inset:0;background:rgba(0,0,0,0.65);
+      z-index:200;display:flex;align-items:center;justify-content:center;
+      padding:1rem;opacity:0;pointer-events:none;transition:opacity 0.2s;
+    }
+    .overlay-modal.active{opacity:1;pointer-events:all;}
+    .modal{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:18px;padding:2rem 1.5rem;
+      width:100%;max-width:340px;text-align:center;
+    }
+    .modal h2{font-size:1.1rem;font-weight:700;margin-bottom:0.4rem;}
+    .modal p{color:var(--muted);font-size:0.85rem;margin-bottom:1.5rem;line-height:1.5;}
+    .modal-btn{
+      width:100%;padding:0.7rem;border-radius:12px;
+      font-size:0.9rem;font-weight:700;
+      font-family:'Outfit',sans-serif;cursor:pointer;
+      border:none;margin-bottom:0.5rem;
+      display:block;text-decoration:none;text-align:center;
+    }
+    .modal-btn-primary{background:var(--accent);color:#fff;}
+    .modal-btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border);}
+
+    /* ══════════════ SWIPE HINT ══════════════ */
+    .swipe-hint{
+      position:fixed;
+      top:50%;left:50%;
+      transform:translate(-50%,-50%);
+      z-index:70;
+      background:rgba(23,23,38,0.88);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:0.6rem 1.1rem;
+      font-size:0.78rem;color:var(--muted);
+      pointer-events:none;
+      opacity:0;
+      transition:opacity 0.3s;
+    }
+    .swipe-hint.show{opacity:1;}
   </style>
 </head>
 <body>
 
-<!-- NAV: 2-row layout -->
-<nav>
-  <!-- Row 1: Back + PDF title/meta -->
-  <div class="nav-row1">
-    <a href="index.html" class="btn btn-back">← Back</a>
-    <div class="pdf-info">
-      <div class="pdf-title" id="pdfTitle">Loading...</div>
-      <div class="pdf-meta" id="pdfMeta"></div>
-    </div>
+<!-- ═══════════ TOP BAR ═══════════ -->
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <div class="topbar-info">
+    <div class="topbar-title" id="pdfTitle">Loading...</div>
+    <div class="topbar-meta" id="pdfMeta"></div>
   </div>
+  <a id="openBtn" href="#" target="_blank" class="topbar-open">📄 Open</a>
+</div>
 
-  <!-- Row 2: Action buttons (scrollable if needed) -->
-  <div class="nav-row2">
-    <button class="btn btn-whatsapp" onclick="shareWhatsApp()">📱 WhatsApp</button>
-    <button class="btn btn-link"     onclick="copyLink()">🔗 Copy</button>
-    <a id="openBtn" href="#" target="_blank" class="btn btn-open">📄 Open</a>
-    <button class="btn btn-save" id="saveBtn" onclick="toggleSave()">🔖 Save</button>
-  </div>
-</nav>
+<!-- ═══════════ ACTION STRIP ═══════════ -->
+<div class="action-strip">
+  <button class="action-btn" onclick="shareWhatsApp()">
+    <span class="ab-icon">📱</span>WhatsApp
+  </button>
+  <button class="action-btn" onclick="copyLink()">
+    <span class="ab-icon">🔗</span>Copy Link
+  </button>
+  <button class="action-btn" id="saveBtn" onclick="toggleSave()">
+    <span class="ab-icon" id="saveIcon">🔖</span>
+    <span id="saveLabel">Save</span>
+  </button>
+  <button class="action-btn" onclick="openComments()">
+    <span class="ab-icon">💬</span>Comments
+  </button>
+</div>
 
-<!-- PDF VIEWER -->
-<div class="viewer-area" id="viewerArea">
-  <div class="center" id="loadingDiv">
+<!-- ═══════════ VIEWER ═══════════ -->
+<div class="viewer-wrap" id="viewerWrap">
+  <div class="viewer-state" id="loadingDiv">
     <div class="spinner"></div>
     <p>Loading PDF...</p>
   </div>
   <canvas id="pdfCanvas" style="display:none;"></canvas>
 </div>
 
-<!-- Comments + YouTube (scrolls inside viewer-area naturally) -->
-<div class="comments-section" id="commentsSection" style="display:none;">
-  <div id="youtubeBox"></div>
-  <div class="comments-title">💬 Comments</div>
-  <div class="comment-input-row" id="commentInputRow" style="display:none;">
-    <input class="comment-input" id="commentInput" placeholder="Write a comment..." maxlength="300" onkeydown="if(event.key==='Enter')postComment()"/>
-    <button class="comment-submit" onclick="postComment()">Post</button>
-  </div>
-  <div id="loginToComment" style="font-size:0.82rem;color:#9ca3af;margin-bottom:0.85rem;display:none;">
-    <a href="login.html" style="color:#4f46e5;">Login</a> to post a comment.
-  </div>
-  <div id="commentsList"><div style="color:#6b7280;font-size:0.85rem;">Loading comments...</div></div>
-</div>
-
-<!-- FLOATING BOTTOM PAGE NAV -->
+<!-- ═══════════ FLOATING PAGE NAV ═══════════ -->
 <div class="page-nav" id="pageNav">
-  <button class="page-btn page-btn-big" onclick="prevPage()" title="Previous page">◀</button>
-
-  <div class="page-nav-center">
-    <span class="page-info" id="pageInfo">— / —</span>
-    <input class="page-jump" id="pageJump" type="number" min="1" title="Go to page"
-           onkeydown="if(event.key==='Enter')jumpToPage()" />
+  <button class="pn-btn" id="prevBtn" onclick="prevPage()" disabled>◀</button>
+  <div class="pn-center">
+    <div class="pn-info" id="pageInfo">— / —</div>
+    <div class="pn-progress"><div class="pn-progress-fill" id="progressFill"></div></div>
+    <div class="pn-jump-wrap">
+      <input class="pn-jump" id="pageJump" type="number" min="1" placeholder="pg" onkeydown="if(event.key==='Enter')jumpToPage()"/>
+      <button class="pn-jump-go" onclick="jumpToPage()">Go</button>
+    </div>
   </div>
-
-  <button class="page-btn page-btn-big" onclick="nextPage()" title="Next page">▶</button>
+  <button class="pn-btn" id="nextBtn" onclick="nextPage()">▶</button>
 </div>
 
-<!-- LOGIN MODAL -->
-<div class="overlay" id="loginModal">
+<!-- ═══════════ COMMENTS BOTTOM SHEET ═══════════ -->
+<div class="comments-overlay" id="commentsOverlay" onclick="closeComments()"></div>
+<div class="comments-sheet" id="commentsSheet">
+  <div class="sheet-handle-row">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeComments()">✕</button>
+  </div>
+  <div class="sheet-title">💬 Comments <span id="commentCount" style="color:var(--muted);font-size:0.8rem;font-weight:500;"></span></div>
+  <div id="youtubeInSheet"></div>
+  <div class="comments-list" id="commentsList">
+    <div class="comments-empty">
+      <div class="ce-icon">💬</div>
+      <div>Loading comments...</div>
+    </div>
+  </div>
+  <div class="comment-input-bar" id="commentBar">
+    <span class="comment-login-prompt" id="loginPrompt" style="display:none;">
+      <a href="login.html">Login</a> to comment
+    </span>
+    <input type="text" id="commentInput" placeholder="Write a comment..." maxlength="300"
+           style="display:none;"
+           onkeydown="if(event.key==='Enter')postComment()"/>
+    <button class="comment-post-btn" id="postBtn" onclick="postComment()" style="display:none;">➤</button>
+  </div>
+</div>
+
+<!-- ═══════════ SWIPE HINT ═══════════ -->
+<div class="swipe-hint" id="swipeHint">👈 Swipe to change page 👉</div>
+
+<!-- ═══════════ LOGIN MODAL ═══════════ -->
+<div class="overlay-modal" id="loginModal">
   <div class="modal">
-    <div style="font-size:2rem;margin-bottom:0.5rem">🔐</div>
+    <div style="font-size:2.5rem;margin-bottom:0.5rem">🔐</div>
     <h2>Login Required</h2>
-    <p>Login to save PDFs to your account.</p>
-    <a href="login.html" class="btn btn-save" style="width:100%;justify-content:center;margin-bottom:0.5rem;padding:0.6rem">Login / Sign Up</a>
-    <button class="btn btn-back" style="width:100%;justify-content:center;padding:0.6rem" onclick="document.getElementById('loginModal').classList.remove('active')">Cancel</button>
+    <p>Login to save PDFs and access more features. It's 100% free!</p>
+    <a href="login.html" class="modal-btn modal-btn-primary">Login / Sign Up Free</a>
+    <button class="modal-btn modal-btn-outline" onclick="document.getElementById('loginModal').classList.remove('active')">Cancel</button>
   </div>
 </div>
 
@@ -272,123 +523,185 @@
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-let currentUser=null, pdfData=null, isSaved=false;
-let pdfDoc=null, pageNum=1;
+let currentUser = null, pdfData = null, isSaved = false;
+let pdfDoc = null, pageNum = 1, totalPages = 0, rendering = false;
 const pdfId = new URLSearchParams(location.search).get('id');
 
+/* ─── AUTH ─── */
 auth.onAuthStateChanged(async user => {
   currentUser = user;
   if (!pdfId) { history.back(); return; }
   await loadPdfData();
-  if (user) await checkSaved();
-  else { document.getElementById('saveBtn').textContent = '🔐 Login'; }
+  if (user) {
+    await checkSaved();
+    // show comment input
+    document.getElementById('commentInput').style.display = '';
+    document.getElementById('postBtn').style.display = '';
+    document.getElementById('loginPrompt').style.display = 'none';
+  } else {
+    document.getElementById('loginPrompt').style.display = '';
+  }
 });
 
+/* ─── LOAD PDF META ─── */
 async function loadPdfData() {
   try {
-    const doc = await db.collection('pdfs').doc(pdfId).get();
-    if (!doc.exists) { showErr('PDF not found!'); return; }
-    pdfData = doc.data();
+    const docSnap = await db.collection('pdfs').doc(pdfId).get();
+    if (!docSnap.exists) { showErr('PDF not found!'); return; }
+    pdfData = docSnap.data();
 
     document.getElementById('pdfTitle').textContent = pdfData.title;
-    document.getElementById('pdfMeta').textContent = [pdfData.subject, pdfData.branch, pdfData.year, pdfData.college, pdfData.regulation].filter(Boolean).join(' • ');
     document.title = pdfData.title + ' — BTech Vault';
+    const meta = [pdfData.subject, pdfData.branch, pdfData.year, pdfData.college, pdfData.regulation].filter(Boolean).join(' • ');
+    document.getElementById('pdfMeta').textContent = meta;
 
-    let url = pdfData.fileUrl;
+    const url = pdfData.fileUrl;
     document.getElementById('openBtn').href = url;
 
+    // YouTube card inside sheet
+    if (pdfData.youtubeUrl) {
+      document.getElementById('youtubeInSheet').innerHTML = `
+        <a href="${pdfData.youtubeUrl}" target="_blank" class="yt-card">
+          <span class="yt-icon">▶️</span>
+          <div>
+            <div class="yt-text">Watch Related Video</div>
+            <div class="yt-url">${pdfData.youtubeUrl}</div>
+          </div>
+        </a>`;
+    }
+
+    // Try loading PDF
     const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
     try {
       pdfDoc = await pdfjsLib.getDocument(proxyUrl).promise;
-      showPdf();
-    } catch(e) {
+      onPdfLoaded();
+    } catch {
       try {
         pdfDoc = await pdfjsLib.getDocument(url).promise;
-        showPdf();
-      } catch(e2) {
-        showErr('Cannot preview. Use Open button ↗', url);
+        onPdfLoaded();
+      } catch {
+        showErr('Cannot preview this PDF.', url);
       }
     }
 
-    if (pdfData.youtubeUrl) {
-      document.getElementById('youtubeBox').innerHTML = `
-        <a href="${pdfData.youtubeUrl}" target="_blank" class="youtube-box">
-          <span class="yt-icon">▶️</span>
-          <div><div class="yt-text">Watch Related YouTube Video</div>
-          <div class="yt-sub">${pdfData.youtubeUrl}</div></div>
-        </a>`;
-    }
-    document.getElementById('commentsSection').style.display = 'block';
     loadComments();
-    if (currentUser) {
-      document.getElementById('commentInputRow').style.display = 'flex';
-    } else {
-      document.getElementById('loginToComment').style.display = 'block';
-    }
-  } catch(e) {
+  } catch (e) {
     showErr('Error: ' + e.message);
   }
 }
 
-function showPdf() {
+/* ─── PDF LOADED ─── */
+function onPdfLoaded() {
+  totalPages = pdfDoc.numPages;
   document.getElementById('loadingDiv').style.display = 'none';
   document.getElementById('pdfCanvas').style.display = 'block';
-  document.getElementById('pageNav').style.display = 'flex';
-  document.getElementById('pageJump').max = pdfDoc.numPages;
+  document.getElementById('pageNav').classList.add('visible');
+  document.getElementById('pageJump').max = totalPages;
   renderPage(1);
+  // show swipe hint briefly
+  if (totalPages > 1) showSwipeHint();
 }
 
+/* ─── RENDER PAGE ─── */
 async function renderPage(num) {
-  const page = await pdfDoc.getPage(num);
-  const canvas = document.getElementById('pdfCanvas');
-  const ctx = canvas.getContext('2d');
-  const availW = window.innerWidth - 24;   // 12px side padding × 2
-  const scale = Math.min(availW / page.getViewport({scale:1}).width, 2);
-  const vp = page.getViewport({scale});
-  canvas.width = vp.width;
-  canvas.height = vp.height;
-  await page.render({canvasContext:ctx, viewport:vp}).promise;
-  pageNum = num;
-  document.getElementById('pageInfo').textContent = `${num} / ${pdfDoc.numPages}`;
-  document.getElementById('pageJump').value = num;
-  // scroll canvas into view top
-  canvas.scrollIntoView({behavior:'smooth', block:'start'});
+  if (rendering) return;
+  rendering = true;
+  try {
+    const page = await pdfDoc.getPage(num);
+    const canvas = document.getElementById('pdfCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Full device-pixel-ratio rendering for crisp text
+    const dpr = window.devicePixelRatio || 1;
+    const viewportWidth = window.innerWidth;
+    const baseVp = page.getViewport({ scale: 1 });
+    const scale = (viewportWidth / baseVp.width) * dpr;
+    const vp = page.getViewport({ scale });
+
+    canvas.width = vp.width;
+    canvas.height = vp.height;
+    canvas.style.width = viewportWidth + 'px';
+    canvas.style.height = (vp.height / dpr) + 'px';
+
+    await page.render({ canvasContext: ctx, viewport: vp }).promise;
+    canvas.classList.remove('page-flash');
+    void canvas.offsetWidth; // reflow
+    canvas.classList.add('page-flash');
+
+    pageNum = num;
+    document.getElementById('pageInfo').textContent = `${num} / ${totalPages}`;
+    document.getElementById('pageJump').value = num;
+    document.getElementById('progressFill').style.width = ((num / totalPages) * 100) + '%';
+
+    // Button states
+    document.getElementById('prevBtn').disabled = num <= 1;
+    document.getElementById('nextBtn').disabled = num >= totalPages;
+
+    // Scroll viewer to top
+    document.getElementById('viewerWrap').scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) {
+    console.error(e);
+  }
+  rendering = false;
 }
 
-function prevPage() { if(pageNum > 1) renderPage(pageNum - 1); }
-function nextPage() { if(pdfDoc && pageNum < pdfDoc.numPages) renderPage(pageNum + 1); }
-
+function prevPage() { if (pageNum > 1) renderPage(pageNum - 1); }
+function nextPage() { if (pdfDoc && pageNum < totalPages) renderPage(pageNum + 1); }
 function jumpToPage() {
   const n = parseInt(document.getElementById('pageJump').value);
-  if (n >= 1 && n <= pdfDoc.numPages) renderPage(n);
+  if (n >= 1 && n <= totalPages) renderPage(n);
 }
 
-// Swipe gesture support
-let touchStartX = 0;
-document.getElementById('viewerArea').addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, {passive:true});
-document.getElementById('viewerArea').addEventListener('touchend', e => {
+/* ─── SWIPE GESTURES ─── */
+let touchStartX = 0, touchStartY = 0;
+const viewerEl = document.getElementById('viewerWrap');
+viewerEl.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].clientX;
+  touchStartY = e.changedTouches[0].clientY;
+}, { passive: true });
+viewerEl.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 60) { dx < 0 ? nextPage() : prevPage(); }
-}, {passive:true});
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 55) {
+    dx < 0 ? nextPage() : prevPage();
+  }
+}, { passive: true });
 
+/* keyboard arrows */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') nextPage();
+  if (e.key === 'ArrowLeft') prevPage();
+});
+
+/* swipe hint */
+function showSwipeHint() {
+  const h = document.getElementById('swipeHint');
+  h.classList.add('show');
+  setTimeout(() => h.classList.remove('show'), 2200);
+}
+
+/* ─── ERROR STATE ─── */
 function showErr(msg, url) {
   document.getElementById('loadingDiv').innerHTML = `
-    <p style="color:#9ca3af;margin-bottom:1rem;text-align:center;">${msg}</p>
-    ${url ? `<a href="${url}" target="_blank" class="btn btn-open" style="padding:0.6rem 1.2rem;font-size:0.9rem;">📄 Open PDF in New Tab</a>` : ''}
-  `;
+    <div style="font-size:2rem;margin-bottom:0.5rem">😕</div>
+    <p style="color:var(--muted);margin-bottom:1rem;">${msg}</p>
+    ${url ? `<a href="${url}" target="_blank" style="background:var(--warn);color:#fff;border:none;border-radius:12px;padding:0.65rem 1.25rem;font-size:0.9rem;font-weight:700;font-family:'Outfit',sans-serif;text-decoration:none;">📄 Open PDF in Browser</a>` : ''}`;
 }
 
+/* ─── SAVE ─── */
 async function checkSaved() {
   try {
-    const doc = await db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(pdfId).get();
-    isSaved = doc.exists; updateSaveBtn();
+    const d = await db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(pdfId).get();
+    isSaved = d.exists;
+    updateSaveBtn();
   } catch {}
 }
 
 function updateSaveBtn() {
   const btn = document.getElementById('saveBtn');
-  btn.innerHTML = isSaved ? '✅ Saved' : '🔖 Save';
-  btn.className = isSaved ? 'btn btn-saved' : 'btn btn-save';
+  document.getElementById('saveIcon').textContent = isSaved ? '✅' : '🔖';
+  document.getElementById('saveLabel').textContent = isSaved ? 'Saved' : 'Save';
+  if (isSaved) btn.classList.add('saved'); else btn.classList.remove('saved');
 }
 
 async function toggleSave() {
@@ -403,26 +716,44 @@ async function toggleSave() {
   updateSaveBtn();
 }
 
+/* ─── COMMENTS SHEET ─── */
+function openComments() {
+  document.getElementById('commentsOverlay').classList.add('open');
+  document.getElementById('commentsSheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeComments() {
+  document.getElementById('commentsOverlay').classList.remove('open');
+  document.getElementById('commentsSheet').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 async function loadComments() {
   try {
     const snap = await db.collection('pdfs').doc(pdfId).collection('comments')
-      .orderBy('createdAt','asc').limit(50).get();
+      .orderBy('createdAt', 'asc').limit(50).get();
     const list = document.getElementById('commentsList');
-    if (snap.empty) { list.innerHTML = '<div style="color:#6b7280;font-size:0.85rem;">No comments yet. Be the first!</div>'; return; }
+    document.getElementById('commentCount').textContent = snap.size ? `(${snap.size})` : '';
+    if (snap.empty) {
+      list.innerHTML = `<div class="comments-empty"><div class="ce-icon">🌟</div><div>No comments yet.<br>Be the first to comment!</div></div>`;
+      return;
+    }
     list.innerHTML = snap.docs.map(d => {
       const c = d.data();
-      const initials = (c.userName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-      const time = c.createdAt ? new Date(c.createdAt.seconds*1000).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '';
+      const initials = (c.userName || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      const time = c.createdAt ? new Date(c.createdAt.seconds * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
       return `<div class="comment-item">
         <div class="comment-avatar">${initials}</div>
         <div class="comment-body">
-          <div class="comment-name">${c.userName||'Anonymous'}</div>
-          <div class="comment-text">${c.text}</div>
+          <div class="comment-name">${esc(c.userName || 'Anonymous')}</div>
+          <div class="comment-text">${esc(c.text)}</div>
           <div class="comment-time">${time}</div>
         </div>
       </div>`;
     }).join('');
-  } catch(e) { document.getElementById('commentsList').innerHTML = '<div style="color:#6b7280;font-size:0.85rem;">Could not load comments.</div>'; }
+  } catch {
+    document.getElementById('commentsList').innerHTML = `<div class="comments-empty">Could not load comments.</div>`;
+  }
 }
 
 async function postComment() {
@@ -430,6 +761,8 @@ async function postComment() {
   const input = document.getElementById('commentInput');
   const text = input.value.trim();
   if (!text) return;
+  const btn = document.getElementById('postBtn');
+  btn.disabled = true;
   input.value = '';
   try {
     await db.collection('pdfs').doc(pdfId).collection('comments').add({
@@ -439,22 +772,28 @@ async function postComment() {
     });
     showToast('Comment posted! 💬');
     loadComments();
-  } catch(e) { showToast('Failed to post comment'); }
+  } catch { showToast('Failed to post'); }
+  btn.disabled = false;
 }
 
+/* ─── SHARE ─── */
 function shareWhatsApp() {
-  const text = `Check out this PDF: ${pdfData ? pdfData.title : ''}\n${location.href}`;
+  const text = `Check out: ${pdfData ? pdfData.title : 'this PDF'}\n${location.href}`;
   window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
-
 function copyLink() {
   navigator.clipboard.writeText(location.href).then(() => showToast('Link copied! 📋'));
 }
 
+/* ─── TOAST ─── */
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 </script>
 </body>
