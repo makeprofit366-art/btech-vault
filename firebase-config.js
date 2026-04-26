@@ -1,6 +1,5 @@
 // Firebase is loaded via CDN scripts in HTML files
 // DO NOT use import statements here
-
 const firebaseConfig = {
   apiKey: "AIzaSyBi4Udgz97OJo1sei1pAmCJ9oiBT4BSGMw",
   authDomain: "btech-vault.firebaseapp.com",
@@ -12,11 +11,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-
 const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
-
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 async function signInWithGoogle() {
