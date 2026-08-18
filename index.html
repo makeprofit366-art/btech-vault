@@ -73,10 +73,18 @@ nav{
   height:60px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
   max-width:1200px;
   margin:0 auto;
 }
+.nav-tools{
+  margin-left:1.1rem;
+  font-size:0.83rem;
+  font-weight:600;
+  color:var(--ink-soft);
+  text-decoration:none;
+  padding:0.4rem 0;
+}
+.nav-tools:hover{color:var(--teal);}
 .logo{
   font-family:'Fraunces',serif;
   font-size:1.3rem;
@@ -100,7 +108,7 @@ nav{
 }
 @media(min-width:560px){.nav-tagline{display:inline;}}
 .nav-left{display:flex;align-items:baseline;}
-.nav-actions{display:flex;align-items:center;gap:0.4rem;}
+.nav-actions{display:flex;align-items:center;gap:0.4rem;margin-left:auto;}
 
 /* Buttons */
 .btn{padding:0.45rem 0.9rem;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;border:1px solid transparent;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;transition:background 0.15s,border-color 0.15s;font-family:'Inter',sans-serif;white-space:nowrap;}
@@ -209,7 +217,7 @@ nav{
 /* ══════════════════════════════════════
    SECTIONS (shared)
 ══════════════════════════════════════ */
-.section{max-width:1100px;margin:0 auto;padding:1.5rem 1.25rem;}
+.section{max-width:1100px;width:100%;margin:0 auto;padding:1.5rem 1.25rem;}
 .section-header{margin-bottom:1rem;}
 .section-header h2{font-size:1.15rem;font-weight:700;color:var(--ink);}
 .section-header p{font-size:0.85rem;color:var(--ink-soft);margin-top:0.2rem;}
@@ -219,7 +227,7 @@ nav{
 /* ══════════════════════════════════════
    STUDENT TOOLS
 ══════════════════════════════════════ */
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.85rem;}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,260px));gap:0.85rem;justify-content:center;}
 .tool-card{
   background:var(--paper-raised);
   border:1px solid var(--line);
@@ -244,7 +252,10 @@ nav{
 /* ══════════════════════════════════════
    PDF GRID — datasheet card
 ══════════════════════════════════════ */
-.pdf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:0.85rem;}
+.pdf-grid{display:grid;grid-template-columns:1fr;gap:0.85rem;width:100%;}
+@media(min-width:640px){.pdf-grid{grid-template-columns:repeat(2,1fr);}}
+@media(min-width:900px){.pdf-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:1280px){.pdf-grid{grid-template-columns:repeat(4,1fr);}}
 .card{
   background:var(--paper-raised);
   border:1px solid var(--line);
@@ -328,6 +339,8 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
   .footer-grid{grid-template-columns:1fr;gap:1.5rem;}
   .btn-resume .resume-text{display:none;}
   .nav-actions{gap:0.3rem;}
+  .nav-tools{margin-left:0.6rem;font-size:0.78rem;}
+  .nav-tagline{display:none;}
   .stats-strip{gap:1.1rem;padding-left:0.75rem;padding-right:0.75rem;}
   .search-card{margin:1.25rem 1rem -2.25rem;padding:0.85rem;}
 }
@@ -354,6 +367,7 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
       <a href="index.html" class="logo"><span class="logo-mark">B</span>Tech<span class="logo-mark">Vault</span></a>
       <span class="nav-tagline">Notes · PYQs · Lab manuals</span>
     </div>
+    <a href="index.html#tools" class="nav-tools">Tools</a>
     <div class="nav-actions" id="navActions">
       <div class="spinner"></div>
     </div>
@@ -409,30 +423,8 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
       <h3>Study Chat</h3>
       <p>Ask questions about your notes and get explanations on the spot.</p>
     </a>
-    <div class="tool-card disabled">
-      <div class="tool-card-top"><div class="tool-icon">🧮</div><span class="tool-tag soon">Coming soon</span></div>
-      <h3>CGPA Calculator</h3>
-      <p>Work out your semester and overall CGPA from your grades.</p>
-    </div>
-    <div class="tool-card disabled">
-      <div class="tool-card-top"><div class="tool-icon">📎</div><span class="tool-tag soon">Coming soon</span></div>
-      <h3>PDF Merge &amp; Split</h3>
-      <p>Combine multiple notes into one file, or pull out the pages you need.</p>
-    </div>
-    <div class="tool-card disabled">
-      <div class="tool-card-top"><div class="tool-icon">📐</div><span class="tool-tag soon">Coming soon</span></div>
-      <h3>Unit Converter</h3>
-      <p>Quick conversions for the units that show up across engineering subjects.</p>
-    </div>
-    <div class="tool-card disabled">
-      <div class="tool-card-top"><div class="tool-icon">🗓️</div><span class="tool-tag soon">Coming soon</span></div>
-      <h3>Attendance Tracker</h3>
-      <p>Track how many classes you can afford to miss and stay above the cutoff.</p>
-    </div>
   </div>
 </div>
-
-<div class="ad-slot"><div class="ad-slot-inner">Advertisement</div></div>
 
 <!-- ═══════════════════════════════ MAIN GRID ════════════════════════════ -->
 <div class="section">
@@ -451,8 +443,6 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
   <p>Upload your PDFs and help other students on the same course.</p>
   <a href="dashboard.html" class="btn btn-primary">Upload a PDF</a>
 </div>
-
-<div class="ad-slot"><div class="ad-slot-inner">Advertisement</div></div>
 
 <!-- ═══════════════════════════════ FOOTER ══════════════════════════════ -->
 <footer>
