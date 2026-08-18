@@ -76,15 +76,35 @@ nav{
   max-width:1200px;
   margin:0 auto;
 }
+.nav-menu{position:relative;margin-left:1.1rem;}
 .nav-tools{
-  margin-left:1.1rem;
-  font-size:0.83rem;
-  font-weight:600;
-  color:var(--ink-soft);
-  text-decoration:none;
-  padding:0.4rem 0;
+  font-size:0.83rem;font-weight:600;color:var(--ink-soft);
+  background:transparent;border:none;cursor:pointer;
+  padding:0.4rem 0;font-family:'Inter',sans-serif;
+  display:inline-flex;align-items:center;gap:0.3rem;
 }
 .nav-tools:hover{color:var(--teal);}
+.nav-tools .caret{font-size:0.65rem;transition:transform 0.15s;}
+.nav-menu.open .caret{transform:rotate(180deg);}
+.tools-dropdown{
+  display:none;
+  position:absolute;top:calc(100% + 8px);left:0;
+  background:var(--paper-raised);border:1px solid var(--line);
+  border-radius:10px;box-shadow:0 10px 28px rgba(23,25,35,0.12);
+  min-width:200px;padding:0.4rem;z-index:150;
+}
+.nav-menu.open .tools-dropdown{display:block;}
+.tools-dropdown a{
+  display:flex;align-items:center;gap:0.55rem;
+  padding:0.55rem 0.6rem;border-radius:7px;
+  font-size:0.85rem;color:var(--ink);text-decoration:none;
+}
+.tools-dropdown a:hover{background:var(--line-soft);}
+.tools-dropdown .dd-all{
+  margin-top:0.2rem;padding-top:0.55rem;
+  border-top:1px solid var(--line-soft);
+  color:var(--teal);font-weight:600;font-size:0.8rem;
+}
 .logo{
   font-family:'Fraunces',serif;
   font-size:1.3rem;
@@ -339,7 +359,8 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
   .footer-grid{grid-template-columns:1fr;gap:1.5rem;}
   .btn-resume .resume-text{display:none;}
   .nav-actions{gap:0.3rem;}
-  .nav-tools{margin-left:0.6rem;font-size:0.78rem;}
+  .nav-menu{margin-left:0.6rem;}
+  .nav-tools{font-size:0.78rem;}
   .nav-tagline{display:none;}
   .stats-strip{gap:1.1rem;padding-left:0.75rem;padding-right:0.75rem;}
   .search-card{margin:1.25rem 1rem -2.25rem;padding:0.85rem;}
@@ -367,7 +388,16 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
       <a href="index.html" class="logo"><span class="logo-mark">B</span>Tech<span class="logo-mark">Vault</span></a>
       <span class="nav-tagline">Notes · PYQs · Lab manuals</span>
     </div>
-    <a href="index.html#tools" class="nav-tools">Tools</a>
+    <div class="nav-menu" id="toolsMenu">
+      <button class="nav-tools" onclick="toggleToolsMenu(event)">Tools <span class="caret">▾</span></button>
+      <div class="tools-dropdown">
+        <a href="resume-builder.html">📄 Resume Builder</a>
+        <a href="chat.html">💬 Study Chat</a>
+        <a href="study-timetable.html">🗓️ Study Timetable</a>
+        <!-- add new tool links here as you build them, same format as above -->
+        <a href="index.html#tools" class="dd-all">See all tools →</a>
+      </div>
+    </div>
     <div class="nav-actions" id="navActions">
       <div class="spinner"></div>
     </div>
@@ -422,6 +452,11 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
       <div class="tool-card-top"><div class="tool-icon">💬</div><span class="tool-tag live">Live</span></div>
       <h3>Study Chat</h3>
       <p>Ask questions about your notes and get explanations on the spot.</p>
+    </a>
+    <a href="study-timetable.html" class="tool-card">
+      <div class="tool-card-top"><div class="tool-icon">🗓️</div><span class="tool-tag live">Live</span></div>
+      <h3>Study Timetable</h3>
+      <p>Build a personalised weekly study schedule around your free hours.</p>
     </a>
   </div>
 </div>
@@ -627,6 +662,15 @@ function filterPdfs(){
 
 function closeModal(){document.getElementById('loginModal').classList.remove('active');}
 document.getElementById('loginModal').addEventListener('click',e=>{if(e.target.id==='loginModal')closeModal();});
+
+function toggleToolsMenu(e){
+  e.stopPropagation();
+  document.getElementById('toolsMenu').classList.toggle('open');
+}
+document.addEventListener('click',e=>{
+  const menu=document.getElementById('toolsMenu');
+  if(menu && !menu.contains(e.target)) menu.classList.remove('open');
+});
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
