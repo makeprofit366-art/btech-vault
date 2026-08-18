@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Timetable Generator — BTechVault</title>
+<meta name="description" content="Build a personalised weekly study timetable in minutes. Free tool by BTechVault.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16213E;
+    --ink-soft:#2A3B63;
+    --parchment:#FBF7EE;
+    --parchment-dim:#F3EDDD;
+    --rule:#E3DAC3;
+    --gold:#C9962B;
+    --gold-dim:#E9D3A0;
+    --teal:#2F6F68;
+    --coral:#D96C4F;
+    --ok:#3E7A52;
+    --shadow: 0 20px 45px -20px rgba(22,33,62,0.35);
+    --radius: 14px;
+    --sub-1:#2F6F68;
+    --sub-2:#C9962B;
+    --sub-3:#D96C4F;
+    --sub-4:#4A5899;
+    --sub-5:#7A8B69;
+    --sub-6:#8B5A7A;
+    --sub-7:#B4552F;
+    --sub-8:#4C7A93;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--parchment);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fraunces',serif; margin:0; color:var(--ink);}
+  p{margin:0;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  a{color:inherit;}
+
+  /* ---------- layout shells ---------- */
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  @media (max-width:640px){ .wrap{padding:0 18px;} }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    border-bottom:1px solid var(--rule);
+    padding:18px 0;
+    background:var(--parchment);
+    position:sticky; top:0; z-index:40;
+  }
+  .topbar .wrap{display:flex; align-items:center; justify-content:space-between;}
+  .brand{display:flex; align-items:baseline; gap:9px; text-decoration:none;}
+  .brand-mark{
+    font-family:'Fraunces',serif; font-weight:700; font-size:22px; letter-spacing:.2px; color:var(--ink);
+  }
+  .brand-sub{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--teal);
+  }
+  .topbar-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); letter-spacing:.02em;
+  }
+  @media (max-width:640px){ .topbar-tag{display:none;} }
+
+  /* ---------- hero ---------- */
+  .hero{padding:64px 0 40px; position:relative; overflow:hidden;}
+  .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:56px; align-items:center;}
+  @media (max-width:920px){ .hero-grid{grid-template-columns:1fr; gap:38px;} }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--teal); margin-bottom:18px;
+  }
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold);}
+
+  .hero h1{
+    font-size:clamp(34px,4.6vw,54px);
+    line-height:1.06;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .hero h1 em{
+    font-style:italic; color:var(--teal); font-weight:500;
+    background-image:linear-gradient(180deg, transparent 68%, var(--gold-dim) 68%);
+  }
+  .hero p.lede{
+    margin-top:20px; font-size:17px; line-height:1.65; color:var(--ink-soft); max-width:46ch;
+  }
+  .hero-actions{margin-top:30px; display:flex; gap:14px; flex-wrap:wrap; align-items:center;}
+  .btn{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px;
+    padding:13px 24px; border-radius:9px; border:1px solid transparent; cursor:pointer;
+    display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+    text-decoration:none;
+  }
+  .btn-primary{background:var(--ink); color:var(--parchment); box-shadow:0 10px 24px -10px rgba(22,33,62,.5);}
+  .btn-primary:hover{transform:translateY(-1px); box-shadow:0 14px 28px -10px rgba(22,33,62,.55);}
+  .btn-ghost{background:transparent; color:var(--ink); border-color:var(--ink);}
+  .btn-ghost:hover{background:var(--ink); color:var(--parchment);}
+  .hero-note{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+
+  /* signature: animated mini timetable */
+  .signature-card{
+    background:var(--ink); border-radius:18px; padding:26px 24px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  .signature-card::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(420px 220px at 85% -10%, rgba(201,150,43,.18), transparent 60%);
+  }
+  .sig-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;}
+  .sig-title{color:var(--parchment); font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; opacity:.75;}
+  .sig-dots span{display:inline-block; width:6px; height:6px; border-radius:50%; background:rgba(251,247,238,.35); margin-left:5px;}
+  .mini-grid{display:grid; grid-template-columns:34px repeat(5,1fr); gap:4px;}
+  .mini-cell{height:20px; border-radius:4px; background:rgba(251,247,238,.06);}
+  .mini-label{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:rgba(251,247,238,.4); display:flex; align-items:center;}
+  .mini-fill{animation:fillIn 3.2s ease-in-out infinite; animation-delay:calc(var(--d) * 90ms);}
+  @keyframes fillIn{
+    0%{opacity:0; transform:scaleX(.7);}
+    12%{opacity:1; transform:scaleX(1);}
+    78%{opacity:1;}
+    100%{opacity:0;}
+  }
+  @media (prefers-reduced-motion: reduce){ .mini-fill{animation:none; opacity:1;} }
+  .sig-caption{margin-top:16px; color:rgba(251,247,238,.55); font-size:12.5px; line-height:1.55;}
+
+  /* ---------- section shell ---------- */
+  .section{padding:52px 0;}
+  .section-head{margin-bottom:26px; display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap;}
+  .section-head h2{font-size:26px; font-weight:600;}
+  .section-head .step{font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);}
+
+  .divider{height:1px; background:var(--rule); border:none; margin:0;}
+
+  /* ---------- builder panel ---------- */
+  .panel{
+    background:#fff; border:1px solid var(--rule); border-radius:var(--radius);
+    padding:28px; box-shadow:0 1px 0 rgba(22,33,62,.02);
+  }
+  @media (max-width:640px){ .panel{padding:20px;} }
+
+  .field-row{display:grid; grid-template-columns:1fr; gap:16px;}
+  .field{display:flex; flex-direction:column; gap:7px;}
+  label{font-size:12.5px; font-weight:600; color:var(--ink-soft); letter-spacing:.01em;}
+  input[type="text"], input[type="number"], input[type="time"], select{
+    font-family:'Inter',sans-serif; font-size:14.5px; color:var(--ink);
+    padding:11px 13px; border-radius:8px; border:1.4px solid var(--rule); background:var(--parchment);
+    outline:none; transition:border-color .15s ease, background .15s ease;
+  }
+  input:focus, select:focus{border-color:var(--teal); background:#fff;}
+  .subject-add-row{display:grid; grid-template-columns:1.6fr .8fr auto; gap:12px; align-items:end;}
+  @media (max-width:640px){ .subject-add-row{grid-template-columns:1fr;} }
+
+  .btn-add{
+    background:var(--teal); color:#fff; border:none; border-radius:8px; padding:11px 18px;
+    font-weight:600; font-size:14px; cursor:pointer; white-space:nowrap; height:44px;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .btn-add:hover{background:#255c56; transform:translateY(-1px);}
+
+  .chip-list{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;}
+  .chip{
+    display:flex; align-items:center; gap:9px; background:var(--parchment-dim);
+    border:1px solid var(--rule); border-radius:999px; padding:7px 8px 7px 14px; font-size:13.5px;
+  }
+  .chip .swatch{width:10px; height:10px; border-radius:3px; flex:none;}
+  .chip .hrs{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-soft);}
+  .chip button{
+    border:none; background:rgba(22,33,62,.08); color:var(--ink); width:20px; height:20px; border-radius:50%;
+    cursor:pointer; font-size:13px; line-height:1; display:flex; align-items:center; justify-content:center;
+  }
+  .chip button:hover{background:var(--coral); color:#fff;}
+  .empty-hint{font-size:13px; color:var(--ink-soft); font-style:italic; margin-top:14px;}
+
+  .settings-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:8px;}
+  @media (max-width:900px){ .settings-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:520px){ .settings-grid{grid-template-columns:1fr;} }
+
+  .day-toggles{display:flex; flex-wrap:wrap; gap:8px;}
+  .day-toggle{
+    padding:9px 13px; border-radius:8px; border:1.4px solid var(--rule); background:var(--parchment);
+    font-size:13px; font-weight:600; cursor:pointer; color:var(--ink-soft); transition:all .15s ease;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .day-toggle.active{background:var(--ink); border-color:var(--ink); color:var(--parchment);}
+
+  .panel-footer{display:flex; align-items:center; justify-content:space-between; margin-top:26px; gap:16px; flex-wrap:wrap;}
+  .warning{
+    display:none; align-items:center; gap:8px; background:#FBEFE9; border:1px solid #F0D3C4; color:#9A4A2C;
+    padding:10px 14px; border-radius:8px; font-size:13px; margin-top:16px;
+  }
+  .warning.show{display:flex;}
+
+  /* ---------- output ---------- */
+  #output{display:none;}
+  #output.show{display:block;}
+  .output-head{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:18px;}
+  .output-actions{display:flex; gap:10px;}
+  .btn-small{
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600; padding:9px 15px; border-radius:7px;
+    border:1.4px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer;
+  }
+  .btn-small:hover{background:var(--ink); color:var(--parchment);}
+
+  .timetable-frame{
+    background:#fff; border:1px solid var(--rule); border-radius:var(--radius); padding:22px; overflow-x:auto;
+    box-shadow:var(--shadow);
+  }
+  table.timetable{border-collapse:collapse; width:100%; min-width:680px;}
+  table.timetable th, table.timetable td{border:1px solid var(--rule); padding:0;}
+  table.timetable thead th{
+    background:var(--ink); color:var(--parchment); font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; padding:12px 8px; font-weight:500;
+  }
+  table.timetable thead th:first-child{background:var(--ink);}
+  td.time-col{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-soft); background:var(--parchment-dim);
+    padding:10px 10px; white-space:nowrap; vertical-align:top; width:88px;
+  }
+  td.slot{height:56px; vertical-align:stretch; padding:0;}
+  .block{
+    height:100%; width:100%; padding:8px 9px; display:flex; flex-direction:column; justify-content:center; gap:2px;
+    border-left:3px solid transparent;
+  }
+  .block .b-name{font-size:12.5px; font-weight:700; color:#fff;}
+  .block .b-tag{font-size:10px; font-family:'IBM Plex Mono',monospace; color:rgba(255,255,255,.8);}
+  .block.free{background:repeating-linear-gradient(135deg, #F7F3E6, #F7F3E6 6px, #F1EBD8 6px, #F1EBD8 12px);}
+  .block.free .b-name{color:var(--ink-soft); font-weight:600;}
+  .block.free .b-tag{color:var(--ink-soft); opacity:.65;}
+  .block.brk{background:var(--parchment-dim);}
+  .block.brk .b-name{color:var(--ink-soft); font-weight:600; font-style:italic;}
+  tr:nth-child(even) td.time-col{background:#F0E9D6;}
+
+  .legend{display:flex; flex-wrap:wrap; gap:14px; margin-top:16px;}
+  .legend-item{display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink-soft);}
+  .legend-swatch{width:11px; height:11px; border-radius:3px;}
+
+  /* ---------- tips ---------- */
+  .tips-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media (max-width:800px){ .tips-grid{grid-template-columns:1fr;} }
+  .tip-card{border:1px solid var(--rule); border-radius:var(--radius); padding:22px; background:#fff;}
+  .tip-card .tip-eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--coral);}
+  .tip-card h3{font-size:18px; margin-top:8px; font-weight:600;}
+  .tip-card p{font-size:13.8px; color:var(--ink-soft); line-height:1.6; margin-top:8px;}
+
+  footer{border-top:1px solid var(--rule); padding:30px 0; margin-top:20px;}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;}
+  footer p{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- print ---------- */
+  @media print{
+    .topbar, .hero, .section:not(#output-section), footer, .output-actions, .btn{display:none !important;}
+    body{background:#fff;}
+    #output-section{padding:0;}
+    .timetable-frame{box-shadow:none; border:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">BTechVault</span>
+      <span class="brand-sub">Study Tools</span>
+    </a>
+    <span class="topbar-tag">Study Timetable Generator</span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Free tool for students</span>
+      <h1>Turn your subjects into a <em>timetable</em> you'll actually keep.</h1>
+      <p class="lede">Tell it what you're studying and when you're free. It works out a balanced weekly schedule in seconds — no spreadsheets, no guesswork.</p>
+      <div class="hero-actions">
+        <a href="#builder" class="btn btn-primary">Build my timetable ↓</a>
+        <a href="#tips" class="btn btn-ghost">Study tips</a>
+      </div>
+      <p class="hero-note" style="margin-top:16px;">No sign‑up · Runs in your browser · Saves automatically</p>
+    </div>
+
+    <div class="signature-card" aria-hidden="true">
+      <div class="sig-top">
+        <span class="sig-title">This week</span>
+        <span class="sig-dots"><span></span><span></span><span></span></span>
+      </div>
+      <div class="mini-grid" id="miniGrid"></div>
+      <p class="sig-caption">Every subject gets its slot, every slot gets a subject — built around the time you actually have.</p>
+    </div>
+  </div>
+</header>
+
+<hr class="divider">
+
+<section class="section" id="builder">
+  <div class="wrap">
+
+    <div class="section-head">
+      <div>
+        <span class="step">Step 1 — Subjects</span>
+        <h2 style="margin-top:6px;">What are you studying?</h2>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="subject-add-row">
+        <div class="field">
+          <label for="subjName">Subject name</label>
+          <input type="text" id="subjName" placeholder="e.g. Organic Chemistry" maxlength="40">
+        </div>
+        <div class="field">
+          <label for="subjHours">Hours needed / week</label>
+          <input type="number" id="subjHours" min="1" max="30" value="3">
+        </div>
+        <button class="btn-add" id="addSubjectBtn" type="button">+ Add subject</button>
+      </div>
+
+      <div class="chip-list" id="chipList"></div>
+      <p class="empty-hint" id="emptyHint">No subjects yet — add at least one above to get started.</p>
+    </div>
+
+    <div class="section-head" style="margin-top:44px;">
+      <div>
+        <span class="step">Step 2 — Availability</span>
+        <h2 style="margin-top:6px;">When can you study?</h2>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="field">
+        <label>Study days</label>
+        <div class="day-toggles" id="dayToggles"></div>
+      </div>
+
+      <div class="settings-grid">
+        <div class="field">
+          <label for="startTime">Day starts</label>
+          <input type="time" id="startTime" value="16:00">
+        </div>
+        <div class="field">
+          <label for="endTime">Day ends</label>
+          <input type="time" id="endTime" value="21:00">
+        </div>
+        <div class="field">
+          <label for="sessionLen">Session length</label>
+          <select id="sessionLen">
+            <option value="30">30 minutes</option>
+            <option value="45" selected>45 minutes</option>
+            <option value="60">60 minutes</option>
+            <option value="90">90 minutes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="breakOn">Daily break</label>
+          <select id="breakOn">
+            <option value="none">No fixed break</option>
+            <option value="18:00-18:30" selected>6:00–6:30 pm</option>
+            <option value="19:00-19:30">7:00–7:30 pm</option>
+            <option value="20:00-20:30">8:00–8:30 pm</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="warning" id="warningBox">
+        <span>⚠</span>
+        <span id="warningText"></span>
+      </div>
+
+      <div class="panel-footer">
+        <p class="hero-note" id="statsLine">Add subjects and pick your days to continue.</p>
+        <button class="btn btn-primary" id="generateBtn" type="button">Generate timetable →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="output-section">
+  <div class="wrap" id="output">
+    <div class="output-head">
+      <div>
+        <span class="step">Result</span>
+        <h2 style="margin-top:6px;">Your weekly timetable</h2>
+      </div>
+      <div class="output-actions">
+        <button class="btn-small" id="printBtn" type="button">Print / Save as PDF</button>
+        <button class="btn-small" id="pngBtn" type="button">Download as image</button>
+      </div>
+    </div>
+
+    <div class="timetable-frame">
+      <div style="overflow-x:auto;">
+        <table class="timetable" id="timetableEl"></table>
+      </div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+</section>
+
+<hr class="divider" id="tips-anchor">
+
+<section class="section" id="tips">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="step">While you're here</span>
+        <h2 style="margin-top:6px;">Three habits that make a timetable stick</h2>
+      </div>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <span class="tip-eyebrow">Spacing</span>
+        <h3>Spread, don't cram</h3>
+        <p>Three 45‑minute sessions across the week beat one three‑hour block. Spacing out revision on the same topic helps it stay in memory.</p>
+      </div>
+      <div class="tip-card">
+        <span class="tip-eyebrow">Focus</span>
+        <h3>Protect the first ten minutes</h3>
+        <p>Most sessions are lost in the first ten minutes to your phone. Put it in another room before the slot starts, not after.</p>
+      </div>
+      <div class="tip-card">
+        <span class="tip-eyebrow">Review</span>
+        <h3>Re‑read nothing, recall everything</h3>
+        <p>Close the book and try to write down what you remember before checking. Testing yourself beats re‑reading, every time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>BTechVault — built for students</p>
+    <p>Your timetable is saved in this browser only.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var PALETTE = ['--sub-1','--sub-2','--sub-3','--sub-4','--sub-5','--sub-6','--sub-7','--sub-8'];
+  var DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var STORAGE_KEY = 'peritto_timetable_v1';
+
+  var state = {
+    subjects: [],       // {id, name, hours, colorVar}
+    days: ['Mon','Tue','Wed','Thu','Fri'],
+    startTime: '16:00',
+    endTime: '21:00',
+    sessionLen: 45,
+    breakWindow: '18:00-18:30'
+  };
+
+  // ---------- helpers ----------
+  function toMinutes(t){ var p=t.split(':'); return (+p[0])*60 + (+p[1]); }
+  function toTimeLabel(mins){
+    var h = Math.floor(mins/60), m = mins%60;
+    var ampm = h >= 12 ? 'pm' : 'am';
+    var h12 = h % 12; if(h12===0) h12=12;
+    return h12 + (m ? ':' + (m<10?'0':'') + m : ':00') + ' ' + ampm;
+  }
+  function uid(){ return 'S' + Math.random().toString(36).slice(2,8); }
+  function nextColor(){
+    var used = state.subjects.length;
+    return PALETTE[used % PALETTE.length];
+  }
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && Array.isArray(parsed.subjects)){ state = Object.assign(state, parsed); }
+      }
+    }catch(e){}
+  }
+
+  // ---------- mini hero grid ----------
+  function buildMiniGrid(){
+    var grid = document.getElementById('miniGrid');
+    var labels = ['4pm','5pm','6pm','7pm'];
+    var cols = 5;
+    var html = '<div></div>';
+    for(var c=0;c<cols;c++){ html += '<div class="mini-label">' + DAYS[c] + '</div>'; }
+    var delay = 0;
+    for(var r=0;r<labels.length;r++){
+      html += '<div class="mini-label">' + labels[r] + '</div>';
+      for(var c2=0;c2<cols;c2++){
+        var filled = Math.random() > 0.32;
+        var colorVar = PALETTE[Math.floor(Math.random()*PALETTE.length)];
+        var style = filled ? 'background:var(' + colorVar + ');' : '';
+        var cls = filled ? 'mini-cell mini-fill' : 'mini-cell';
+        html += '<div class="' + cls + '" style="' + style + '--d:' + delay + '"></div>';
+        delay++;
+      }
+    }
+    grid.innerHTML = html;
+  }
+
+  // ---------- day toggles ----------
+  function buildDayToggles(){
+    var box = document.getElementById('dayToggles');
+    box.innerHTML = '';
+    DAYS.forEach(function(d){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'day-toggle' + (state.days.indexOf(d) > -1 ? ' active' : '');
+      btn.textContent = d;
+      btn.addEventListener('click', function(){
+        var idx = state.days.indexOf(d);
+        if(idx > -1){ state.days.splice(idx,1); } else { state.days.push(d); }
+        state.days.sort(function(a,b){ return DAYS.indexOf(a) - DAYS.indexOf(b); });
+        buildDayToggles();
+        updateStatsLine();
+      });
+      box.appendChild(btn);
+    });
+  }
+
+  // ---------- subjects ----------
+  function renderChips(){
+    var list = document.getElementById('chipList');
+    var hint = document.getElementById('emptyHint');
+    list.innerHTML = '';
+    hint.style.display = state.subjects.length ? 'none' : 'block';
+    state.subjects.forEach(function(s){
+      var chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.innerHTML =
+        '<span class="swatch" style="background:var(' + s.colorVar + ')"></span>' +
+        '<span>' + escapeHtml(s.name) + '</span>' +
+        '<span class="hrs">' + s.hours + 'h/wk</span>';
+      var removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.innerHTML = '&times;';
+      removeBtn.title = 'Remove ' + s.name;
+      removeBtn.addEventListener('click', function(){
+        state.subjects = state.subjects.filter(function(x){ return x.id !== s.id; });
+        renderChips();
+        updateStatsLine();
+      });
+      chip.appendChild(removeBtn);
+      list.appendChild(chip);
+    });
+  }
+
+  function escapeHtml(str){
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function addSubject(){
+    var nameEl = document.getElementById('subjName');
+    var hoursEl = document.getElementById('subjHours');
+    var name = nameEl.value.trim();
+    var hours = parseFloat(hoursEl.value);
+    if(!name){ nameEl.focus(); return; }
+    if(!hours || hours <= 0){ hours = 1; }
+    state.subjects.push({ id: uid(), name: name, hours: hours, colorVar: nextColor() });
+    nameEl.value = '';
+    hoursEl.value = '3';
+    nameEl.focus();
+    renderChips();
+    updateStatsLine();
+  }
+
+  // ---------- stats / warnings ----------
+  function computeSlots(){
+    var startMin = toMinutes(state.startTime);
+    var endMin = toMinutes(state.endTime);
+    var len = parseInt(state.sessionLen, 10);
+    var slots = [];
+    if(endMin <= startMin || !len) return slots;
+
+    var breakStart = null, breakEnd = null;
+    if(state.breakWindow && state.breakWindow !== 'none'){
+      var parts = state.breakWindow.split('-');
+      breakStart = toMinutes(parts[0]);
+      breakEnd = toMinutes(parts[1]);
+    }
+
+    var t = startMin;
+    while(t + len <= endMin){
+      var overlapsBreak = breakStart !== null && t < breakEnd && (t + len) > breakStart;
+      if(!overlapsBreak){ slots.push(t); }
+      t += len;
+    }
+    return slots; // per day, in minutes-from-midnight
+  }
+
+  function updateStatsLine(){
+    var line = document.getElementById('statsLine');
+    var warnBox = document.getElementById('warningBox');
+    var warnText = document.getElementById('warningText');
+    var slotsPerDay = computeSlots().length;
+    var totalSlots = slotsPerDay * state.days.length;
+    var totalHoursAvailable = (totalSlots * parseInt(state.sessionLen,10)) / 60;
+    var totalHoursNeeded = state.subjects.reduce(function(sum,s){ return sum + s.hours; }, 0);
+
+    if(!state.subjects.length){
+      line.textContent = 'Add subjects and pick your days to continue.';
+    } else {
+      line.textContent = totalHoursNeeded.toFixed(1) + 'h requested across ' + state.subjects.length +
+        ' subject' + (state.subjects.length>1?'s':'') + ' · ' + totalHoursAvailable.toFixed(1) + 'h available this week';
+    }
+
+    if(state.subjects.length && totalHoursNeeded > totalHoursAvailable){
+      warnText.textContent = 'You\'ve asked for more hours than fit in your available slots. Add more days, extend your hours, or the generator will fit as much as it can and flag the rest.';
+      warnBox.classList.add('show');
+    } else {
+      warnBox.classList.remove('show');
+    }
+  }
+
+  // ---------- generator ----------
+  function generateTimetable(){
+    if(!state.subjects.length || !state.days.length){
+      alert('Add at least one subject and one study day first.');
+      return;
+    }
+    var len = parseInt(state.sessionLen, 10);
+    var slotsPerDay = computeSlots();
+    if(!slotsPerDay.length){
+      alert('Your end time needs to be after your start time, with room for at least one session.');
+      return;
+    }
+
+    // sessions needed per subject
+    var queue = [];
+    state.subjects.forEach(function(s){
+      var count = Math.max(1, Math.round((s.hours * 60) / len));
+      for(var i=0;i<count;i++){ queue.push(s); }
+    });
+
+    // interleave subjects (round robin) so the same subject doesn't cluster
+    queue = interleave(state.subjects, len);
+
+    // build grid: grid[day][slotIndex] = subject or null
+    var grid = {};
+    state.days.forEach(function(d){ grid[d] = new Array(slotsPerDay.length).fill(null); });
+
+    var qi = 0;
+    var totalCells = state.days.length * slotsPerDay.length;
+    var lastSubjectPerDay = {};
+    var placed = 0;
+
+    for(var col=0; col<slotsPerDay.length && qi < queue.length; col++){
+      for(var di=0; di<state.days.length && qi < queue.length; di++){
+        var day = state.days[di];
+        if(grid[day][col] !== null) continue;
+        // try to avoid same subject twice in a row on same day
+        var candidate = queue[qi];
+        if(lastSubjectPerDay[day] === candidate.id && qi+1 < queue.length){
+          // swap with next if possible
+          var tmp = queue[qi]; queue[qi] = queue[qi+1]; queue[qi+1] = tmp;
+          candidate = queue[qi];
+        }
+        grid[day][col] = candidate;
+        lastSubjectPerDay[day] = candidate.id;
+        qi++;
+        placed++;
+      }
+    }
+
+    var unplaced = queue.length - placed;
+
+    renderTimetable(grid, slotsPerDay, unplaced);
+    save();
+  }
+
+  function interleave(subjects, len){
+    var buckets = subjects.map(function(s){
+      var count = Math.max(1, Math.round((s.hours * 60) / len));
+      return { s: s, remaining: count };
+    });
+    var out = [];
+    var guard = 0;
+    while(buckets.some(function(b){ return b.remaining > 0; }) && guard < 5000){
+      buckets.forEach(function(b){
+        if(b.remaining > 0){ out.push(b.s); b.remaining--; }
+      });
+      guard++;
+    }
+    return out;
+  }
+
+  function renderTimetable(grid, slotsPerDay, unplaced){
+    var table = document.getElementById('timetableEl');
+    var breakWindow = null;
+    if(state.breakWindow && state.breakWindow !== 'none'){
+      var p = state.breakWindow.split('-');
+      breakWindow = { start: toMinutes(p[0]), end: toMinutes(p[1]) };
+    }
+
+    var thead = '<thead><tr><th>Time</th>' + state.days.map(function(d){ return '<th>' + d + '</th>'; }).join('') + '</tr></thead>';
+
+    var rows = '';
+    slotsPerDay.forEach(function(startMin, idx){
+      var endMin = startMin + parseInt(state.sessionLen,10);
+      rows += '<tr><td class="time-col">' + toTimeLabel(startMin) + '<br>–' + toTimeLabel(endMin) + '</td>';
+      state.days.forEach(function(day){
+        var subj = grid[day][idx];
+        if(subj){
+          rows += '<td class="slot"><div class="block" style="background:var(' + subj.colorVar + '); border-left-color:rgba(0,0,0,.15);">' +
+            '<span class="b-name">' + escapeHtml(subj.name) + '</span>' +
+            '<span class="b-tag">' + state.sessionLen + ' min</span></div></td>';
+        } else {
+          rows += '<td class="slot"><div class="block free"><span class="b-name">Free / review</span></div></td>';
+        }
+      });
+      rows += '</tr>';
+
+      // insert break row once, right after the slot preceding it
+      if(breakWindow){
+        var nextStart = slotsPerDay[idx+1];
+        if(startMin < breakWindow.start && (nextStart === undefined || nextStart >= breakWindow.end)){
+          rows += '<tr><td class="time-col">' + toTimeLabel(breakWindow.start) + '<br>–' + toTimeLabel(breakWindow.end) + '</td>';
+          state.days.forEach(function(){
+            rows += '<td class="slot"><div class="block brk"><span class="b-name">Break</span></div></td>';
+          });
+          rows += '</tr>';
+        }
+      }
+    });
+
+    table.innerHTML = thead + '<tbody>' + rows + '</tbody>';
+
+    // legend
+    var legend = document.getElementById('legend');
+    legend.innerHTML = state.subjects.map(function(s){
+      return '<div class="legend-item"><span class="legend-swatch" style="background:var(' + s.colorVar + ')"></span>' + escapeHtml(s.name) + '</div>';
+    }).join('') + '<div class="legend-item"><span class="legend-swatch" style="background:repeating-linear-gradient(135deg,#F7F3E6,#F7F3E6 4px,#F1EBD8 4px,#F1EBD8 8px)"></span>Free / review</div>';
+
+    document.getElementById('output').classList.add('show');
+
+    var warnBox = document.getElementById('warningBox');
+    var warnText = document.getElementById('warningText');
+    if(unplaced > 0){
+      warnText.textContent = unplaced + ' session' + (unplaced>1?'s':'') + " couldn't fit this week — consider adding a day or extending your hours.";
+      warnBox.classList.add('show');
+    }
+
+    document.getElementById('output').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  // ---------- export ----------
+  function printTimetable(){ window.print(); }
+
+  function downloadPng(){
+    var frame = document.querySelector('.timetable-frame');
+    if(!window.html2canvas){ window.print(); return; }
+    html2canvas(frame, { backgroundColor:'#ffffff', scale:2 }).then(function(canvas){
+      var link = document.createElement('a');
+      link.download = 'my-study-timetable.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+
+  // ---------- wire up ----------
+  function bindSettingsInputs(){
+    document.getElementById('startTime').addEventListener('change', function(e){ state.startTime = e.target.value; updateStatsLine(); });
+    document.getElementById('endTime').addEventListener('change', function(e){ state.endTime = e.target.value; updateStatsLine(); });
+    document.getElementById('sessionLen').addEventListener('change', function(e){ state.sessionLen = e.target.value; updateStatsLine(); });
+    document.getElementById('breakOn').addEventListener('change', function(e){ state.breakWindow = e.target.value; updateStatsLine(); });
+  }
+
+  function init(){
+    load();
+    buildMiniGrid();
+    buildDayToggles();
+    renderChips();
+
+    document.getElementById('startTime').value = state.startTime;
+    document.getElementById('endTime').value = state.endTime;
+    document.getElementById('sessionLen').value = String(state.sessionLen);
+    document.getElementById('breakOn').value = state.breakWindow || 'none';
+
+    bindSettingsInputs();
+    updateStatsLine();
+
+    document.getElementById('addSubjectBtn').addEventListener('click', addSubject);
+    document.getElementById('subjName').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addSubject(); } });
+    document.getElementById('subjHours').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addSubject(); } });
+
+    document.getElementById('generateBtn').addEventListener('click', generateTimetable);
+    document.getElementById('printBtn').addEventListener('click', printTimetable);
+    document.getElementById('pngBtn').addEventListener('click', downloadPng);
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+</body>
+</html>
