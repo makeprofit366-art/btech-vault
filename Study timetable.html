@@ -253,6 +253,16 @@
   .tip-card h3{font-size:18px; margin-top:8px; font-weight:600;}
   .tip-card p{font-size:13.8px; color:var(--ink-soft); line-height:1.6; margin-top:8px;}
 
+  /* ---------- article / guide content ---------- */
+  .guide{max-width:760px;}
+  .guide p{font-size:15px; line-height:1.75; color:var(--ink-soft); margin-bottom:16px;}
+  .guide h3{font-size:19px; font-weight:600; margin-top:32px; margin-bottom:10px;}
+  .guide ul{margin:0 0 16px 20px; color:var(--ink-soft); font-size:15px; line-height:1.75;}
+  .guide li{margin-bottom:6px;}
+  .faq-item{margin-bottom:20px;}
+  .faq-item .q{display:block; font-weight:700; color:var(--ink); font-size:15px; margin-bottom:5px;}
+  .faq-item .a{color:var(--ink-soft); font-size:15px; line-height:1.7;}
+
   footer{border-top:1px solid var(--rule); padding:30px 0; margin-top:20px;}
   footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;}
   footer p{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
@@ -407,6 +417,51 @@
       </div>
     </div>
     <div class="legend" id="legend"></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="guide">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="step">Guide</span>
+        <h2 style="margin-top:6px;">Getting the most out of a study timetable</h2>
+      </div>
+    </div>
+    <div class="guide">
+      <p>Most engineering students don't fail at planning because they can't make a timetable — they fail because the timetable they make doesn't survive contact with an actual week. A missed lab session pushes everything back, an assignment deadline eats a study block, and by Wednesday the neat weekly grid is abandoned. This tool exists to fix the planning part quickly enough that you actually keep the habit part.</p>
+
+      <p>The generator above takes two inputs that matter far more than any productivity app feature: what you need to study, and when you're genuinely free. Everything else — the colour-coded blocks, the interleaving between subjects, the built-in break — is just the scheduling logic working around those two numbers. If either input is dishonest (studying hours you don't have, or subjects with unrealistic weekly targets), the output won't hold up, no matter how good the tool is.</p>
+
+      <h3>Set hours you can actually keep</h3>
+      <p>A common mistake is entering the hours you feel you should study rather than the hours you can realistically commit to. If a subject genuinely needs 6 hours a week but your semester only leaves you 3 free evenings of 90 minutes each, be honest about that constraint first. It's easier to add a fourth day next week once the 3-day version becomes a habit than to abandon an ambitious plan after two days and stop entirely.</p>
+
+      <h3>Let the interleaving do its job</h3>
+      <p>The tool deliberately avoids stacking the same subject in every slot on a given day. This isn't an accident — switching between subjects across a week, rather than binging one subject for hours, is one of the more reliable findings in how people retain technical material. If you find yourself wanting to override the schedule and cram one subject before an exam, that's fine for exam week specifically, but for regular semester study, trust the spread.</p>
+
+      <h3>Use the break slot on purpose</h3>
+      <p>The daily break isn't filler — it's there because a fixed 30-minute gap in the middle of a study block gives you a natural point to stop scrolling on your phone before it eats the whole session. Put the break somewhere you'd naturally want to check messages anyway, so the temptation has a designated slot instead of interrupting a study block.</p>
+
+      <h3>Frequently asked questions</h3>
+      <div class="faq-item">
+        <span class="q">How many hours per week should I put for a core subject?</span>
+        <span class="a">As a starting point, 3-4 hours a week is enough to stay on top of a typical semester subject without cramming before exams. Increase it for subjects you're behind on or that carry more weight in your final grade, and reduce it for subjects you're already comfortable with.</span>
+      </div>
+      <div class="faq-item">
+        <span class="q">What if I miss a day on the schedule?</span>
+        <span class="a">Don't try to make up the missed session by doubling the next one — that's usually what causes people to abandon the whole timetable. Just pick up the next scheduled slot as normal. Missing one session out of a week has almost no effect on the outcome; abandoning the whole system because of one missed session does.</span>
+      </div>
+      <div class="faq-item">
+        <span class="q">Is there a best time of day to study?</span>
+        <span class="a">The honest answer is that consistency matters more than the specific hour. A 7pm slot you actually show up to every day beats a "theoretically optimal" early-morning slot you skip half the time. Pick hours around your existing routine — after dinner, before a fixed commitment — rather than hours that sound disciplined on paper.</span>
+      </div>
+      <div class="faq-item">
+        <span class="q">Does this save my timetable if I close the tab?</span>
+        <span class="a">Yes. Your subjects and settings are saved in your browser automatically, so reopening this page will bring back your last timetable. It isn't tied to a BTechVault account, so it won't follow you to a different browser or device.</span>
+      </div>
+    </div>
   </div>
 </section>
 
