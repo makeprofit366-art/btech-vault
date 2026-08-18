@@ -324,15 +324,25 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
 /* RESPONSIVE */
 @media(max-width:640px){
   .hero h1{font-size:1.35rem;}
+  .hide-mobile{display:none;}
   .footer-grid{grid-template-columns:1fr;gap:1.5rem;}
   .btn-resume .resume-text{display:none;}
+  .nav-actions{gap:0.3rem;}
+  .stats-strip{gap:1.1rem;padding-left:0.75rem;padding-right:0.75rem;}
+  .search-card{margin:1.25rem 1rem -2.25rem;padding:0.85rem;}
+}
+@media(min-width:641px) and (max-width:899px){
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .footer-brand{grid-column:1/-1;}
 }
 @media(min-width:641px){
   .hero{padding:3.25rem 2rem 4rem;}
   .section{padding:2rem 2rem;}
   footer{padding:3rem 2rem 1.75rem;}
-  .footer-grid{grid-template-columns:1.4fr 1fr 1fr;}
   .footer-bottom{flex-direction:row;justify-content:space-between;text-align:left;}
+}
+@media(min-width:900px){
+  .footer-grid{grid-template-columns:1.4fr 1fr 1fr;}
 }
 </style>
 </head>
@@ -457,13 +467,17 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
         <li><a href="index.html">Home</a></li>
         <li><a href="index.html#tools">Student Tools</a></li>
         <li><a href="dashboard.html">Upload a PDF</a></li>
+        <li><a href="about.html">About</a></li>
         <li><a href="tip.html">Support Us</a></li>
       </ul>
     </div>
     <div class="footer-section">
-      <h4>Contact</h4>
-      <div class="footer-contact-item">General queries<br><a href="mailto:support@btechvault.in">support@btechvault.in</a></div>
-      <div class="footer-contact-item">Contribute materials<br><a href="mailto:contribute@btechvault.in">contribute@btechvault.in</a></div>
+      <h4>Legal</h4>
+      <ul class="footer-links">
+        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+      </ul>
     </div>
   </div>
   <hr class="footer-divider"/>
