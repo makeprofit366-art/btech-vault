@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <!-- Google tag (gtag.js) -->
@@ -13,68 +13,103 @@
     gtag('config', 'G-65G3NWR8C0');
   </script>
 
-  <title>Student Chat — BTech Vault</title>
+  <title>Dashboard — BTech Vault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <script src="firebase-config.js"></script>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Inter',sans-serif; background:#f8f9fa; color:#111; height:100vh; display:flex; flex-direction:column; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f8f9fa; color: #1a1a2e; min-height: 100vh; }
+    nav { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 1.2rem; font-weight: 700; color: #1a1a2e; text-decoration: none; }
+    .logo span { color: #4f46e5; }
+    .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+    .nav-user { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: #6b7280; }
+    .nav-user img { width: 30px; height: 30px; border-radius: 50%; }
+    .btn { padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+    .btn-primary { background: #4f46e5; color: #fff; }
+    .btn-primary:hover { background: #4338ca; }
+    .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+    .btn-outline:hover { border-color: #4f46e5; color: #4f46e5; }
+    .btn-danger { background: #fff; color: #ef4444; border: 1px solid #ef4444; }
+    .btn-danger:hover { background: #ef4444; color: #fff; }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
 
-    nav { background:#fff; border-bottom:1px solid #e5e7eb; padding:0 1.5rem; height:56px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
-    .logo { font-size:1.1rem; font-weight:700; text-decoration:none; color:#111; }
-    .logo span { color:#4f46e5; }
-    .nav-right { display:flex; align-items:center; gap:0.75rem; }
-    .btn { padding:0.4rem 0.85rem; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer; border:none; font-family:'Inter',sans-serif; text-decoration:none; display:inline-flex; align-items:center; gap:0.3rem; }
-    .btn-outline { background:#fff; border:1px solid #d1d5db; color:#374151; }
-    .btn-primary { background:#4f46e5; color:#fff; }
+    /* TABS */
+    .tabs { background: #fff; border-bottom: 1px solid #e5e7eb; display: flex; padding: 0 2rem; }
+    .tab { padding: 1rem 1.25rem; font-size: 0.875rem; font-weight: 500; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; text-decoration: none; transition: all 0.15s; }
+    .tab:hover { color: #4f46e5; }
+    .tab.active { color: #4f46e5; border-bottom-color: #4f46e5; }
 
-    .chat-header { background:#fff; border-bottom:1px solid #e5e7eb; padding:0.75rem 1.5rem; display:flex; align-items:center; gap:0.75rem; flex-shrink:0; }
-    .chat-header-icon { font-size:1.5rem; }
-    .chat-header-title { font-size:1rem; font-weight:700; }
-    .chat-header-sub { font-size:0.78rem; color:#6b7280; }
-    .online-dot { width:8px; height:8px; background:#22c55e; border-radius:50%; display:inline-block; margin-right:4px; }
+    /* UPLOAD FORM */
+    .form-wrap { max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    .form-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 2rem; }
+    .form-card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .form-card p { color: #6b7280; font-size: 0.875rem; margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.3px; }
+    .form-group input, .form-group select { width: 100%; padding: 0.6rem 0.85rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.875rem; outline: none; font-family: 'Inter', sans-serif; background: #f9fafb; color: #111; transition: border 0.15s; }
+    .form-group input:focus, .form-group select:focus { border-color: #4f46e5; background: #fff; }
 
-    .messages-area { flex:1; overflow-y:auto; padding:1rem 1.5rem; display:flex; flex-direction:column; gap:0.75rem; }
+    /* UPLOAD ZONE */
+    .upload-zone { border: 2px dashed #d1d5db; border-radius: 10px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; background: #f9fafb; }
+    .upload-zone:hover, .upload-zone.over { border-color: #4f46e5; background: #eef2ff; }
+    .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .upload-zone .u-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+    .upload-zone p { color: #6b7280; font-size: 0.875rem; }
+    .upload-zone small { color: #9ca3af; font-size: 0.75rem; }
+    .file-preview { display: none; align-items: center; gap: 0.75rem; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 0.75rem; margin-top: 0.75rem; }
+    .file-preview.show { display: flex; }
+    .file-name { font-size: 0.875rem; font-weight: 500; }
+    .file-size { font-size: 0.75rem; color: #6b7280; }
 
-    .msg-wrap { display:flex; gap:0.6rem; align-items:flex-end; }
-    .msg-wrap.mine { flex-direction:row-reverse; }
-    .avatar { width:32px; height:32px; border-radius:50%; background:#4f46e5; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:#fff; flex-shrink:0; }
-    .msg-content { max-width:70%; }
-    .msg-name { font-size:0.7rem; color:#9ca3af; margin-bottom:0.2rem; }
-    .mine .msg-name { text-align:right; }
-    .msg-bubble { padding:0.6rem 0.9rem; border-radius:16px; font-size:0.875rem; line-height:1.5; word-break:break-word; }
-    .msg-bubble.other { background:#fff; border:1px solid #e5e7eb; border-bottom-left-radius:4px; }
-    .msg-bubble.mine { background:#4f46e5; color:#fff; border-bottom-right-radius:4px; }
-    .msg-time { font-size:0.65rem; color:#9ca3af; margin-top:0.2rem; }
-    .mine .msg-time { text-align:right; }
+    /* TAGS */
+    .tag-box { border: 1px solid #d1d5db; border-radius: 6px; padding: 0.4rem 0.6rem; min-height: 42px; display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; background: #f9fafb; cursor: text; }
+    .tag-box:focus-within { border-color: #4f46e5; background: #fff; }
+    .tag-item { background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 4px; padding: 0.15rem 0.5rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.3rem; }
+    .tag-item button { background: none; border: none; cursor: pointer; color: #4f46e5; font-size: 0.9rem; padding: 0; line-height: 1; }
+    .tag-input { border: none; outline: none; font-family: 'Inter', sans-serif; font-size: 0.875rem; background: transparent; min-width: 100px; flex: 1; color: #111; }
+    .tag-suggestions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+    .tag-pill { padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; background: #f3f4f6; border: 1px solid #e5e7eb; color: #6b7280; cursor: pointer; transition: all 0.15s; }
+    .tag-pill:hover { background: #4f46e5; color: #fff; border-color: #4f46e5; }
 
-    .date-divider { text-align:center; font-size:0.72rem; color:#9ca3af; margin:0.5rem 0; }
-    .date-divider span { background:#f8f9fa; padding:0 0.75rem; }
+    /* PROGRESS */
+    .progress-wrap { margin-top: 0.75rem; display: none; }
+    .progress-wrap.show { display: block; }
+    .progress-bar { width: 100%; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #4f46e5; border-radius: 3px; transition: width 0.3s; width: 0%; }
+    .progress-text { font-size: 0.78rem; color: #6b7280; margin-top: 0.35rem; }
 
-    .input-area { background:#fff; border-top:1px solid #e5e7eb; padding:0.75rem 1.5rem; display:flex; gap:0.75rem; align-items:center; flex-shrink:0; }
-    .chat-input { flex:1; border:1px solid #d1d5db; border-radius:24px; padding:0.6rem 1rem; font-size:0.875rem; font-family:'Inter',sans-serif; outline:none; background:#f9fafb; }
-    .chat-input:focus { border-color:#4f46e5; background:#fff; }
-    .send-btn { background:#4f46e5; color:#fff; border:none; border-radius:50%; width:40px; height:40px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background 0.15s; }
-    .send-btn:hover { background:#4338ca; }
-    .send-btn:disabled { background:#9ca3af; cursor:not-allowed; }
+    /* PDF GRID */
+    .grid-wrap { padding: 1.5rem 2rem; }
+    .grid-title { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #374151; }
+    .pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1.1rem; }
+    .card-icon { font-size: 1.5rem; margin-bottom: 0.6rem; }
+    .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .card-subject { font-size: 0.78rem; color: #4f46e5; margin-bottom: 0.5rem; }
+    .card-meta { font-size: 0.72rem; color: #9ca3af; margin-bottom: 0.6rem; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.75rem; }
+    .tag { font-size: 0.7rem; padding: 0.15rem 0.45rem; border-radius: 4px; background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+    .card-actions { display: flex; gap: 0.5rem; }
+    .card-actions .btn { flex: 1; justify-content: center; }
 
-    .login-prompt { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1rem; color:#6b7280; }
-    .login-prompt h2 { font-size:1rem; font-weight:600; color:#111; }
+    /* EMPTY */
+    .empty { text-align: center; padding: 3rem 1rem; color: #9ca3af; grid-column: 1/-1; }
+    .empty .e-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .empty h3 { font-size: 0.95rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem; }
 
-    .spinner { width:20px; height:20px; border:2px solid #e5e7eb; border-top-color:#4f46e5; border-radius:50%; animation:spin 0.7s linear infinite; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    /* TOAST */
+    .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1f2937; color: #fff; padding: 0.75rem 1.1rem; border-radius: 8px; font-size: 0.875rem; z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .spinner { width: 16px; height: 16px; border: 2px solid #e5e7eb; border-top-color: #4f46e5; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .empty-chat { text-align:center; color:#9ca3af; padding:2rem; font-size:0.875rem; }
-    .empty-chat .e-icon { font-size:2rem; margin-bottom:0.5rem; }
-
-    @media(max-width:640px) {
-      .messages-area { padding:0.75rem; }
-      .input-area { padding:0.75rem; }
-      .msg-content { max-width:85%; }
-    }
+    @media (max-width: 640px) { .grid-wrap, nav, .tabs { padding-left: 1rem; padding-right: 1rem; } .pdf-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -82,133 +117,401 @@
 <nav>
   <a href="index.html" class="logo">BTech<span>Vault</span></a>
   <div class="nav-right">
-    <a href="index.html" class="btn btn-outline">← Back</a>
-    <div id="navUser"></div>
+    <div class="nav-user" id="navUser"><div class="spinner"></div></div>
+    <button class="btn btn-outline btn-sm" onclick="signOut()">Logout</button>
   </div>
 </nav>
 
-<div class="chat-header">
-  <div class="chat-header-icon">💬</div>
-  <div>
-    <div class="chat-header-title">Student Chat Room</div>
-    <div class="chat-header-sub"><span class="online-dot"></span>Public • All BTech students</div>
+<div class="tabs">
+  <a href="#" class="tab active" id="tab-upload-btn" onclick="showTab('upload',this);return false;">📤 Upload PDF</a>
+  <a href="#" class="tab" id="tab-myuploads-btn" onclick="showTab('myuploads',this);return false;">📁 My Uploads</a>
+  <a href="#" class="tab" id="tab-saved-btn" onclick="showTab('saved',this);return false;">🔖 Saved PDFs</a>
+</div>
+
+<!-- UPLOAD TAB -->
+<div id="tab-upload" class="form-wrap">
+  <div class="form-card">
+    <h2>Upload a PDF</h2>
+    <p>Subject name is mandatory. Tags help others find your PDF easily.</p>
+
+    <div class="form-group">
+      <label>PDF File *</label>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" accept=".pdf" id="pdfFile" onchange="onFileSelect(this)"/>
+        <span class="u-icon">📄</span>
+        <p>Drag & drop or click to select PDF</p>
+        <small>PDF files only</small>
+      </div>
+      <div class="file-preview" id="filePreview">
+        <span style="font-size:1.5rem">📄</span>
+        <div>
+          <div class="file-name" id="fileName"></div>
+          <div class="file-size" id="fileSize"></div>
+        </div>
+        <button onclick="clearFile()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#ef4444;font-size:1.1rem">✕</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Title *</label>
+      <input type="text" id="pdfTitle" placeholder="e.g. Data Structures Unit 1 Notes" maxlength="100"/>
+    </div>
+
+    <div class="form-group">
+      <label>Subject Name * (Very Important)</label>
+      <input type="text" id="pdfSubject" placeholder="e.g. Data Structures, DBMS, Networks..." maxlength="60"/>
+    </div>
+
+    <div class="form-group">
+      <label>College Name</label>
+      <input type="text" id="pdfCollege" placeholder="e.g. JNTU Kakinada, KL University..." maxlength="100"/>
+    </div>
+
+    <div class="form-group">
+      <label>Regulation Year</label>
+      <input type="text" id="pdfRegulation" placeholder="e.g. R20, R18, R22..." maxlength="20"/>
+    </div>
+    <div class="form-group">
+      <label>Branch</label>
+      <select id="pdfBranch">
+        <option value="">Select Branch (optional)</option>
+        <option>CSE</option><option>ECE</option><option>EEE</option>
+        <option>Mech</option><option>Civil</option><option>IT</option>
+        <option>Chemical</option><option>Common</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Year</label>
+      <select id="pdfYear">
+        <option value="">Select Year (optional)</option>
+        <option>1st Year</option><option>2nd Year</option>
+        <option>3rd Year</option><option>4th Year</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Tags</label>
+      <div class="tag-box" id="tagBox" onclick="document.getElementById('tagInput').focus()">
+        <input type="text" id="tagInput" class="tag-input" placeholder="Type tag, press Enter..."
+          onkeydown="handleTag(event)"/>
+      </div>
+      <div class="tag-suggestions">
+        <span class="tag-pill" onclick="addTag('supply')">+ supply</span>
+        <span class="tag-pill" onclick="addTag('backlog')">+ backlog</span>
+        <span class="tag-pill" onclick="addTag('arrear')">+ arrear</span>
+        <span class="tag-pill" onclick="addTag('unit-1')">+ unit-1</span>
+        <span class="tag-pill" onclick="addTag('unit-2')">+ unit-2</span>
+        <span class="tag-pill" onclick="addTag('previous-paper')">+ previous-paper</span>
+        <span class="tag-pill" onclick="addTag('lab')">+ lab</span>
+        <span class="tag-pill" onclick="addTag('notes')">+ notes</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>YouTube Video Link <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
+      <input type="url" id="pdfYoutube" placeholder="e.g. https://youtube.com/watch?v=..." maxlength="200"/>
+      <small style="color:#9ca3af;font-size:0.75rem;">Add a related YouTube lecture or explanation video</small>
+    </div>
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText">Uploading...</div>
+    </div>
+
+    <div id="compressBanner" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:0.85rem 1rem;margin-bottom:1rem;">
+      <p style="font-size:0.85rem;color:#92400e;margin-bottom:0.4rem;">⚠️ <strong>File too large!</strong> Cloudinary free plan allows max 10MB per file.</p>
+      <a href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-25mb" target="_blank" style="font-size:0.85rem;color:#4f46e5;font-weight:600;">👉 Click here to compress your PDF for free ↗</a>
+      <p style="font-size:0.78rem;color:#92400e;margin-top:0.3rem;">After compressing, upload again!</p>
+    </div>
+
+    <button class="btn btn-primary" id="uploadBtn" style="width:100%;justify-content:center;margin-top:1rem;padding:0.75rem;" onclick="uploadPdf()">
+      📤 Upload PDF
+    </button>
   </div>
 </div>
 
-<div class="messages-area" id="messagesArea">
-  <div style="display:flex;justify-content:center;padding:2rem;">
-    <div class="spinner"></div>
+<!-- MY UPLOADS TAB -->
+<div id="tab-myuploads" style="display:none;">
+  <div class="grid-wrap">
+    <div class="grid-title">My Uploaded PDFs</div>
+    <div class="pdf-grid" id="myGrid">
+      <div class="empty" style="grid-column:1/-1"><div class="spinner"></div></div>
+    </div>
   </div>
 </div>
 
-<div class="input-area" id="inputArea" style="display:none;">
-  <img id="userAvatar" src="" style="width:32px;height:32px;border-radius:50%;display:none;" referrerpolicy="no-referrer"/>
-  <input class="chat-input" id="chatInput" placeholder="Type a message..." maxlength="500" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"/>
-  <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+<!-- SAVED TAB -->
+<div id="tab-saved" style="display:none;">
+  <div class="grid-wrap">
+    <div class="grid-title">Saved PDFs <span style="font-size:0.75rem;color:#9ca3af;font-weight:400;">(only visible to you)</span></div>
+    <div class="pdf-grid" id="savedGrid">
+      <div class="empty" style="grid-column:1/-1"><div class="spinner"></div></div>
+    </div>
+  </div>
 </div>
 
-<div id="loginPrompt" style="display:none;" class="login-prompt">
-  <div style="font-size:2rem;">🔐</div>
-  <h2>Login to Chat</h2>
-  <p style="font-size:0.85rem;">Join the student community!</p>
-  <a href="login.html" class="btn btn-primary" style="padding:0.6rem 1.5rem;">Login / Sign Up</a>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
+// ============ CLOUDINARY CONFIG ============
+const CLOUD_NAME = 'djfdw2srr';
+const UPLOAD_PRESET = 'btech_vault';
+// ==========================================
+
 let currentUser = null;
-let unsubscribe = null;
+let tags = [];
+let selectedFile = null;
 
 auth.onAuthStateChanged(user => {
+  if (!user) { window.location.href = 'login.html'; return; }
   currentUser = user;
-  if (user) {
-    document.getElementById('inputArea').style.display = 'flex';
-    document.getElementById('loginPrompt').style.display = 'none';
-    const avatar = document.getElementById('userAvatar');
-    if (user.photoURL) { avatar.src = user.photoURL; avatar.style.display = 'block'; }
-    document.getElementById('navUser').innerHTML = `<span style="font-size:0.82rem;color:#6b7280;">${user.displayName?.split(' ')[0]||''}</span>`;
-  } else {
-    document.getElementById('inputArea').style.display = 'none';
-    document.getElementById('loginPrompt').style.display = 'flex';
-    document.getElementById('navUser').innerHTML = `<a href="login.html" class="btn btn-primary">Login</a>`;
-  }
-  loadMessages();
+  document.getElementById('navUser').innerHTML = `
+    <img src="${user.photoURL}" referrerpolicy="no-referrer" style="width:28px;height:28px;border-radius:50%;"/>
+    <span style="font-size:0.875rem;color:#6b7280;">${user.displayName.split(' ')[0]}</span>`;
+  loadMyUploads();
+  loadSaved();
 });
 
-function loadMessages() {
-  if (unsubscribe) unsubscribe();
-  const area = document.getElementById('messagesArea');
-
-  unsubscribe = db.collection('globalChat')
-    .orderBy('createdAt', 'asc')
-    .limitToLast(100)
-    .onSnapshot(snap => {
-      if (snap.empty) {
-        area.innerHTML = `<div class="empty-chat"><div class="e-icon">💬</div><p>No messages yet.<br>Start the conversation!</p></div>`;
-        return;
-      }
-
-      let html = '';
-      let lastDate = '';
-
-      snap.docs.forEach(doc => {
-        const m = doc.data();
-        const isMe = currentUser && m.userId === currentUser.uid;
-        const date = m.createdAt ? new Date(m.createdAt.seconds * 1000) : new Date();
-        const dateStr = date.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
-        const timeStr = date.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
-        const initials = (m.userName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-
-        if (dateStr !== lastDate) {
-          html += `<div class="date-divider"><span>${dateStr}</span></div>`;
-          lastDate = dateStr;
-        }
-
-        html += `<div class="msg-wrap ${isMe ? 'mine' : ''}">
-          ${!isMe ? `<div class="avatar" style="background:${stringToColor(m.userId||'x')}">${initials}</div>` : ''}
-          <div class="msg-content">
-            ${!isMe ? `<div class="msg-name">${esc(m.userName||'Anonymous')}</div>` : ''}
-            <div class="msg-bubble ${isMe ? 'mine' : 'other'}">${esc(m.text)}</div>
-            <div class="msg-time">${timeStr}</div>
-          </div>
-          ${isMe ? `<div class="avatar" style="background:#4f46e5">${initials}</div>` : ''}
-        </div>`;
-      });
-
-      area.innerHTML = html;
-      area.scrollTop = area.scrollHeight;
-    }, err => {
-      area.innerHTML = `<div class="empty-chat"><p>Error loading messages.<br>${err.message}</p></div>`;
-    });
+// TABS
+function showTab(name, el) {
+  ['upload','myuploads','saved'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = 'none';
+    document.getElementById('tab-' + t + '-btn').classList.remove('active');
+  });
+  document.getElementById('tab-' + name).style.display = name === 'upload' ? 'block' : 'block';
+  el.classList.add('active');
 }
 
-async function sendMessage() {
-  if (!currentUser) return;
-  const input = document.getElementById('chatInput');
-  const text = input.value.trim();
-  if (!text) return;
-  const btn = document.getElementById('sendBtn');
-  btn.disabled = true;
-  input.value = '';
-  try {
-    await db.collection('globalChat').add({
-      text,
-      userId: currentUser.uid,
-      userName: currentUser.displayName || 'Anonymous',
-      userPhoto: currentUser.photoURL || null,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  } catch(e) {
-    input.value = text;
+// FILE SELECT
+function onFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (!file.name.endsWith('.pdf')) { showToast('Only PDF files allowed!'); input.value=''; return; }
+  selectedFile = file;
+  document.getElementById('compressBanner').style.display = 'none';
+  document.getElementById('filePreview').classList.add('show');
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
+  document.getElementById('uploadZone').style.borderColor = '#4f46e5';
+  if (!document.getElementById('pdfTitle').value)
+    document.getElementById('pdfTitle').value = file.name.replace('.pdf','').replace(/_/g,' ');
+}
+
+function clearFile() {
+  selectedFile = null;
+  document.getElementById('pdfFile').value = '';
+  document.getElementById('filePreview').classList.remove('show');
+  document.getElementById('uploadZone').style.borderColor = '';
+}
+
+// TAGS
+function handleTag(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
+    if (val) addTag(val);
+    e.target.value = '';
   }
-  btn.disabled = false;
-  input.focus();
+}
+function addTag(val) {
+  val = val.trim().toLowerCase();
+  if (!val || tags.includes(val) || tags.length >= 10) return;
+  tags.push(val);
+  renderTags();
+}
+function removeTag(val) { tags = tags.filter(t => t !== val); renderTags(); }
+function renderTags() {
+  const box = document.getElementById('tagBox');
+  const input = document.getElementById('tagInput');
+  box.innerHTML = '';
+  tags.forEach(t => {
+    const span = document.createElement('span');
+    span.className = 'tag-item';
+    span.innerHTML = `${t} <button onclick="removeTag('${t}')">✕</button>`;
+    box.appendChild(span);
+  });
+  box.appendChild(input);
 }
 
-function stringToColor(str) {
-  const colors = ['#7c3aed','#db2777','#ea580c','#16a34a','#0284c7','#9333ea','#dc2626','#0891b2'];
-  let hash = 0;
-  for (let c of str) hash = c.charCodeAt(0) + ((hash << 5) - hash);
-  return colors[Math.abs(hash) % colors.length];
+// UPLOAD TO CLOUDINARY
+async function uploadPdf() {
+  const title = document.getElementById('pdfTitle').value.trim();
+  const subject = document.getElementById('pdfSubject').value.trim();
+  const branch = document.getElementById('pdfBranch').value;
+  const year = document.getElementById('pdfYear').value;
+  const college = document.getElementById('pdfCollege').value;
+  const regulation = document.getElementById('pdfRegulation').value;
+  const youtubeUrl = document.getElementById('pdfYoutube').value.trim();
+
+  if (!selectedFile) { showToast('Please select a PDF!'); return; }
+  if (!title) { showToast('Please enter a title!'); return; }
+  if (!subject) { showToast('Subject name is required!'); return; }
+
+  const btn = document.getElementById('uploadBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="border-color:#fff;border-top-color:#4f46e5;"></div> Uploading...';
+
+  const progressWrap = document.getElementById('progressWrap');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  progressWrap.classList.add('show');
+
+  try {
+    // Upload to Cloudinary
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('resource_type', 'raw');
+
+    const xhr = new XMLHttpRequest();
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const pct = Math.round(e.loaded / e.total * 100);
+        progressFill.style.width = pct + '%';
+        progressText.textContent = `Uploading... ${pct}%`;
+      }
+    };
+
+    const uploadResult = await new Promise((resolve, reject) => {
+      xhr.onload = () => {
+        if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
+        else {
+          const errData = JSON.parse(xhr.responseText);
+          if (errData.error && errData.error.message && errData.error.message.includes('too large')) {
+            reject(new Error('FILE_TOO_LARGE'));
+          } else {
+            reject(new Error('Upload failed: ' + xhr.responseText));
+          }
+        }
+      };
+      xhr.onerror = () => reject(new Error('Network error'));
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`);
+      xhr.send(formData);
+    });
+
+    progressText.textContent = 'Saving details...';
+
+    // Save to Firestore
+    await db.collection('pdfs').add({
+      title, subject, branch: branch||null, year: year||null, college: college||null, regulation: regulation||null, youtubeUrl: youtubeUrl||null, tags,
+      fileUrl: uploadResult.secure_url,
+      fileName: selectedFile.name,
+      fileSize: selectedFile.size,
+      uploadedBy: currentUser.uid,
+      uploaderName: currentUser.displayName,
+      uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      status: 'active'
+    });
+
+    progressFill.style.width = '100%';
+    progressText.textContent = '✅ Upload successful!';
+    showToast('PDF uploaded successfully! 🎉');
+
+    setTimeout(() => {
+      clearFile();
+      document.getElementById('pdfTitle').value = '';
+      document.getElementById('pdfSubject').value = '';
+      document.getElementById('pdfBranch').value = '';
+      document.getElementById('pdfYear').value = '';
+      document.getElementById('pdfCollege').value = '';
+      document.getElementById('pdfRegulation').value = '';
+      document.getElementById('pdfYoutube').value = '';
+      tags = []; renderTags();
+      progressWrap.classList.remove('show');
+      progressFill.style.width = '0%';
+      btn.disabled = false;
+      btn.innerHTML = '📤 Upload PDF';
+      loadMyUploads();
+    }, 1500);
+
+  } catch (err) {
+    if (err.message === 'FILE_TOO_LARGE') {
+      showToast('❌ File too large! Cloudinary limit is 10MB. Please compress first.');
+      progressWrap.style.display = 'none';
+      // Show compress banner
+      document.getElementById('compressBanner').style.display = 'block';
+    } else {
+      showToast('Upload failed: ' + err.message);
+    }
+    btn.disabled = false;
+    btn.innerHTML = '📤 Upload PDF';
+    progressWrap.classList.remove('show');
+  }
+}
+
+// MY UPLOADS
+async function loadMyUploads() {
+  const grid = document.getElementById('myGrid');
+  try {
+    const snap = await db.collection('pdfs').where('uploadedBy','==',currentUser.uid).get();
+    if (snap.empty) {
+      grid.innerHTML = `<div class="empty"><div class="e-icon">📭</div><h3>No uploads yet</h3><p>Upload your first PDF!</p></div>`;
+      return;
+    }
+    grid.innerHTML = snap.docs.map(doc => {
+      const p = doc.data();
+      const date = p.uploadedAt ? new Date(p.uploadedAt.seconds*1000).toLocaleDateString('en-IN') : '';
+      return `<div class="card">
+        <div class="card-icon">📄</div>
+        <div class="card-title">${esc(p.title)}</div>
+        <div class="card-subject">📚 ${esc(p.subject)}</div>
+        <div class="card-meta">${date} · ${(p.fileSize/1024/1024).toFixed(1)} MB</div>
+        <div class="card-tags">${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <div class="card-actions">
+          <a href="viewer.html?id=${doc.id}" class="btn btn-outline btn-sm">📖 View</a>
+          <button class="btn btn-danger btn-sm" onclick="deleteMyPdf('${doc.id}')">🗑 Delete</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    grid.innerHTML = `<div class="empty"><h3>Error loading</h3><p>${e.message}</p></div>`;
+  }
+}
+
+async function deleteMyPdf(id) {
+  if (!confirm('Delete this PDF?')) return;
+  await db.collection('pdfs').doc(id).delete();
+  showToast('PDF deleted');
+  loadMyUploads();
+}
+
+// SAVED
+async function loadSaved() {
+  const grid = document.getElementById('savedGrid');
+  try {
+    const snap = await db.collection('users').doc(currentUser.uid).collection('savedPDFs').orderBy('savedAt','desc').get();
+    if (snap.empty) {
+      grid.innerHTML = `<div class="empty"><div class="e-icon">🔖</div><h3>No saved PDFs</h3><p>Browse PDFs and click Save</p></div>`;
+      return;
+    }
+    grid.innerHTML = snap.docs.map(doc => {
+      const s = doc.data();
+      return `<div class="card">
+        <div class="card-icon">📄</div>
+        <div class="card-title">${esc(s.title)}</div>
+        <div class="card-subject">📚 ${esc(s.subject)}</div>
+        <div class="card-actions">
+          <a href="viewer.html?id=${doc.id}" class="btn btn-primary btn-sm">📖 View</a>
+          <button class="btn btn-danger btn-sm" onclick="unsave('${doc.id}')">🗑 Remove</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    grid.innerHTML = `<div class="empty"><h3>Error: ${e.message}</h3></div>`;
+  }
+}
+
+async function unsave(id) {
+  await db.collection('users').doc(currentUser.uid).collection('savedPDFs').doc(id).delete();
+  showToast('Removed from saved');
+  loadSaved();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
