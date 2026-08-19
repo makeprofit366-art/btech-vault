@@ -3,107 +3,142 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Free Resume Builder — BTech Vault</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-65G3NWR8C0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-65G3NWR8C0');
+</script>
+
+<title>Free ATS Resume Builder — BTechVault</title>
+<meta name="description" content="Build a clean, ATS-friendly resume in minutes. No sign-up, no watermark, free PDF download."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f0f4f8;--surface:#fff;--border:#e2e8f0;--accent:#1a56a0;--accent2:#2563eb;--text:#1e293b;--muted:#64748b;--font:'Inter',sans-serif;}
+:root{
+  --ink:#171923;
+  --ink-soft:#4A5060;
+  --paper:#FBFAF7;
+  --paper-raised:#FFFFFF;
+  --navy:#16324F;
+  --navy-deep:#0F2438;
+  --teal:#0E7C7B;
+  --amber:#C98A1E;
+  --line:#E4E0D8;
+  --line-soft:#EDEAE3;
+  --radius:10px;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;}
-.topbar{background:#1e293b;padding:0.6rem 1.25rem;display:flex;align-items:center;gap:0.75rem;}
-.topbar a{color:#94a3b8;font-size:0.8rem;text-decoration:none;}.topbar a:hover{color:#fff;}
-.topbar-logo{font-weight:800;font-size:0.95rem;color:#fff;}.topbar-logo span{color:#3b82f6;}
-.topbar-free{margin-left:auto;background:#22c55e22;color:#22c55e;font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:20px;border:1px solid #22c55e44;}
-#app{max-width:900px;margin:0 auto;padding:1.5rem 1rem 5rem;}
-.step{display:none;}.step.active{display:block;animation:fadeUp 0.3s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;line-height:1.5;}
+h1,h2,h3{font-family:'Fraunces',serif;letter-spacing:-0.01em;}
+a{color:inherit;}
 
-/* DEMO */
-.demo-hero{margin-bottom:1.5rem;}
-.demo-hero h1{font-size:1.7rem;font-weight:800;color:#1e293b;line-height:1.2;}
-.demo-hero h1 span{color:#2563eb;}
-.demo-hero p{color:var(--muted);font-size:0.88rem;margin-top:0.35rem;}
-.demo-feats{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.85rem;}
-.df{background:#fff;border:1px solid var(--border);border-radius:20px;padding:0.3rem 0.75rem;font-size:0.78rem;color:#374151;font-weight:500;}
-.demo-label{display:inline-block;background:#dbeafe;color:#1d4ed8;font-size:0.72rem;font-weight:700;padding:0.25rem 0.75rem;border-radius:20px;margin-bottom:0.6rem;letter-spacing:0.04em;}
-.demo-wrap{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.13);margin-bottom:1.5rem;border:1px solid #e2e8f0;}
+.topbar{background:var(--paper-raised);border-bottom:1px solid var(--line);padding:0 1.25rem;height:58px;display:flex;align-items:center;gap:0.75rem;position:sticky;top:0;z-index:50;}
+.topbar-logo{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700;color:var(--ink);text-decoration:none;display:inline-flex;align-items:baseline;}
+.topbar-logo .mark{color:var(--teal);}
+.topbar-tag{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);border-left:1px solid var(--line);padding-left:0.7rem;margin-left:0.15rem;}
+.topbar-free{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:600;color:var(--teal);background:#E4F3F2;padding:0.25rem 0.65rem;border-radius:20px;letter-spacing:0.03em;}
 
-/* RESUME TEMPLATE */
-.rv{font-family:Calibri,Arial,sans-serif;color:#1a1a1a;font-size:13px;line-height:1.5;padding:24px 28px;background:#fff;}
-.rv-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #1a56a0;padding-bottom:9px;margin-bottom:11px;}
-.rv-name{font-size:24px;font-weight:800;color:#1a56a0;text-transform:uppercase;letter-spacing:-0.5px;line-height:1.1;}
-.rv-jobtitle{font-size:12.5px;font-weight:700;color:#333;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
-.rv-contact{font-size:11px;color:#555;margin-top:2px;}
-.rv-photo{width:68px;height:68px;border-radius:50%;object-fit:cover;border:2px solid #1a56a0;flex-shrink:0;margin-left:12px;}
-.rv-sec{margin-bottom:11px;}
-.rv-sec-title{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#1a56a0;border-bottom:1.5px solid #1a56a0;padding-bottom:3px;margin-bottom:6px;}
+#app{max-width:900px;margin:0 auto;padding:1.75rem 1.25rem 5rem;}
+.step{display:none;}
+.step.active{display:block;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STEP 0: intro/demo ── */
+.demo-hero h1{font-size:1.7rem;font-weight:700;color:var(--ink);line-height:1.25;}
+.demo-hero h1 em{font-style:italic;color:var(--teal);}
+.demo-hero p{color:var(--ink-soft);font-size:0.92rem;margin-top:0.5rem;max-width:56ch;}
+.demo-feats{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem;}
+.df{background:var(--paper-raised);border:1px solid var(--line);border-radius:20px;padding:0.32rem 0.85rem;font-size:0.78rem;color:var(--ink-soft);font-weight:500;}
+.demo-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.08em;margin:1.5rem 0 0.7rem;}
+.demo-wrap{background:var(--paper-raised);border-radius:12px;overflow:hidden;box-shadow:0 10px 34px rgba(23,25,35,0.1);margin-bottom:1.75rem;border:1px solid var(--line);}
+
+/* resume typography — kept plain and ATS-safe: single column, no images required, no icon fonts */
+.rv{font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:13px;line-height:1.55;padding:26px 30px;background:#fff;}
+.rv-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid var(--navy);padding-bottom:10px;margin-bottom:12px;}
+.rv-name{font-size:23px;font-weight:800;color:var(--navy);letter-spacing:0.2px;line-height:1.15;}
+.rv-jobtitle{font-size:12.5px;font-weight:700;color:#333;text-transform:uppercase;letter-spacing:0.6px;margin-top:3px;}
+.rv-contact{font-size:11px;color:#555;margin-top:3px;}
+.rv-photo{width:66px;height:66px;border-radius:6px;object-fit:cover;border:1px solid var(--line);flex-shrink:0;margin-left:14px;}
+.rv-sec{margin-bottom:12px;}
+.rv-sec-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--navy);border-bottom:1px solid var(--navy);padding-bottom:4px;margin-bottom:7px;}
 .rv-row{display:flex;justify-content:space-between;align-items:flex-start;}
 .rv-jt{font-size:12.5px;font-weight:700;color:#1a1a1a;}
 .rv-date{font-size:11px;color:#666;white-space:nowrap;margin-left:8px;}
-.rv-co{font-size:12px;font-weight:600;color:#1a56a0;margin-bottom:2px;}
+.rv-co{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:2px;}
 .rv-ul{list-style:none;padding:0;margin:0;}
 .rv-ul li{font-size:11.5px;color:#333;padding-left:12px;position:relative;margin-bottom:2px;}
-.rv-ul li:before{content:'•';position:absolute;left:0;color:#1a56a0;}
+.rv-ul li:before{content:'-';position:absolute;left:0;color:var(--navy);}
 .rv-skills{display:grid;grid-template-columns:repeat(3,1fr);gap:3px 12px;}
 .rv-skill{font-size:11.5px;color:#333;}
 
-/* CTA */
-.cta-btn{display:block;width:100%;max-width:340px;margin:0 auto;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;border:none;border-radius:10px;padding:0.88rem;font-size:1rem;font-weight:700;cursor:pointer;font-family:var(--font);box-shadow:0 6px 20px rgba(29,78,216,0.35);transition:all 0.15s;}
-.cta-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(29,78,216,0.45);}
+.cta-btn{display:block;width:100%;max-width:360px;margin:0 auto;background:var(--navy);color:#fff;border:none;border-radius:9px;padding:0.9rem;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;}
+.cta-btn:hover{background:var(--navy-deep);}
 
-/* FAQ */
-.faq{margin-top:2rem;}.faq h3{font-size:0.95rem;font-weight:700;margin-bottom:0.75rem;}
-.faq-item{background:#fff;border:1px solid var(--border);border-radius:8px;margin-bottom:0.4rem;overflow:hidden;}
-.faq-q{padding:0.7rem 1rem;font-size:0.83rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:#1e293b;}
-.faq-q:hover{background:#f8fafc;}
-.faq-a{padding:0 1rem 0.7rem;font-size:0.8rem;color:var(--muted);line-height:1.6;display:none;}
+.ats-note{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:1rem 1.15rem;margin-top:1.5rem;font-size:0.83rem;color:var(--ink-soft);line-height:1.65;}
+.ats-note strong{color:var(--ink);}
+
+.faq{margin-top:2rem;}
+.faq h3{font-size:1rem;font-weight:700;margin-bottom:0.85rem;font-family:'Inter',sans-serif;}
+.faq-item{background:var(--paper-raised);border:1px solid var(--line);border-radius:9px;margin-bottom:0.4rem;overflow:hidden;}
+.faq-q{padding:0.75rem 1rem;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--ink);}
+.faq-q:hover{background:var(--line-soft);}
+.faq-a{padding:0 1rem 0.75rem;font-size:0.82rem;color:var(--ink-soft);line-height:1.65;display:none;}
 .faq-item.open .faq-a{display:block;}
-.faq-arr{transition:transform 0.2s;font-size:0.7rem;color:var(--muted);}
+.faq-arr{transition:transform 0.2s;font-size:0.7rem;color:var(--ink-soft);}
 .faq-item.open .faq-arr{transform:rotate(180deg);}
 
-/* FORM */
-.form-hd{margin-bottom:1.1rem;}.form-hd h2{font-size:1.25rem;font-weight:800;}.form-hd p{color:var(--muted);font-size:0.81rem;margin-top:0.2rem;}
-.fsec{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:0.8rem;}
-.fsec-lbl{font-size:0.73rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#2563eb;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.3rem;}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;}
+/* ── STEP 1: form ── */
+.form-hd{margin-bottom:1.2rem;}
+.form-hd h2{font-size:1.3rem;font-weight:700;}
+.form-hd p{color:var(--ink-soft);font-size:0.85rem;margin-top:0.25rem;}
+.fsec{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:1.1rem;margin-bottom:0.85rem;}
+.fsec-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--teal);margin-bottom:0.85rem;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;}
 .fg1{grid-template-columns:1fr;}
 @media(max-width:500px){.fg{grid-template-columns:1fr;}}
-label{font-size:0.74rem;color:var(--muted);font-weight:500;display:block;margin-bottom:0.22rem;}
-input,textarea{width:100%;background:#f8fafc;border:1.5px solid var(--border);border-radius:7px;padding:0.48rem 0.68rem;color:#1e293b;font-size:0.83rem;font-family:var(--font);outline:none;transition:border-color 0.15s;}
-input:focus,textarea:focus{border-color:#2563eb;background:#fff;}
-textarea{resize:vertical;min-height:68px;}
+label{font-size:0.76rem;color:var(--ink-soft);font-weight:500;display:block;margin-bottom:0.25rem;}
+input,textarea,select{width:100%;background:var(--paper);border:1.4px solid var(--line);border-radius:7px;padding:0.5rem 0.7rem;color:var(--ink);font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.15s,background 0.15s;}
+input:focus,textarea:focus{border-color:var(--teal);background:#fff;}
+textarea{resize:vertical;min-height:70px;}
 
-/* Photo */
-.photo-wrap{display:flex;align-items:center;gap:1rem;margin-bottom:0.85rem;}
-.photo-prev{width:62px;height:62px;border-radius:50%;background:#e2e8f0;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden;flex-shrink:0;}
-.photo-prev img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.photo-btn{background:#dbeafe;color:#1d4ed8;border:1.5px dashed #93c5fd;border-radius:7px;padding:0.45rem 0.9rem;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:var(--font);}
-.photo-btn:hover{background:#bfdbfe;}
+.photo-wrap{display:flex;align-items:center;gap:1rem;margin-bottom:0.9rem;}
+.photo-prev{width:60px;height:60px;border-radius:8px;background:var(--line-soft);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--ink-soft);overflow:hidden;flex-shrink:0;font-family:'IBM Plex Mono',monospace;}
+.photo-prev img{width:100%;height:100%;object-fit:cover;}
+.photo-btn{background:var(--line-soft);color:var(--ink);border:1.4px dashed var(--line);border-radius:7px;padding:0.5rem 1rem;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+.photo-btn:hover{border-color:var(--teal);color:var(--teal);}
 
-.add-btn{background:#f8fafc;border:1.5px dashed var(--border);border-radius:7px;padding:0.42rem;width:100%;color:#2563eb;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:0.35rem;transition:all 0.15s;}
-.add-btn:hover{background:#eff6ff;border-color:#2563eb;}
-.rm-btn{background:#fee2e222;border:none;color:#ef4444;border-radius:5px;padding:0.18rem 0.5rem;font-size:0.7rem;cursor:pointer;font-family:var(--font);}
-.rep{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:0.75rem;margin-bottom:0.6rem;}
-.rep-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;}
-.rep-num{font-size:0.7rem;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:0.04em;}
+.add-btn{background:var(--paper);border:1.4px dashed var(--line);border-radius:7px;padding:0.45rem;width:100%;color:var(--teal);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-top:0.4rem;transition:all 0.15s;}
+.add-btn:hover{background:#E4F3F2;border-color:var(--teal);}
+.rm-btn{background:transparent;border:none;color:#B4552F;border-radius:5px;padding:0.2rem 0.5rem;font-size:0.72rem;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;}
+.rep{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:0.8rem;margin-bottom:0.65rem;}
+.rep-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.65rem;}
+.rep-num{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:0.04em;}
 
-.gen-btn{display:block;width:100%;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;border:none;border-radius:10px;padding:0.85rem;font-size:1rem;font-weight:700;cursor:pointer;font-family:var(--font);box-shadow:0 5px 18px rgba(29,78,216,0.3);margin-top:1.1rem;transition:all 0.15s;}
-.gen-btn:hover{transform:translateY(-1px);}
-.gen-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-.pbar{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.1rem;text-align:center;margin-top:0.65rem;display:none;}
+.gen-btn{display:block;width:100%;background:var(--navy);color:#fff;border:none;border-radius:9px;padding:0.9rem;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-top:1.2rem;transition:background 0.15s;}
+.gen-btn:hover{background:var(--navy-deep);}
+.gen-btn:disabled{opacity:0.6;cursor:not-allowed;}
+.pbar{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:1.15rem;text-align:center;margin-top:0.7rem;display:none;}
 .pbar.show{display:block;}
-.pbar-txt{color:var(--muted);font-size:0.83rem;margin-bottom:0.65rem;}
-.bar-wrap{height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;}
-.bar-fill{height:100%;background:linear-gradient(90deg,#1d4ed8,#7c3aed);border-radius:3px;width:0%;transition:width 0.35s ease;}
+.pbar-txt{color:var(--ink-soft);font-size:0.85rem;margin-bottom:0.7rem;}
+.bar-wrap{height:5px;background:var(--line);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;background:var(--teal);border-radius:3px;width:0%;transition:width 0.35s ease;}
 
-/* RESULT */
-.res-actions{display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1.1rem;}
-.dl-btn{flex:1;min-width:130px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;border:none;border-radius:9px;padding:0.72rem 1rem;font-size:0.88rem;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:0.35rem;transition:transform 0.15s;}
-.dl-btn:hover{transform:translateY(-2px);}
-.bk-btn{background:#fff;border:1.5px solid var(--border);color:#374151;border-radius:9px;padding:0.72rem 1rem;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:var(--font);}
-.bk-btn:hover{border-color:#2563eb;color:#2563eb;}
-#resumeOut{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.1);}
+/* ── STEP 2: result ── */
+.result-hd{margin-bottom:1.1rem;}
+.result-hd h2{font-size:1.3rem;font-weight:700;}
+.result-hd p{color:var(--ink-soft);font-size:0.83rem;margin-top:0.25rem;}
+.res-actions{display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1.15rem;}
+.dl-btn{flex:1;min-width:150px;background:var(--navy);color:#fff;border:none;border-radius:9px;padding:0.75rem 1rem;font-size:0.88rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;}
+.dl-btn:hover{background:var(--navy-deep);}
+.bk-btn{background:var(--paper-raised);border:1.4px solid var(--line);color:var(--ink-soft);border-radius:9px;padding:0.75rem 1rem;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+.bk-btn:hover{border-color:var(--teal);color:var(--teal);}
+#resumeOut{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 6px 28px rgba(23,25,35,0.08);}
 
-/* PRINT */
 @media print{
   body>*{display:none!important;}
   #printArea,#printArea *{display:revert!important;}
@@ -115,29 +150,28 @@ textarea{resize:vertical;min-height:68px;}
 <body>
 
 <div class="topbar">
-  <a href="index.html">← BTech Vault</a>
-  <span style="color:#475569">|</span>
-  <span class="topbar-logo">BTech<span>Vault</span></span>
-  <span class="topbar-free">100% FREE</span>
+  <a href="index.html" class="topbar-logo"><span class="mark">B</span>Tech<span class="mark">Vault</span></a>
+  <span class="topbar-tag">Resume Builder</span>
+  <span class="topbar-free">Free</span>
 </div>
 
 <div id="app">
 
-<!-- ══ STEP 0: DEMO ══ -->
+<!-- STEP 0: intro -->
 <div class="step active" id="step0">
   <div class="demo-hero">
-    <h1>Create Your <span>Resume</span> in 2 Minutes ✨</h1>
-    <p>Fill your details → Instant professional resume → Download PDF free</p>
+    <h1>Build a resume that gets <em>past the filter</em>, not just past you.</h1>
+    <p>Fill in your details, get a clean single-column resume built for applicant tracking systems, and download it as a PDF. No sign-up, no watermark.</p>
     <div class="demo-feats">
-      <span class="df">✅ No sign-up needed</span>
-      <span class="df">📸 Add your photo</span>
-      <span class="df">⬇️ PDF download</span>
-      <span class="df">📱 Mobile friendly</span>
-      <span class="df">🎯 ATS-friendly</span>
+      <span class="df">No sign-up needed</span>
+      <span class="df">Optional photo</span>
+      <span class="df">Free PDF download</span>
+      <span class="df">Works on mobile</span>
+      <span class="df">ATS-safe layout</span>
     </div>
   </div>
 
-  <div class="demo-label">👇 SAMPLE — YOUR RESUME WILL LOOK EXACTLY LIKE THIS</div>
+  <span class="demo-label">Sample output — your resume follows this structure</span>
   <div class="demo-wrap">
     <div class="rv">
       <div class="rv-head">
@@ -146,98 +180,96 @@ textarea{resize:vertical;min-height:68px;}
           <div class="rv-jobtitle">Financial Analyst</div>
           <div class="rv-contact">Market Street 12, New York &nbsp;|&nbsp; (412) 479-6342 &nbsp;|&nbsp; example@gmail.com</div>
         </div>
-        <img class="rv-photo" src="https://i.pravatar.cc/80?img=11" alt="Photo"/>
+        <img class="rv-photo" src="https://i.pravatar.cc/80?img=11" alt="Sample profile photo"/>
       </div>
       <div class="rv-sec">
         <div class="rv-sec-title">Summary</div>
-        <p style="font-size:11.5px;color:#333;line-height:1.6;">Experienced and driven Financial Analyst with an impressive background of managing multi-million dollar budgets while providing analysis and account support within product development departments.</p>
+        <p style="font-size:11.5px;color:#333;line-height:1.6;">Financial analyst with a track record of managing multi-million dollar budgets, providing analysis and account support across product development departments.</p>
       </div>
       <div class="rv-sec">
         <div class="rv-sec-title">Professional Experience</div>
-        <div class="rv-row"><div class="rv-jt">Financial Analyst, GEO Corp.</div><div class="rv-date">Jan 2012 — Present</div></div>
+        <div class="rv-row"><div class="rv-jt">Financial Analyst, GEO Corp.</div><div class="rv-date">Jan 2012 - Present</div></div>
         <div class="rv-co">GEO Corp.</div>
-        <ul class="rv-ul"><li>Created budgets and ensured that labor and material costs were decreased by 15 percent.</li><li>Generated financial statements including cash flow charts and balance sheets.</li></ul>
-        <div style="margin-top:7px;"><div class="rv-row"><div class="rv-jt">Financial Analyst, Sisco Enterprises</div><div class="rv-date">Feb 2008 — Dec 2012</div></div>
+        <ul class="rv-ul"><li>Cut labor and material costs by 15 percent through revised budget planning.</li><li>Generated financial statements including cash flow charts and balance sheets.</li></ul>
+        <div style="margin-top:7px;"><div class="rv-row"><div class="rv-jt">Financial Analyst, Sisco Enterprises</div><div class="rv-date">Feb 2008 - Dec 2012</div></div>
         <div class="rv-co">Sisco Enterprises</div>
-        <ul class="rv-ul"><li>Provide reports, ad-hoc analysis, annual operations plan budgets, monthly cash forecasts.</li></ul></div>
+        <ul class="rv-ul"><li>Delivered ad-hoc analysis, annual operating budgets, and monthly cash forecasts.</li></ul></div>
       </div>
       <div class="rv-sec">
         <div class="rv-sec-title">Education</div>
-        <div class="rv-row"><div><div style="font-size:12.5px;font-weight:700;">Diploma in Computer Engineering</div><div class="rv-co">University of Arizona</div><div style="font-size:11px;color:#666;">Graduated with High Honors.</div></div><div class="rv-date">Aug 2006 — Oct 2008</div></div>
+        <div class="rv-row"><div><div style="font-size:12.5px;font-weight:700;">Diploma in Computer Engineering</div><div class="rv-co">University of Arizona</div><div style="font-size:11px;color:#666;">Graduated with High Honors.</div></div><div class="rv-date">Aug 2006 - Oct 2008</div></div>
       </div>
       <div class="rv-sec">
         <div class="rv-sec-title">Technical Skills</div>
-        <div class="rv-skills"><div class="rv-skill">Solution Strategies</div><div class="rv-skill">Analytical Thinker</div><div class="rv-skill">Innovation</div><div class="rv-skill">Team Leadership</div><div class="rv-skill">Market Assessment</div><div class="rv-skill">Collaboration</div></div>
-      </div>
-      <div class="rv-sec">
-        <div class="rv-sec-title">Additional Information</div>
-        <ul class="rv-ul"><li><strong>Languages:</strong> English, French</li><li><strong>Certificates:</strong> Financial Analyst License</li><li><strong>Awards:</strong> Most Innovate Employer of the Year (2011)</li></ul>
+        <div class="rv-skills"><div class="rv-skill">Solution Strategies</div><div class="rv-skill">Analytical Thinking</div><div class="rv-skill">Team Leadership</div><div class="rv-skill">Market Assessment</div><div class="rv-skill">Financial Modeling</div><div class="rv-skill">Collaboration</div></div>
       </div>
     </div>
   </div>
 
-  <button class="cta-btn" onclick="goStep(1)">✨ Create My Resume — Free</button>
+  <button class="cta-btn" onclick="goStep(1)">Create my resume</button>
+
+  <div class="ats-note"><strong>Why this layout:</strong> the resume itself uses a single column, standard fonts, and plain text sections on purpose. Applicant tracking systems parse resumes as text, and multi-column layouts, icon fonts, and embedded graphics are a common reason a resume gets misread or rejected before a human ever sees it. A photo is optional and never required for ATS parsing to work correctly.</div>
 
   <div class="faq">
-    <h3>❓ Common Questions</h3>
-    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Is this 100% free? <span class="faq-arr">▼</span></div><div class="faq-a">Yes! No sign-up, no watermark, no payment. Completely free.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">How to download as PDF? <span class="faq-arr">▼</span></div><div class="faq-a">Click "Download PDF" → Browser print dialog opens → Select "Save as PDF" → Save.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Can I add my photo? <span class="faq-arr">▼</span></div><div class="faq-a">Yes! Upload your photo in the form — it appears in the top-right corner of the resume.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Can I edit after generating? <span class="faq-arr">▼</span></div><div class="faq-a">Yes! Click "Edit Details" anytime to change anything and regenerate instantly.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Is it ATS-friendly? <span class="faq-arr">▼</span></div><div class="faq-a">Yes, clean formatting that ATS systems can read easily. No tables or complex layouts.</div></div>
+    <h3>Common questions</h3>
+    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Is this actually free? <span class="faq-arr">v</span></div><div class="faq-a">Yes. No sign-up, no watermark, no payment at any step.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">How do I download it as a PDF? <span class="faq-arr">v</span></div><div class="faq-a">Click "Download PDF" once your resume is generated. Your browser's print dialog opens; choose "Save as PDF" as the destination and save.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Should I add a photo? <span class="faq-arr">v</span></div><div class="faq-a">It's optional. Some regions and industries expect a photo on a resume, others actively discourage it. If you're applying internationally or through a large company's ATS, leaving it off is usually the safer choice.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Can I edit after generating? <span class="faq-arr">v</span></div><div class="faq-a">Yes. Click "Edit" on the result screen to change anything and regenerate instantly.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Is the layout really ATS-friendly? <span class="faq-arr">v</span></div><div class="faq-a">The output uses a single-column structure, standard section headers, and plain text with no tables or text boxes, which is what most ATS parsing guides recommend.</div></div>
   </div>
 </div>
 
-<!-- ══ STEP 1: FORM ══ -->
+<!-- STEP 1: form -->
 <div class="step" id="step1">
-  <div class="form-hd"><h2>📝 Enter Your Details</h2><p>Fill in your info below — resume generates instantly!</p></div>
+  <div class="form-hd"><h2>Enter your details</h2><p>Fill in your information below. Your resume updates the moment you generate it.</p></div>
 
   <div class="fsec">
-    <div class="fsec-lbl">👤 Personal Info</div>
+    <div class="fsec-lbl">Personal info</div>
     <div class="photo-wrap">
-      <div class="photo-prev" id="photoPrev">👤</div>
+      <div class="photo-prev" id="photoPrev">Photo</div>
       <div>
-        <button class="photo-btn" onclick="document.getElementById('photoIn').click()">📷 Upload Photo</button>
+        <button class="photo-btn" onclick="document.getElementById('photoIn').click()">Upload photo</button>
         <input type="file" id="photoIn" accept="image/*" style="display:none" onchange="prevPhoto(this)"/>
-        <div style="font-size:0.7rem;color:var(--muted);margin-top:0.25rem;">Optional • Appears top-right of resume</div>
+        <div style="font-size:0.72rem;color:var(--ink-soft);margin-top:0.3rem;">Optional. Appears at the top right of your resume.</div>
       </div>
     </div>
     <div class="fg">
-      <div><label>Full Name *</label><input id="f_name" placeholder="Ravi Kumar Reddy"/></div>
-      <div><label>Job Title *</label><input id="f_title" placeholder="Software Engineer"/></div>
+      <div><label>Full name *</label><input id="f_name" placeholder="Ravi Kumar Reddy"/></div>
+      <div><label>Job title *</label><input id="f_title" placeholder="Software Engineer"/></div>
       <div><label>Phone</label><input id="f_phone" placeholder="+91-9876543210"/></div>
       <div><label>Email</label><input id="f_email" placeholder="ravi@email.com"/></div>
-      <div><label>LinkedIn / Website</label><input id="f_link" placeholder="linkedin.com/in/ravi"/></div>
+      <div><label>LinkedIn / website</label><input id="f_link" placeholder="linkedin.com/in/ravi"/></div>
       <div><label>Location</label><input id="f_loc" placeholder="Hyderabad, India"/></div>
     </div>
-    <div style="margin-top:0.6rem;"><label>Professional Summary *</label><textarea id="f_sum" placeholder="Write 3-4 lines about your experience, key strengths, and career goal..."></textarea></div>
+    <div style="margin-top:0.65rem;"><label>Professional summary *</label><textarea id="f_sum" placeholder="Three to four lines about your experience, key strengths, and what you're looking for next."></textarea></div>
   </div>
 
-  <div class="fsec"><div class="fsec-lbl">💼 Work Experience</div><div id="expL"></div><button class="add-btn" onclick="addExp()">+ Add Experience</button></div>
-  <div class="fsec"><div class="fsec-lbl">🎓 Education</div><div id="eduL"></div><button class="add-btn" onclick="addEdu()">+ Add Education</button></div>
-  <div class="fsec"><div class="fsec-lbl">⚡ Technical Skills</div><div class="fg1"><div><label>Skills (comma separated)</label><input id="f_skills" placeholder="Python, React, Node.js, MySQL, Git, Docker, AWS"/></div></div></div>
-  <div class="fsec"><div class="fsec-lbl">🚀 Projects (optional)</div><div id="projL"></div><button class="add-btn" onclick="addProj()">+ Add Project</button></div>
-  <div class="fsec"><div class="fsec-lbl">📜 Certifications (optional)</div><div id="certL"></div><button class="add-btn" onclick="addCert()">+ Add Certification</button></div>
+  <div class="fsec"><div class="fsec-lbl">Work experience</div><div id="expL"></div><button class="add-btn" onclick="addExp()">Add experience</button></div>
+  <div class="fsec"><div class="fsec-lbl">Education</div><div id="eduL"></div><button class="add-btn" onclick="addEdu()">Add education</button></div>
+  <div class="fsec"><div class="fsec-lbl">Technical skills</div><div class="fg1"><div><label>Skills, comma separated</label><input id="f_skills" placeholder="Python, React, Node.js, MySQL, Git, Docker, AWS"/></div></div></div>
+  <div class="fsec"><div class="fsec-lbl">Projects (optional)</div><div id="projL"></div><button class="add-btn" onclick="addProj()">Add project</button></div>
+  <div class="fsec"><div class="fsec-lbl">Certifications (optional)</div><div id="certL"></div><button class="add-btn" onclick="addCert()">Add certification</button></div>
   <div class="fsec">
-    <div class="fsec-lbl">ℹ️ Additional Info (optional)</div>
+    <div class="fsec-lbl">Additional info (optional)</div>
     <div class="fg">
       <div><label>Languages</label><input id="f_lang" placeholder="English, Telugu, Hindi"/></div>
-      <div><label>Awards / Activities</label><input id="f_award" placeholder="Best Developer Award 2023"/></div>
-      <div><label>Interests / Hobbies</label><input id="f_hobby" placeholder="Open source, Hackathons"/></div>
+      <div><label>Awards / activities</label><input id="f_award" placeholder="Best Developer Award 2023"/></div>
+      <div><label>Interests / hobbies</label><input id="f_hobby" placeholder="Open source, hackathons"/></div>
     </div>
   </div>
 
   <div id="pbar" class="pbar"><div class="pbar-txt" id="pbarTxt">Building your resume...</div><div class="bar-wrap"><div class="bar-fill" id="bFill"></div></div></div>
-  <button class="gen-btn" id="genBtn" onclick="generate()">🚀 Generate My Resume</button>
+  <button class="gen-btn" id="genBtn" onclick="generate()">Generate my resume</button>
 </div>
 
-<!-- ══ STEP 2: RESULT ══ -->
+<!-- STEP 2: result -->
 <div class="step" id="step2">
-  <div style="margin-bottom:1rem;"><h2 style="font-size:1.25rem;font-weight:800;">✅ Your Resume is Ready!</h2><p style="color:var(--muted);font-size:0.8rem;margin-top:0.2rem;">Download as PDF — or edit and regenerate anytime</p></div>
+  <div class="result-hd"><h2>Your resume is ready</h2><p>Download it as a PDF, or go back and edit any section.</p></div>
   <div class="res-actions">
-    <button class="dl-btn" onclick="dlPDF()">⬇️ Download PDF</button>
-    <button class="bk-btn" onclick="goStep(1)">✏️ Edit</button>
-    <button class="bk-btn" onclick="goStep(0)">🏠 Home</button>
+    <button class="dl-btn" onclick="dlPDF()">Download PDF</button>
+    <button class="bk-btn" onclick="goStep(1)">Edit</button>
+    <button class="bk-btn" onclick="goStep(0)">Start over</button>
   </div>
   <div id="resumeOut"></div>
 </div>
@@ -261,16 +293,16 @@ function prevPhoto(inp){
 
 function addExp(){
   eC++;const d=document.createElement('div');d.className='rep';
-  d.innerHTML=`<div class="rep-hd"><span class="rep-num">Experience #${eC}</span><button class="rm-btn" onclick="this.closest('.rep').remove()">✕</button></div>
-  <div class="fg"><div><label>Job Title</label><input placeholder="Software Engineer"/></div><div><label>Company</label><input placeholder="Google"/></div>
+  d.innerHTML=`<div class="rep-hd"><span class="rep-num">Experience ${eC}</span><button class="rm-btn" onclick="this.closest('.rep').remove()">Remove</button></div>
+  <div class="fg"><div><label>Job title</label><input placeholder="Software Engineer"/></div><div><label>Company</label><input placeholder="Google"/></div>
   <div><label>Start</label><input placeholder="Jan 2022"/></div><div><label>End</label><input placeholder="Present"/></div>
   <div><label>Location</label><input placeholder="Bangalore"/></div></div>
-  <div style="margin-top:0.55rem;"><label>Responsibilities (one per line)</label><textarea placeholder="• Built REST APIs&#10;• Improved performance by 40%&#10;• Led team of 5"></textarea></div>`;
+  <div style="margin-top:0.6rem;"><label>Responsibilities, one per line</label><textarea placeholder="Built REST APIs&#10;Improved performance by 40 percent&#10;Led a team of five"></textarea></div>`;
   document.getElementById('expL').appendChild(d);
 }
 function addEdu(){
   dC++;const d=document.createElement('div');d.className='rep';
-  d.innerHTML=`<div class="rep-hd"><span class="rep-num">Education #${dC}</span><button class="rm-btn" onclick="this.closest('.rep').remove()">✕</button></div>
+  d.innerHTML=`<div class="rep-hd"><span class="rep-num">Education ${dC}</span><button class="rm-btn" onclick="this.closest('.rep').remove()">Remove</button></div>
   <div class="fg"><div><label>Degree</label><input placeholder="B.Tech Computer Science"/></div><div><label>Institution</label><input placeholder="JNTU Hyderabad"/></div>
   <div><label>Start</label><input placeholder="2018"/></div><div><label>End</label><input placeholder="2022"/></div>
   <div><label>Location</label><input placeholder="Hyderabad"/></div><div><label>CGPA</label><input placeholder="8.5"/></div></div>`;
@@ -278,15 +310,15 @@ function addEdu(){
 }
 function addProj(){
   pC++;const d=document.createElement('div');d.className='rep';
-  d.innerHTML=`<div class="rep-hd"><span class="rep-num">Project #${pC}</span><button class="rm-btn" onclick="this.closest('.rep').remove()">✕</button></div>
-  <div class="fg"><div><label>Name</label><input placeholder="BTech Vault"/></div><div><label>Tech Stack</label><input placeholder="React, Firebase"/></div>
+  d.innerHTML=`<div class="rep-hd"><span class="rep-num">Project ${pC}</span><button class="rm-btn" onclick="this.closest('.rep').remove()">Remove</button></div>
+  <div class="fg"><div><label>Name</label><input placeholder="BTechVault"/></div><div><label>Tech stack</label><input placeholder="React, Firebase"/></div>
   <div><label>Link</label><input placeholder="github.com/..."/></div></div>
-  <div style="margin-top:0.55rem;"><label>Description</label><textarea placeholder="What it does and your role..." style="min-height:55px;"></textarea></div>`;
+  <div style="margin-top:0.6rem;"><label>Description</label><textarea placeholder="What it does and your role in building it." style="min-height:55px;"></textarea></div>`;
   document.getElementById('projL').appendChild(d);
 }
 function addCert(){
   cC++;const d=document.createElement('div');d.className='rep';
-  d.innerHTML=`<div class="rep-hd"><span class="rep-num">Cert #${cC}</span><button class="rm-btn" onclick="this.closest('.rep').remove()">✕</button></div>
+  d.innerHTML=`<div class="rep-hd"><span class="rep-num">Certification ${cC}</span><button class="rm-btn" onclick="this.closest('.rep').remove()">Remove</button></div>
   <div class="fg"><div><label>Name</label><input placeholder="AWS Certified Developer"/></div><div><label>Organization</label><input placeholder="Amazon"/></div><div><label>Year</label><input placeholder="2023"/></div></div>`;
   document.getElementById('certL').appendChild(d);
 }
@@ -304,10 +336,10 @@ function collect(){
 
 function generate(){
   const d=collect();
-  if(!d.name||!d.title||!d.sum){alert('Please fill: Name, Job Title, Summary');return;}
+  if(!d.name||!d.title||!d.sum){alert('Please fill in your name, job title, and summary.');return;}
   const btn=document.getElementById('genBtn'),pb=document.getElementById('pbar'),bf=document.getElementById('bFill'),pt=document.getElementById('pbarTxt');
   btn.disabled=true;pb.classList.add('show');
-  const steps=[[20,'📋 Reading details...'],[50,'🎨 Building layout...'],[80,'✍️ Adding content...'],[100,'✅ Done!']];
+  const steps=[[20,'Reading details...'],[50,'Building layout...'],[80,'Adding content...'],[100,'Done.']];
   let si=0;const iv=setInterval(()=>{if(si<steps.length){bf.style.width=steps[si][0]+'%';pt.textContent=steps[si][1];si++;}else clearInterval(iv);},380);
   setTimeout(()=>{clearInterval(iv);const html=buildResume(d);document.getElementById('resumeOut').innerHTML=html;document.getElementById('printArea').innerHTML=html;pb.classList.remove('show');btn.disabled=false;goStep(2);},1700);
 }
@@ -316,35 +348,35 @@ function x(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 
 function sec(title,content){
   if(!content)return'';
-  return`<div style="margin-bottom:12px;"><div style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#1a56a0;border-bottom:1.5px solid #1a56a0;padding-bottom:3px;margin-bottom:6px;">${title}</div>${content}</div>`;
+  return`<div style="margin-bottom:12px;"><div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#16324F;border-bottom:1px solid #16324F;padding-bottom:4px;margin-bottom:7px;">${title}</div>${content}</div>`;
 }
 
 function buildResume(d){
   const expHTML=d.exps.filter(e=>e.title||e.company).map(e=>{
     const buls=(e.bullets||'').split('\n').map(b=>b.replace(/^[•\-\*]\s*/,'')).filter(Boolean);
-    return`<div style="margin-bottom:9px;"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="font-size:12.5px;font-weight:700;">${x(e.title)}${e.company?', '+x(e.company):''}</div><div style="font-size:11px;color:#666;white-space:nowrap;margin-left:8px;">${x(e.start)}${e.end?' — '+x(e.end):''}</div></div>${e.company?`<div style="font-size:12px;font-weight:600;color:#1a56a0;margin-bottom:2px;">${x(e.company)}</div>`:''}${e.loc?`<div style="font-size:11px;color:#777;margin-bottom:2px;">${x(e.loc)}</div>`:''}${buls.length?`<ul style="list-style:none;padding:0;margin:3px 0 0;">${buls.map(b=>`<li style="font-size:11.5px;color:#333;padding-left:13px;position:relative;margin-bottom:2px;"><span style="position:absolute;left:0;color:#1a56a0;">•</span>${x(b)}</li>`).join('')}</ul>`:''}</div>`;
+    return`<div style="margin-bottom:9px;"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="font-size:12.5px;font-weight:700;">${x(e.title)}${e.company?', '+x(e.company):''}</div><div style="font-size:11px;color:#666;white-space:nowrap;margin-left:8px;">${x(e.start)}${e.end?' - '+x(e.end):''}</div></div>${e.company?`<div style="font-size:12px;font-weight:600;color:#16324F;margin-bottom:2px;">${x(e.company)}</div>`:''}${e.loc?`<div style="font-size:11px;color:#777;margin-bottom:2px;">${x(e.loc)}</div>`:''}${buls.length?`<ul style="list-style:none;padding:0;margin:3px 0 0;">${buls.map(b=>`<li style="font-size:11.5px;color:#333;padding-left:12px;position:relative;margin-bottom:2px;"><span style="position:absolute;left:0;color:#16324F;">-</span>${x(b)}</li>`).join('')}</ul>`:''}</div>`;
   }).join('');
 
-  const eduHTML=d.edus.filter(e=>e.deg||e.inst).map(e=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-size:12.5px;font-weight:700;">${x(e.deg)}</div><div style="font-size:12px;font-weight:600;color:#1a56a0;">${x(e.inst)}</div>${e.loc?`<div style="font-size:11px;color:#777;">${x(e.loc)}</div>`:''}${e.gpa?`<div style="font-size:11.5px;color:#333;">CGPA: ${x(e.gpa)}</div>`:''}</div><div style="font-size:11px;color:#666;white-space:nowrap;margin-left:8px;">${x(e.start)}${e.end?' — '+x(e.end):''}</div></div>`).join('');
+  const eduHTML=d.edus.filter(e=>e.deg||e.inst).map(e=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-size:12.5px;font-weight:700;">${x(e.deg)}</div><div style="font-size:12px;font-weight:600;color:#16324F;">${x(e.inst)}</div>${e.loc?`<div style="font-size:11px;color:#777;">${x(e.loc)}</div>`:''}${e.gpa?`<div style="font-size:11.5px;color:#333;">CGPA: ${x(e.gpa)}</div>`:''}</div><div style="font-size:11px;color:#666;white-space:nowrap;margin-left:8px;">${x(e.start)}${e.end?' - '+x(e.end):''}</div></div>`).join('');
 
   const skillsHTML=(d.skills||'').split(',').map(s=>s.trim()).filter(Boolean).map(s=>`<div style="font-size:11.5px;color:#333;">${x(s)}</div>`).join('');
 
-  const projHTML=d.projs.filter(p=>p.name).map(p=>`<div style="margin-bottom:7px;"><div style="font-size:12.5px;font-weight:700;">${x(p.name)}${p.stack?` <span style="font-size:11px;color:#1a56a0;font-weight:400;">| ${x(p.stack)}</span>`:''}</div>${p.link?`<div style="font-size:11px;color:#1a56a0;">${x(p.link)}</div>`:''}${p.desc?`<div style="font-size:11.5px;color:#333;">${x(p.desc)}</div>`:''}</div>`).join('');
+  const projHTML=d.projs.filter(p=>p.name).map(p=>`<div style="margin-bottom:7px;"><div style="font-size:12.5px;font-weight:700;">${x(p.name)}${p.stack?` <span style="font-size:11px;color:#16324F;font-weight:400;">| ${x(p.stack)}</span>`:''}</div>${p.link?`<div style="font-size:11px;color:#16324F;">${x(p.link)}</div>`:''}${p.desc?`<div style="font-size:11.5px;color:#333;">${x(p.desc)}</div>`:''}</div>`).join('');
 
-  const certHTML=d.certs.filter(c=>c.name).map(c=>`<li style="font-size:11.5px;color:#333;padding-left:13px;position:relative;margin-bottom:2px;"><span style="position:absolute;left:0;color:#1a56a0;">•</span><strong>${x(c.name)}</strong>${c.org?' — '+x(c.org):''}${c.year?' ('+x(c.year)+')':''}</li>`).join('');
+  const certHTML=d.certs.filter(c=>c.name).map(c=>`<li style="font-size:11.5px;color:#333;padding-left:12px;position:relative;margin-bottom:2px;"><span style="position:absolute;left:0;color:#16324F;">-</span><strong>${x(c.name)}</strong>${c.org?' - '+x(c.org):''}${c.year?' ('+x(c.year)+')':''}</li>`).join('');
 
   const addLines=[];
-  if(d.lang)addLines.push(`<li style="font-size:11.5px;color:#333;padding-left:13px;position:relative;margin-bottom:2px;"><span style="position:absolute;left:0;color:#1a56a0;">•</span><strong>Languages:</strong> ${x(d.lang)}</li>`);
-  if(d.award)addLines.push(`<li style="font-size:11.5px;color:#333;padding-left:13px;position:relative;margin-bottom:2px;"><span style="position:absolute;left:0;color:#1a56a0;">•</span><strong>Awards/Activities:</strong> ${x(d.award)}</li>`);
-  if(d.hobby)addLines.push(`<li style="font-size:11.5px;color:#333;padding-left:13px;position:relative;margin-bottom:2px;"><span style="position:absolute;left:0;color:#1a56a0;">•</span><strong>Interests:</strong> ${x(d.hobby)}</li>`);
+  if(d.lang)addLines.push(`<li style="font-size:11.5px;color:#333;padding-left:12px;position:relative;margin-bottom:2px;"><span style="position:absolute;left:0;color:#16324F;">-</span><strong>Languages:</strong> ${x(d.lang)}</li>`);
+  if(d.award)addLines.push(`<li style="font-size:11.5px;color:#333;padding-left:12px;position:relative;margin-bottom:2px;"><span style="position:absolute;left:0;color:#16324F;">-</span><strong>Awards / activities:</strong> ${x(d.award)}</li>`);
+  if(d.hobby)addLines.push(`<li style="font-size:11.5px;color:#333;padding-left:12px;position:relative;margin-bottom:2px;"><span style="position:absolute;left:0;color:#16324F;">-</span><strong>Interests:</strong> ${x(d.hobby)}</li>`);
 
-  const photoTag=d.photo?`<img src="${d.photo}" style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:2.5px solid #1a56a0;flex-shrink:0;margin-left:14px;"/>`:'' ;
+  const photoTag=d.photo?`<img src="${d.photo}" style="width:68px;height:68px;border-radius:6px;object-fit:cover;border:1px solid #E4E0D8;flex-shrink:0;margin-left:14px;"/>`:'' ;
 
-  return`<div style="font-family:Calibri,Arial,sans-serif;color:#1a1a1a;font-size:13px;line-height:1.5;padding:26px 30px;background:#fff;max-width:800px;margin:0 auto;">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #1a56a0;padding-bottom:9px;margin-bottom:12px;">
+  return`<div style="font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:13px;line-height:1.55;padding:28px 32px;background:#fff;max-width:800px;margin:0 auto;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #16324F;padding-bottom:10px;margin-bottom:13px;">
     <div>
-      <div style="font-size:24px;font-weight:800;color:#1a56a0;text-transform:uppercase;letter-spacing:-0.5px;line-height:1.1;">${x(d.name)}</div>
-      <div style="font-size:12.5px;font-weight:700;color:#333;text-transform:uppercase;letter-spacing:0.4px;margin-top:2px;">${x(d.title)}</div>
+      <div style="font-size:23px;font-weight:800;color:#16324F;letter-spacing:0.2px;line-height:1.15;">${x(d.name)}</div>
+      <div style="font-size:12.5px;font-weight:700;color:#333;text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;">${x(d.title)}</div>
       <div style="font-size:11px;color:#555;margin-top:3px;">${[d.loc,d.phone,d.email,d.link].filter(Boolean).map(v=>x(v)).join(' &nbsp;|&nbsp; ')}</div>
     </div>
     ${photoTag}
