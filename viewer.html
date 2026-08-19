@@ -4,6 +4,16 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="theme-color" content="#0f0f1a"/>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-65G3NWR8C0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-65G3NWR8C0');
+  </script>
+
   <title>PDF Viewer — BTech Vault</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -233,7 +243,6 @@
     .pn-jump-go:active{filter:brightness(0.85);}
 
     /* ══════════════ COMMENTS SHEET ══════════════ */
-    /* triggered by comment button — slides up */
     .comments-overlay{
       position:fixed;inset:0;
       background:rgba(0,0,0,0.55);
