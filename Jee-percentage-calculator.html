@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEE Percentage Calculator - BTechVault</title>
+<meta name="description" content="Calculate your JEE Main marks percentage and check your Class 12 board eligibility for NIT and IIT admission in seconds. Free tool by BTechVault.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16213E;
+    --ink-soft:#2A3B63;
+    --parchment:#FBF7EE;
+    --parchment-dim:#F3EDDD;
+    --rule:#E3DAC3;
+    --gold:#C9962B;
+    --gold-dim:#E9D3A0;
+    --teal:#2F6F68;
+    --coral:#D96C4F;
+    --ok:#2E7D4F;
+    --ok-bg:#E9F4EC;
+    --warn:#9A4A2C;
+    --warn-bg:#FBEFE9;
+    --shadow: 0 20px 45px -20px rgba(22,33,62,0.35);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--parchment); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Fraunces',serif; margin:0; color:var(--ink);}
+  p{margin:0;}
+  a{color:inherit;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 28px;}
+  @media (max-width:640px){ .wrap{padding:0 18px;} }
+
+  .topbar{border-bottom:1px solid var(--rule); padding:18px 0; background:var(--parchment); position:sticky; top:0; z-index:40;}
+  .topbar .wrap{display:flex; align-items:center; justify-content:space-between;}
+  .brand{display:flex; align-items:baseline; gap:9px; text-decoration:none;}
+  .brand-mark{font-family:'Fraunces',serif; font-weight:700; font-size:22px; color:var(--ink);}
+  .brand-sub{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--teal);}
+  .topbar-tag{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft);}
+  @media (max-width:640px){ .topbar-tag{display:none;} }
+
+  .hero{padding:56px 0 36px;}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--teal); margin-bottom:16px;}
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold);}
+  .hero h1{font-size:clamp(30px,4.4vw,46px); line-height:1.1; font-weight:600; letter-spacing:-0.01em; max-width:18ch;}
+  .hero h1 em{font-style:italic; color:var(--teal); font-weight:500; background-image:linear-gradient(180deg, transparent 68%, var(--gold-dim) 68%);}
+  .hero p.lede{margin-top:18px; font-size:16.5px; line-height:1.65; color:var(--ink-soft); max-width:60ch;}
+  .hero-note{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace; margin-top:16px;}
+
+  .section{padding:44px 0;}
+  .divider{height:1px; background:var(--rule); border:none;}
+  .section-head{margin-bottom:22px;}
+  .section-head .step{font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);}
+  .section-head h2{font-size:24px; font-weight:600; margin-top:6px;}
+  .section-head p.desc{margin-top:8px; color:var(--ink-soft); font-size:14.5px; max-width:62ch;}
+
+  .tabs{display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;}
+  .tab-btn{
+    padding:11px 18px; border-radius:9px; border:1.4px solid var(--rule); background:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; letter-spacing:.04em; text-transform:uppercase;
+    font-weight:600; color:var(--ink-soft); cursor:pointer; transition:all .15s ease;
+  }
+  .tab-btn.active{background:var(--ink); border-color:var(--ink); color:var(--parchment);}
+
+  .panel{background:#fff; border:1px solid var(--rule); border-radius:var(--radius); padding:28px; box-shadow:0 1px 0 rgba(22,33,62,.02);}
+  @media (max-width:640px){ .panel{padding:20px;} }
+  .panel-view{display:none;}
+  .panel-view.active{display:block;}
+
+  .field-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  @media (max-width:760px){ .field-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:480px){ .field-grid{grid-template-columns:1fr;} }
+  .field{display:flex; flex-direction:column; gap:7px;}
+  label{font-size:12.5px; font-weight:600; color:var(--ink-soft);}
+  label .max{font-weight:400; color:var(--ink-soft); opacity:.7;}
+  input[type="text"], input[type="number"], select{
+    font-family:'Inter',sans-serif; font-size:14.5px; color:var(--ink);
+    padding:11px 13px; border-radius:8px; border:1.4px solid var(--rule); background:var(--parchment);
+    outline:none; transition:border-color .15s ease, background .15s ease; width:100%;
+  }
+  input:focus, select:focus{border-color:var(--teal); background:#fff;}
+
+  .row-two{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;}
+  @media (max-width:480px){ .row-two{grid-template-columns:1fr;} }
+
+  .panel-footer{display:flex; align-items:center; justify-content:space-between; margin-top:24px; gap:16px; flex-wrap:wrap;}
+  .btn{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px; padding:13px 24px; border-radius:9px;
+    border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .15s ease, box-shadow .15s ease; text-decoration:none;
+  }
+  .btn-primary{background:var(--ink); color:var(--parchment); box-shadow:0 10px 24px -10px rgba(22,33,62,.5);}
+  .btn-primary:hover{transform:translateY(-1px);}
+
+  .result{margin-top:24px; display:none;}
+  .result.show{display:block;}
+  .result-card{border:1px solid var(--rule); border-radius:12px; padding:22px; background:var(--parchment-dim);}
+  .result-top{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;}
+  .result-figure{font-family:'Fraunces',serif; font-size:44px; font-weight:600; color:var(--ink);}
+  .result-figure .unit{font-size:22px; color:var(--teal); margin-left:2px;}
+  .result-sub{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-soft);}
+  .result-detail{margin-top:14px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+  @media (max-width:640px){ .result-detail{grid-template-columns:1fr;} }
+  .detail-item{background:#fff; border:1px solid var(--rule); border-radius:8px; padding:12px 14px;}
+  .detail-item .d-label{font-size:11px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:.06em;}
+  .detail-item .d-value{font-size:17px; font-weight:700; margin-top:4px;}
+
+  .status-line{margin-top:16px; padding:13px 16px; border-radius:9px; font-size:13.8px; line-height:1.5;}
+  .status-ok{background:var(--ok-bg); color:var(--ok); border:1px solid #CFE6D7;}
+  .status-warn{background:var(--warn-bg); color:var(--warn); border:1px solid #F0D3C4;}
+
+  .fine-print{margin-top:18px; font-size:12.5px; color:var(--ink-soft); line-height:1.6;}
+
+  /* article */
+  .article{max-width:760px;}
+  .article h2{font-size:24px; font-weight:600; margin-bottom:10px;}
+  .article h3{font-size:18px; font-weight:600; margin-top:26px; margin-bottom:8px;}
+  .article p{font-size:15px; line-height:1.75; color:var(--ink-soft); margin-top:12px;}
+  .article ul{margin:12px 0 0; padding-left:20px; color:var(--ink-soft); font-size:15px; line-height:1.75;}
+  .article li{margin-bottom:6px;}
+  .article-meta{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--gold); text-transform:uppercase; letter-spacing:.12em; margin-bottom:10px;}
+
+  footer{border-top:1px solid var(--rule); padding:28px 0; margin-top:16px;}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;}
+  footer p{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">BTechVault</span>
+      <span class="brand-sub">Study Tools</span>
+    </a>
+    <span class="topbar-tag">JEE Percentage Calculator</span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Free tool for JEE aspirants</span>
+    <h1>Know your <em>JEE percentage</em> and your admission eligibility, at once.</h1>
+    <p class="lede">Enter your marks to get your JEE Main percentage instantly, and check whether your Class 12 board score meets the requirement for NIT, IIT and IIIT admission.</p>
+    <p class="hero-note">No sign-up. Nothing is uploaded. All numbers stay in your browser.</p>
+  </div>
+</header>
+
+<hr class="divider">
+
+<section class="section" id="calculator">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="step">Calculator</span>
+      <h2>Choose what you want to calculate</h2>
+      <p class="desc">Use the JEE Main tab for your exam percentage, or the Class 12 tab to check your board percentage against the admission requirement for centrally funded institutes.</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="jee" type="button">JEE Main percentage</button>
+      <button class="tab-btn" data-tab="board" type="button">Class 12 eligibility</button>
+    </div>
+
+    <div class="panel">
+
+      <!-- JEE MAIN TAB -->
+      <div class="panel-view active" id="view-jee">
+        <div class="field-grid">
+          <div class="field">
+            <label for="physMarks">Physics <span class="max">(out of 100)</span></label>
+            <input type="number" id="physMarks" min="-100" max="100" placeholder="e.g. 72">
+          </div>
+          <div class="field">
+            <label for="chemMarks">Chemistry <span class="max">(out of 100)</span></label>
+            <input type="number" id="chemMarks" min="-100" max="100" placeholder="e.g. 65">
+          </div>
+          <div class="field">
+            <label for="mathMarks">Mathematics <span class="max">(out of 100)</span></label>
+            <input type="number" id="mathMarks" min="-100" max="100" placeholder="e.g. 80">
+          </div>
+        </div>
+
+        <div class="row-two">
+          <div class="field">
+            <label for="jeeTotalOverride">Total marks obtained <span class="max">(auto-filled, editable)</span></label>
+            <input type="number" id="jeeTotalOverride" placeholder="Auto-calculated from above">
+          </div>
+          <div class="field">
+            <label for="jeeMaxMarks">Maximum marks for this paper</label>
+            <input type="number" id="jeeMaxMarks" value="300">
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <p class="hero-note" style="margin-top:0;">Leave a subject blank if you only want the overall total.</p>
+          <button class="btn btn-primary" id="jeeCalcBtn" type="button">Calculate percentage</button>
+        </div>
+
+        <div class="result" id="jeeResult">
+          <div class="result-card">
+            <div class="result-top">
+              <span class="result-figure" id="jeeFigure">0<span class="unit">%</span></span>
+              <span class="result-sub" id="jeeSub"></span>
+            </div>
+            <div class="result-detail" id="jeeDetail"></div>
+          </div>
+          <p class="fine-print">This is your raw marks percentage, not your JEE Main percentile. NTA calculates percentile separately for each session using a normalization formula, so two students with the same marks in different sessions can get different percentiles.</p>
+        </div>
+      </div>
+
+      <!-- BOARD TAB -->
+      <div class="panel-view" id="view-board">
+        <div class="field-grid">
+          <div class="field">
+            <label for="s1">Subject 1 marks</label>
+            <input type="number" id="s1" placeholder="e.g. 88">
+          </div>
+          <div class="field">
+            <label for="s1max">Subject 1 max marks</label>
+            <input type="number" id="s1max" value="100">
+          </div>
+          <div class="field"></div>
+
+          <div class="field">
+            <label for="s2">Subject 2 marks</label>
+            <input type="number" id="s2" placeholder="e.g. 76">
+          </div>
+          <div class="field">
+            <label for="s2max">Subject 2 max marks</label>
+            <input type="number" id="s2max" value="100">
+          </div>
+          <div class="field"></div>
+
+          <div class="field">
+            <label for="s3">Subject 3 marks</label>
+            <input type="number" id="s3" placeholder="e.g. 81">
+          </div>
+          <div class="field">
+            <label for="s3max">Subject 3 max marks</label>
+            <input type="number" id="s3max" value="100">
+          </div>
+          <div class="field"></div>
+
+          <div class="field">
+            <label for="s4">Subject 4 marks</label>
+            <input type="number" id="s4" placeholder="e.g. 79">
+          </div>
+          <div class="field">
+            <label for="s4max">Subject 4 max marks</label>
+            <input type="number" id="s4max" value="100">
+          </div>
+          <div class="field"></div>
+
+          <div class="field">
+            <label for="s5">Subject 5 marks</label>
+            <input type="number" id="s5" placeholder="e.g. 85">
+          </div>
+          <div class="field">
+            <label for="s5max">Subject 5 max marks</label>
+            <input type="number" id="s5max" value="100">
+          </div>
+          <div class="field">
+            <label for="category">Category</label>
+            <select id="category">
+              <option value="75">General / OBC-NCL / EWS (75% required)</option>
+              <option value="65">SC / ST / PwD (65% required)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <p class="hero-note" style="margin-top:0;">Use your best five subjects, as most boards and institutes count aggregate on this basis.</p>
+          <button class="btn btn-primary" id="boardCalcBtn" type="button">Check my eligibility</button>
+        </div>
+
+        <div class="result" id="boardResult">
+          <div class="result-card">
+            <div class="result-top">
+              <span class="result-figure" id="boardFigure">0<span class="unit">%</span></span>
+              <span class="result-sub">aggregate of best five subjects</span>
+            </div>
+          </div>
+          <div class="status-line" id="boardStatus"></div>
+          <p class="fine-print">This threshold applies only to admission through JEE Main into NITs, IIITs and other centrally funded technical institutes (CFTIs). It is not required simply to sit for the JEE Main exam. Candidates who do not meet it directly can still qualify by ranking in the top 20 percentile of their own board. Always confirm current-year rules on the official NTA information bulletin before relying on this for admission decisions.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section">
+  <div class="wrap article">
+    <p class="article-meta">Guide</p>
+    <h2>Understanding your JEE percentage and why it matters</h2>
+
+    <p>Every year, lakhs of students preparing for the Joint Entrance Examination search for a fast way to convert their marks into a percentage, and just as often confuse that percentage with their JEE Main percentile. The two numbers look similar, sound similar, and are often used interchangeably in conversation, but they answer different questions and are used at different stages of your admission journey. This calculator handles both the exam marks side and the Class 12 board eligibility side, and this guide explains what each number actually tells you, so you can read your own results correctly instead of relying on guesswork.</p>
+
+    <h3>What your JEE Main percentage actually shows</h3>
+    <p>Your percentage is simply the marks you scored out of the total marks available for that paper, expressed out of a hundred. If JEE Main Paper 1 is out of 300 and you scored 210, your percentage is 70. It is a fixed, personal number. It does not change based on how anyone else performed, and it does not account for the fact that different sessions of JEE Main can have papers of slightly different difficulty. That is exactly why NTA does not use raw percentage to decide your rank or your eligibility for counseling. Instead, it converts your score into a percentile.</p>
+
+    <h3>Percentage and percentile are not the same thing</h3>
+    <p>Percentile tells you where you stand relative to everyone else who appeared in your session. A percentile of 95 means you scored better than 95 percent of candidates in that particular sitting, regardless of your raw marks. Because JEE Main runs across multiple sessions and shifts, each with a different group of test takers and a different paper, NTA applies a normalization formula to make results comparable across sessions. This is why two students can score the same raw marks in different shifts and end up with different percentiles, and why a jump of a few marks near the top of the distribution can move your percentile by a noticeable margin while the same jump lower down barely moves it at all. If you are trying to estimate your rank or your chances in counseling, percentile and the official rank list are what matter, not the raw percentage this calculator gives you for your marks.</p>
+
+    <h3>Where the Class 12 percentage rule fits in</h3>
+    <p>Separately from your JEE Main score, admission to NITs, IIITs and other centrally funded technical institutes carries a Class 12 eligibility requirement. Candidates from the General, OBC-NCL and EWS categories need an aggregate of at least 75 percent in their best five Class 12 subjects, while candidates from SC, ST and PwD categories need at least 65 percent. If your board percentage falls short of this figure, you are not automatically out of the running. Being placed in the top 20 percentile of your own board's results in that year satisfies the same condition. This rule is checked at the counseling and seat allotment stage, not when you register for or sit the exam itself, so a lower Class 12 score will never stop you from attempting JEE Main. It can, however, affect which institutes you are eligible to join once you clear the exam, which is why it is worth checking early rather than after results are out.</p>
+
+    <h3>How to use the two calculators on this page together</h3>
+    <p>Start with the JEE Main tab if you want to convert a mock test score, a previous attempt, or a projected score into a percentage you can track over time. Subject wise entry is optional, so you can use it either to see how Physics, Chemistry and Mathematics compare, or simply to check your total. Then use the Class 12 tab with your actual or expected board marks to see, in advance, whether you meet the 75 or 65 percent threshold for your category. Running both together gives you a clearer picture than either number alone. Your JEE Main percentage shows how your preparation is trending, and your board eligibility check tells you whether there is a separate, unrelated requirement you also need to keep in view.</p>
+
+    <h3>A few things worth keeping in mind</h3>
+    <ul>
+      <li>Percentage from this tool is calculated purely from the marks and maximum marks you enter. It does not simulate NTA's official normalization or percentile formula.</li>
+      <li>The Class 12 aggregate should generally be calculated on your best five subjects, which is the basis most boards and institutes use, though exact subject combinations can vary slightly by board.</li>
+      <li>Eligibility rules, attempt limits and category wise thresholds are set by NTA and can be revised from year to year, so always cross check against the current official information bulletin before making admission decisions.</li>
+      <li>This tool is independently built for student use and is not affiliated with, endorsed by, or connected to the National Testing Agency or any board of education.</li>
+    </ul>
+
+    <p>Used this way, the calculator becomes less of a one time number generator and more of a quick check you can return to throughout the year, whether after a mock test, after your board pre boards, or once your actual JEE Main result is declared.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>BTechVault - built for students</p>
+    <p>Independent tool, not affiliated with NTA or any education board.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  function num(id){
+    var v = document.getElementById(id).value;
+    return v === '' ? null : parseFloat(v);
+  }
+  function fmt(n){
+    return (Math.round(n * 100) / 100).toString();
+  }
+
+  // ---- JEE Main tab ----
+  var physEl = document.getElementById('physMarks');
+  var chemEl = document.getElementById('chemMarks');
+  var mathEl = document.getElementById('mathMarks');
+  var totalOverrideEl = document.getElementById('jeeTotalOverride');
+
+  function syncTotal(){
+    var p = num('physMarks'), c = num('chemMarks'), m = num('mathMarks');
+    var vals = [p, c, m].filter(function(x){ return x !== null; });
+    if(vals.length){
+      var sum = vals.reduce(function(a,b){ return a + b; }, 0);
+      totalOverrideEl.value = fmt(sum);
+    }
+  }
+  [physEl, chemEl, mathEl].forEach(function(el){
+    el.addEventListener('input', syncTotal);
+  });
+
+  document.getElementById('jeeCalcBtn').addEventListener('click', function(){
+    var total = num('jeeTotalOverride');
+    var max = num('jeeMaxMarks') || 300;
+    if(total === null){
+      alert('Enter your marks, either subject-wise or as a total, first.');
+      return;
+    }
+    var pct = (total / max) * 100;
+    document.getElementById('jeeFigure').innerHTML = fmt(pct) + '<span class="unit">%</span>';
+    document.getElementById('jeeSub').textContent = fmt(total) + ' out of ' + fmt(max) + ' marks';
+
+    var detail = document.getElementById('jeeDetail');
+    var p = num('physMarks'), c = num('chemMarks'), m = num('mathMarks');
+    var items = [];
+    if(p !== null) items.push({label:'Physics', value: fmt(p) + ' / 100'});
+    if(c !== null) items.push({label:'Chemistry', value: fmt(c) + ' / 100'});
+    if(m !== null) items.push({label:'Mathematics', value: fmt(m) + ' / 100'});
+    detail.innerHTML = items.map(function(it){
+      return '<div class="detail-item"><div class="d-label">' + it.label + '</div><div class="d-value">' + it.value + '</div></div>';
+    }).join('');
+
+    document.getElementById('jeeResult').classList.add('show');
+  });
+
+  // ---- Board tab ----
+  document.getElementById('boardCalcBtn').addEventListener('click', function(){
+    var subjects = [1,2,3,4,5];
+    var obtained = 0, maxTotal = 0, filled = 0;
+    subjects.forEach(function(i){
+      var mark = num('s' + i);
+      var maxMark = num('s' + i + 'max');
+      if(mark !== null && maxMark){
+        obtained += mark;
+        maxTotal += maxMark;
+        filled++;
+      }
+    });
+    if(filled < 5){
+      alert('Enter marks for all five subjects to calculate your aggregate accurately.');
+      return;
+    }
+    var pct = (obtained / maxTotal) * 100;
+    document.getElementById('boardFigure').innerHTML = fmt(pct) + '<span class="unit">%</span>';
+    document.getElementById('boardResult').classList.add('show');
+
+    var threshold = parseFloat(document.getElementById('category').value);
+    var statusBox = document.getElementById('boardStatus');
+    if(pct >= threshold){
+      statusBox.className = 'status-line status-ok';
+      statusBox.textContent = 'Your aggregate of ' + fmt(pct) + '% meets the ' + threshold + '% requirement for admission to NITs, IIITs and other CFTIs through JEE Main, subject to confirming the current official criteria.';
+    } else {
+      statusBox.className = 'status-line status-warn';
+      statusBox.textContent = 'Your aggregate of ' + fmt(pct) + '% is below the ' + threshold + '% requirement. You can still qualify if you are placed in the top 20 percentile of your board for this year, which is an accepted alternative to the fixed percentage.';
+    }
+  });
+
+  // ---- tabs ----
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabBtns.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.panel-view').forEach(function(v){ v.classList.remove('active'); });
+      document.getElementById('view-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
