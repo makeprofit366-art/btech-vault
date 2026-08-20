@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-65G3NWR8C0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-65G3NWR8C0');
+</script>
+
+<title>Image Tools - BTechVault</title>
+<meta name="description" content="Convert, compress, resize, crop, rotate and prepare images for college applications, exams and projects. Free browser based tools by BTechVault.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16213E; --ink-soft:#2A3B63; --parchment:#FBF7EE; --parchment-dim:#F3EDDD;
+    --rule:#E3DAC3; --gold:#C9962B; --gold-dim:#E9D3A0; --teal:#2F6F68; --coral:#D96C4F;
+    --ok:#2E7D4F; --ok-bg:#E9F4EC; --warn:#9A4A2C; --warn-bg:#FBEFE9;
+    --shadow: 0 20px 45px -20px rgba(22,33,62,0.35); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--parchment); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Fraunces',serif; margin:0; color:var(--ink);}
+  p{margin:0;}
+  a{color:inherit;}
+  .wrap{max-width:1160px; margin:0 auto; padding:0 28px;}
+  @media (max-width:640px){ .wrap{padding:0 18px;} }
+
+  .topbar{border-bottom:1px solid var(--rule); padding:18px 0; background:var(--parchment); position:sticky; top:0; z-index:50;}
+  .topbar .wrap{display:flex; align-items:center; justify-content:space-between;}
+  .brand{display:flex; align-items:baseline; gap:9px; text-decoration:none;}
+  .brand-mark{font-family:'Fraunces',serif; font-weight:700; font-size:22px; color:var(--ink);}
+  .brand-sub{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--teal);}
+  .topbar-tag{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft);}
+  @media (max-width:640px){ .topbar-tag{display:none;} }
+
+  .hero{padding:48px 0 26px;}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--teal); margin-bottom:16px;}
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold);}
+  .hero h1{font-size:clamp(28px,4vw,42px); line-height:1.12; font-weight:600; letter-spacing:-0.01em; max-width:24ch;}
+  .hero h1 em{font-style:italic; color:var(--teal); font-weight:500; background-image:linear-gradient(180deg, transparent 68%, var(--gold-dim) 68%);}
+  .hero p.lede{margin-top:16px; font-size:16px; line-height:1.65; color:var(--ink-soft); max-width:64ch;}
+  .hero-note{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace; margin-top:14px;}
+
+  .section{padding:30px 0;}
+  .divider{height:1px; background:var(--rule); border:none;}
+  .section-head{margin-bottom:20px;}
+  .section-head .step{font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);}
+  .section-head h2{font-size:22px; font-weight:600; margin-top:6px;}
+  .section-head p.desc{margin-top:8px; color:var(--ink-soft); font-size:14.5px; max-width:66ch;}
+
+  /* tool tab nav */
+  .tool-nav{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px;}
+  .tool-tab{
+    padding:10px 16px; border-radius:9px; border:1.4px solid var(--rule); background:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.02em; font-weight:600;
+    color:var(--ink-soft); cursor:pointer; transition:all .15s ease;
+  }
+  .tool-tab.active{background:var(--ink); border-color:var(--ink); color:var(--parchment);}
+  .tool-panel{display:none;}
+  .tool-panel.active{display:block;}
+
+  .panel{background:#fff; border:1px solid var(--rule); border-radius:var(--radius); padding:26px;}
+  @media (max-width:640px){ .panel{padding:18px;} }
+
+  /* dropzone */
+  .dropzone{
+    border:2px dashed var(--rule); border-radius:12px; padding:36px 20px; text-align:center;
+    cursor:pointer; transition:all .15s ease; background:var(--parchment-dim);
+  }
+  .dropzone:hover, .dropzone.drag{border-color:var(--teal); background:#fff;}
+  .dropzone .dz-title{font-family:'Fraunces',serif; font-size:18px; font-weight:600; margin-bottom:6px;}
+  .dropzone .dz-sub{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+
+  .workbench{display:none; margin-top:22px;}
+  .workbench.show{display:block;}
+  .wb-grid{display:grid; grid-template-columns:1.3fr .9fr; gap:24px; align-items:start;}
+  @media (max-width:900px){ .wb-grid{grid-template-columns:1fr;} }
+
+  .preview-frame{
+    background:repeating-conic-gradient(#f0ead6 0% 25%, #f7f2e4 0% 50%) 50% / 18px 18px;
+    border:1px solid var(--rule); border-radius:12px; padding:14px; display:flex; align-items:center; justify-content:center;
+    min-height:260px; overflow:auto;
+  }
+  .preview-frame canvas, .preview-frame img{max-width:100%; max-height:420px; display:block; border-radius:2px;}
+
+  .controls{display:flex; flex-direction:column; gap:16px;}
+  .field{display:flex; flex-direction:column; gap:6px;}
+  label{font-size:12px; font-weight:600; color:var(--ink-soft);}
+  input[type="number"], input[type="text"], select{
+    font-family:'Inter',sans-serif; font-size:14px; color:var(--ink); padding:10px 12px; border-radius:8px;
+    border:1.4px solid var(--rule); background:var(--parchment); outline:none; width:100%;
+  }
+  input:focus, select:focus{border-color:var(--teal); background:#fff;}
+  input[type="range"]{width:100%; accent-color:var(--teal);}
+  .row-two{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .checkbox-row{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-soft);}
+  .checkbox-row input{width:auto;}
+  .btn-group{display:flex; gap:8px; flex-wrap:wrap;}
+
+  .btn{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:14px; padding:11px 18px; border-radius:9px;
+    border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .15s ease; text-decoration:none;
+  }
+  .btn-primary{background:var(--ink); color:var(--parchment); box-shadow:0 10px 24px -10px rgba(22,33,62,.5);}
+  .btn-primary:hover{transform:translateY(-1px);}
+  .btn-outline{background:transparent; color:var(--ink); border-color:var(--ink);}
+  .btn-outline:hover{background:var(--ink); color:var(--parchment);}
+  .btn-sm{font-size:12.5px; padding:8px 14px; border-radius:7px;}
+  .btn:disabled{opacity:.45; cursor:not-allowed; transform:none;}
+
+  .stat-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;}
+  .stat-chip{
+    background:var(--parchment-dim); border:1px solid var(--rule); border-radius:8px; padding:8px 12px;
+    font-size:12.5px; color:var(--ink-soft);
+  }
+  .stat-chip b{color:var(--ink); font-family:'IBM Plex Mono',monospace;}
+  .savings{color:var(--ok); font-weight:700;}
+
+  .swap-link{font-size:12.5px; color:var(--teal); text-decoration:underline; cursor:pointer; background:none; border:none; font-family:'Inter',sans-serif; padding:0;}
+
+  /* crop stage */
+  .crop-stage{position:relative; display:inline-block; max-width:100%; touch-action:none;}
+  .crop-stage img{display:block; max-width:100%; max-height:440px; user-select:none; -webkit-user-drag:none;}
+  .crop-box{
+    position:absolute; border:1.5px solid var(--gold); box-shadow:0 0 0 9999px rgba(22,33,62,.5);
+    cursor:move; touch-action:none;
+  }
+  .crop-handle{
+    position:absolute; width:14px; height:14px; background:var(--gold); border:2px solid #fff; border-radius:50%;
+    touch-action:none;
+  }
+  .handle-nw{top:-7px; left:-7px; cursor:nwse-resize;}
+  .handle-ne{top:-7px; right:-7px; cursor:nesw-resize;}
+  .handle-sw{bottom:-7px; left:-7px; cursor:nesw-resize;}
+  .handle-se{bottom:-7px; right:-7px; cursor:nwse-resize;}
+
+  .aspect-btns{display:flex; gap:6px; flex-wrap:wrap;}
+  .aspect-btn{
+    padding:7px 12px; border-radius:7px; border:1.4px solid var(--rule); background:#fff;
+    font-size:12px; font-weight:600; color:var(--ink-soft); cursor:pointer;
+  }
+  .aspect-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+
+  /* file list for pdf tool */
+  .file-list{display:flex; flex-direction:column; gap:8px; margin-top:14px;}
+  .file-row{display:flex; align-items:center; gap:10px; border:1px solid var(--rule); border-radius:8px; padding:8px 10px; background:var(--parchment-dim);}
+  .file-row img{width:42px; height:42px; object-fit:cover; border-radius:5px; border:1px solid var(--rule);}
+  .file-row .f-name{flex:1; font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .file-row .f-actions{display:flex; gap:4px;}
+  .icon-btn{
+    border:none; background:rgba(22,33,62,.08); color:var(--ink); width:24px; height:24px; border-radius:50%;
+    cursor:pointer; font-size:13px; line-height:1; display:flex; align-items:center; justify-content:center;
+  }
+  .icon-btn:hover{background:var(--coral); color:#fff;}
+
+  .fine-print{margin-top:16px; font-size:12.5px; color:var(--ink-soft); line-height:1.6;}
+
+  /* article */
+  .article{max-width:760px;}
+  .article h2{font-size:24px; font-weight:600; margin-bottom:10px;}
+  .article h3{font-size:18px; font-weight:600; margin-top:24px; margin-bottom:8px;}
+  .article p{font-size:15px; line-height:1.75; color:var(--ink-soft); margin-top:12px;}
+  .article ul{margin:12px 0 0; padding-left:20px; color:var(--ink-soft); font-size:15px; line-height:1.75;}
+  .article li{margin-bottom:6px;}
+  .article-meta{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--gold); text-transform:uppercase; letter-spacing:.12em; margin-bottom:10px;}
+
+  footer{border-top:1px solid var(--rule); padding:28px 0; margin-top:16px;}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;}
+  footer p{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">BTechVault</span>
+      <span class="brand-sub">Study Tools</span>
+    </a>
+    <span class="topbar-tag">Image Tools</span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Free tools for applications, exams and projects</span>
+    <h1>Every image fix you need for <em>one form</em>, in one place.</h1>
+    <p class="lede">Convert formats, compress file size, resize, crop, rotate, build a PDF, or get a passport photo and signature to exact specification, all inside your browser.</p>
+    <p class="hero-note">Files are processed on your device and are never uploaded anywhere.</p>
+  </div>
+</header>
+
+<hr class="divider">
+
+<section class="section" id="tools">
+  <div class="wrap">
+
+    <div class="tool-nav" id="toolNav">
+      <button class="tool-tab active" data-tool="convert" type="button">Convert</button>
+      <button class="tool-tab" data-tool="compress" type="button">Compress</button>
+      <button class="tool-tab" data-tool="resize" type="button">Resize</button>
+      <button class="tool-tab" data-tool="crop" type="button">Crop</button>
+      <button class="tool-tab" data-tool="rotate" type="button">Rotate</button>
+      <button class="tool-tab" data-tool="pdf" type="button">Image to PDF</button>
+      <button class="tool-tab" data-tool="passport" type="button">Passport Photo</button>
+      <button class="tool-tab" data-tool="signature" type="button">Signature Resizer</button>
+    </div>
+
+    <!-- CONVERT -->
+    <div class="tool-panel active" id="panel-convert">
+      <div class="panel">
+        <div class="dropzone" id="convDrop">
+          <div class="dz-title">Drop an image here, or click to choose one</div>
+          <div class="dz-sub">JPG, PNG or WebP</div>
+          <input type="file" id="convInput" accept="image/*" hidden>
+        </div>
+        <div class="workbench" id="convWorkbench">
+          <div class="wb-grid">
+            <div class="preview-frame"><canvas id="convCanvas"></canvas></div>
+            <div class="controls">
+              <div class="field">
+                <label for="convFormat">Convert to</label>
+                <select id="convFormat">
+                  <option value="image/png">PNG</option>
+                  <option value="image/jpeg" selected>JPG</option>
+                  <option value="image/webp">WebP</option>
+                </select>
+              </div>
+              <div class="field" id="convQualityField">
+                <label for="convQuality">Quality</label>
+                <input type="range" id="convQuality" min="10" max="100" value="90">
+              </div>
+              <div class="stat-row">
+                <span class="stat-chip">Original: <b id="convOrigSize">-</b></span>
+                <span class="stat-chip">Dimensions: <b id="convDims">-</b></span>
+              </div>
+              <button class="btn btn-primary" id="convDownloadBtn" type="button">Convert and download</button>
+              <button class="swap-link" id="convAnotherBtn" type="button">Use a different image</button>
+            </div>
+          </div>
+        </div>
+        <p class="fine-print">PNG keeps transparency and is best for graphics or screenshots. JPG gives the smallest files for photos. WebP usually gives the best quality for its file size, but check that the system you are uploading to accepts it first.</p>
+      </div>
+    </div>
+
+    <!-- COMPRESS -->
+    <div class="tool-panel" id="panel-compress">
+      <div class="panel">
+        <div class="dropzone" id="compDrop">
+          <div class="dz-title">Drop an image here, or click to choose one</div>
+          <div class="dz-sub">Best for photos larger than 500 KB</div>
+          <input type="file" id="compInput" accept="image/*" hidden>
+        </div>
+        <div class="workbench" id="compWorkbench">
+          <div class="wb-grid">
+            <div class="preview-frame"><canvas id="compCanvas"></canvas></div>
+            <div class="controls">
+              <div class="field">
+                <label for="compFormat">Output format</label>
+                <select id="compFormat">
+                  <option value="image/jpeg" selected>JPG</option>
+                  <option value="image/webp">WebP</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="compQuality">Quality <span id="compQualityVal">80</span>%</label>
+                <input type="range" id="compQuality" min="10" max="95" value="80">
+              </div>
+              <div class="stat-row">
+                <span class="stat-chip">Original: <b id="compOrigSize">-</b></span>
+                <span class="stat-chip">New size: <b id="compNewSize">-</b></span>
+                <span class="stat-chip savings" id="compSavings"></span>
+              </div>
+              <button class="btn btn-primary" id="compDownloadBtn" type="button">Download compressed image</button>
+              <button class="swap-link" id="compAnotherBtn" type="button">Use a different image</button>
+            </div>
+          </div>
+        </div>
+        <p class="fine-print">Most upload forms cap file size between 100 KB and 2 MB. Drag the quality slider down until the new size fits the limit, while keeping the preview looking sharp enough to read.</p>
+      </div>
+    </div>
+
+    <!-- RESIZE -->
+    <div class="tool-panel" id="panel-resize">
+      <div class="panel">
+        <div class="dropzone" id="rszDrop">
+          <div class="dz-title">Drop an image here, or click to choose one</div>
+          <div class="dz-sub">Set exact pixel dimensions</div>
+          <input type="file" id="rszInput" accept="image/*" hidden>
+        </div>
+        <div class="workbench" id="rszWorkbench">
+          <div class="wb-grid">
+            <div class="preview-frame"><canvas id="rszCanvas"></canvas></div>
+            <div class="controls">
+              <div class="row-two">
+                <div class="field">
+                  <label for="rszWidth">Width (px)</label>
+                  <input type="number" id="rszWidth" min="1">
+                </div>
+                <div class="field">
+                  <label for="rszHeight">Height (px)</label>
+                  <input type="number" id="rszHeight" min="1">
+                </div>
+              </div>
+              <div class="checkbox-row">
+                <input type="checkbox" id="rszLock" checked>
+                <label for="rszLock" style="margin:0;">Lock aspect ratio</label>
+              </div>
+              <div class="btn-group">
+                <button class="btn-sm btn-outline" data-pct="25" type="button">25%</button>
+                <button class="btn-sm btn-outline" data-pct="50" type="button">50%</button>
+                <button class="btn-sm btn-outline" data-pct="75" type="button">75%</button>
+                <button class="btn-sm btn-outline" data-pct="100" type="button">100%</button>
+              </div>
+              <div class="field">
+                <label for="rszFormat">Output format</label>
+                <select id="rszFormat">
+                  <option value="image/png">PNG</option>
+                  <option value="image/jpeg" selected>JPG</option>
+                  <option value="image/webp">WebP</option>
+                </select>
+              </div>
+              <div class="stat-row"><span class="stat-chip">Original: <b id="rszOrigDims">-</b></span></div>
+              <button class="btn btn-primary" id="rszDownloadBtn" type="button">Resize and download</button>
+              <button class="swap-link" id="rszAnotherBtn" type="button">Use a different image</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CROP -->
+    <div class="tool-panel" id="panel-crop">
+      <div class="panel">
+        <div class="dropzone" id="cropDrop">
+          <div class="dz-title">Drop an image here, or click to choose one</div>
+          <div class="dz-sub">Drag the box, or its corners, to select an area</div>
+          <input type="file" id="cropInput" accept="image/*" hidden>
+        </div>
+        <div class="workbench" id="cropWorkbench">
+          <div class="wb-grid">
+            <div class="preview-frame">
+              <div class="crop-stage" id="cropStage">
+                <img id="cropImg" alt="Image to crop">
+              </div>
+            </div>
+            <div class="controls">
+              <div class="field">
+                <label>Aspect ratio</label>
+                <div class="aspect-btns" id="cropAspectBtns">
+                  <button class="aspect-btn active" data-ratio="free" type="button">Free</button>
+                  <button class="aspect-btn" data-ratio="1" type="button">1:1</button>
+                  <button class="aspect-btn" data-ratio="1.333" type="button">4:3</button>
+                  <button class="aspect-btn" data-ratio="0.75" type="button">3:4</button>
+                  <button class="aspect-btn" data-ratio="1.778" type="button">16:9</button>
+                </div>
+              </div>
+              <div class="field">
+                <label for="cropFormat">Output format</label>
+                <select id="cropFormat">
+                  <option value="image/png">PNG</option>
+                  <option value="image/jpeg" selected>JPG</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" id="cropApplyBtn" type="button">Crop and download</button>
+              <button class="swap-link" id="cropAnotherBtn" type="button">Use a different image</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROTATE -->
+    <div class="tool-panel" id="panel-rotate">
+      <div class="panel">
+        <div class="dropzone" id="rotDrop">
+          <div class="dz-title">Drop an image here, or click to choose one</div>
+          <div class="dz-sub">Rotate, flip, or straighten</div>
+          <input type="file" id="rotInput" accept="image/*" hidden>
+        </div>
+        <div class="workbench" id="rotWorkbench">
+          <div class="wb-grid">
+            <div class="preview-frame"><canvas id="rotCanvas"></canvas></div>
+            <div class="controls">
+              <div class="btn-group">
+                <button class="btn-sm btn-outline" id="rotLeftBtn" type="button">Rotate left 90</button>
+                <button class="btn-sm btn-outline" id="rotRightBtn" type="button">Rotate right 90</button>
+              </div>
+              <div class="btn-group">
+                <button class="btn-sm btn-outline" id="rotFlipHBtn" type="button">Flip horizontal</button>
+                <button class="btn-sm btn-outline" id="rotFlipVBtn" type="button">Flip vertical</button>
+              </div>
+              <div class="field">
+                <label for="rotSlider">Fine rotate <span id="rotSliderVal">0</span>&deg;</label>
+                <input type="range" id="rotSlider" min="-180" max="180" value="0">
+              </div>
+              <div class="field">
+                <label for="rotFormat">Output format</label>
+                <select id="rotFormat">
+                  <option value="image/png">PNG</option>
+                  <option value="image/jpeg" selected>JPG</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" id="rotDownloadBtn" type="button">Download rotated image</button>
+              <button class="swap-link" id="rotAnotherBtn" type="button">Use a different image</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMAGE TO PDF -->
+    <div class="tool-panel" id="panel-pdf">
+      <div class="panel">
+        <div class="dropzone" id="pdfDrop">
+          <div class="dz-title">Drop one or more images here, or click to choose</div>
+          <div class="dz-sub">Each image becomes its own page, in the order shown below</div>
+          <input type="file" id="pdfInput" accept="image/*" multiple hidden>
+        </div>
+        <div class="workbench" id="pdfWorkbench">
+          <div class="wb-grid">
+            <div>
+              <div class="file-list" id="pdfFileList"></div>
+            </div>
+            <div class="controls">
+              <div class="field">
+                <label for="pdfPageSize">Page size</label>
+                <select id="pdfPageSize">
+                  <option value="a4">A4</option>
+                  <option value="letter">Letter</option>
+                  <option value="fit">Fit to each image</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" id="pdfGenerateBtn" type="button">Generate PDF</button>
+              <button class="swap-link" id="pdfClearBtn" type="button">Clear all images</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASSPORT PHOTO -->
+    <div class="tool-panel" id="panel-passport">
+      <div class="panel">
+        <div class="dropzone" id="passDrop">
+          <div class="dz-title">Drop a photo here, or click to choose one</div>
+          <div class="dz-sub">Use a plain background, front facing, well lit photo</div>
+          <input type="file" id="passInput" accept="image/*" hidden>
+        </div>
+        <div class="workbench" id="passWorkbench">
+          <div class="wb-grid">
+            <div class="preview-frame">
+              <div class="crop-stage" id="passStage">
+                <img id="passImg" alt="Photo to crop for passport size">
+              </div>
+            </div>
+            <div class="controls">
+              <div class="field">
+                <label for="passPreset">Photo specification</label>
+                <select id="passPreset">
+                  <option value="51x51">India passport, 2x2 in (51 x 51 mm)</option>
+                  <option value="51x51-us">US passport, 2x2 in (51 x 51 mm)</option>
+                  <option value="35x45">UK / Schengen visa (35 x 45 mm)</option>
+                  <option value="25x35">PAN card / ID photo (25 x 35 mm)</option>
+                </select>
+              </div>
+              <div class="checkbox-row">
+                <input type="checkbox" id="passSheet">
+                <label for="passSheet" style="margin:0;">Also lay out a printable sheet (4 x 6 in)</label>
+              </div>
+              <button class="btn btn-primary" id="passApplyBtn" type="button">Crop to size and download</button>
+              <button class="swap-link" id="passAnotherBtn" type="button">Use a different photo</button>
+            </div>
+          </div>
+        </div>
+        <p class="fine-print">These are commonly used dimensions, but requirements can be revised. Confirm the current specification with the passport, visa or exam authority you are submitting to before you use the final file.</p>
+      </div>
+    </div>
+
+    <!-- SIGNATURE RESIZER -->
+    <div class="tool-panel" id="panel-signature">
+      <div class="panel">
+        <div class="dropzone" id="sigDrop">
+          <div class="dz-title">Drop a signature image here, or click to choose one</div>
+          <div class="dz-sub">Sign on plain white paper and photograph it in good light</div>
+          <input type="file" id="sigInput" accept="image/*" hidden>
+        </div>
+        <div class="workbench" id="sigWorkbench">
+          <div class="wb-grid">
+            <div class="preview-frame"><canvas id="sigCanvas"></canvas></div>
+            <div class="controls">
+              <div class="field">
+                <label for="sigPreset">Target size</label>
+                <select id="sigPreset">
+                  <option value="140x60">140 x 60 px, common exam form size</option>
+                  <option value="200x100">200 x 100 px</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+              <div class="row-two" id="sigCustomRow" style="display:none;">
+                <div class="field">
+                  <label for="sigWidth">Width (px)</label>
+                  <input type="number" id="sigWidth" value="200">
+                </div>
+                <div class="field">
+                  <label for="sigHeight">Height (px)</label>
+                  <input type="number" id="sigHeight" value="100">
+                </div>
+              </div>
+              <div class="field">
+                <label for="sigMaxKb">Maximum file size (KB)</label>
+                <input type="number" id="sigMaxKb" value="20" min="5">
+              </div>
+              <div class="checkbox-row">
+                <input type="checkbox" id="sigTransparent">
+                <label for="sigTransparent" style="margin:0;">Make white background transparent (PNG)</label>
+              </div>
+              <div class="stat-row"><span class="stat-chip">Final size: <b id="sigFinalSize">-</b></span></div>
+              <button class="btn btn-primary" id="sigApplyBtn" type="button">Resize and download</button>
+              <button class="swap-link" id="sigAnotherBtn" type="button">Use a different image</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section">
+  <div class="wrap article">
+    <p class="article-meta">Guide</p>
+    <h2>Getting image requirements right the first time</h2>
+
+    <p>Almost every college application, exam registration, and job portal asks for a photo or a document image in a very specific format, and rejects the file quietly or with a vague error if you miss the mark. Most of these rejections come down to one of three things: the wrong file type, a file that is too large or too small, or dimensions that do not match what the form expects. None of this reflects on you, it is simply a technical mismatch, and it is usually fixed in under a minute once you know which tool to reach for.</p>
+
+    <h3>Match the format before you match anything else</h3>
+    <p>JPG remains the most widely accepted format for photographs because it compresses well without needing transparency. PNG is the better choice for anything with sharp edges or text, such as a scanned signature or a screenshot, since it does not introduce the soft blur that JPG compression can leave around fine lines. WebP tends to give the smallest file at a given quality level, but not every government or institutional portal accepts it yet, so it is worth checking the accepted format list on a form before you rely on it.</p>
+
+    <h3>File size limits exist because of the systems on the other end</h3>
+    <p>A limit of 100 KB or 200 KB for a photograph is not arbitrary. Many application portals store thousands of these files and were built years ago on infrastructure that assumes small uploads. Reducing quality by even a small amount usually cuts file size dramatically, because compression removes the fine detail human eyes barely notice while keeping the parts that make an image recognizable. If a form gives both a minimum and a maximum size, aim for the middle of that range rather than the lowest number, since some portals reject files that are unusually small as well as ones that are too large.</p>
+
+    <h3>Exact pixel dimensions matter for signatures and passport photos specifically</h3>
+    <p>Unlike a general photo upload, signature and passport photo fields are often validated against an exact width and height in pixels or millimeters, and a file that is even slightly off can be rejected automatically before a human ever reviews it. This is why the passport photo and signature tools on this page work to precise output dimensions rather than just scaling an image down proportionally, and why the passport tool lets you select a recognized specification rather than guessing at one.</p>
+
+    <h3>A short checklist before you submit</h3>
+    <ul>
+      <li>Re-read the exact requirement on the form, including whether it is written in pixels, millimeters, or inches, since these are not interchangeable without a DPI setting.</li>
+      <li>Check both the minimum and maximum file size if both are listed, not just the maximum.</li>
+      <li>Open the final file once after downloading it, to confirm it looks correct and is not accidentally rotated or cropped oddly.</li>
+      <li>Keep a copy of the original, unedited photo somewhere safe, since you will likely need to prepare the same photo differently for a second form later.</li>
+    </ul>
+
+    <p>None of these tools store or transmit your images. Every conversion, crop, and resize happens directly in your browser using your device's own processing, and the file never leaves your computer until you choose to download it.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>BTechVault - built for students</p>
+    <p>All processing happens in your browser. Nothing is uploaded.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- shared utilities ---------------- */
+  function fileToImage(file){
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      reader.onload = function(e){
+        var img = new Image();
+        img.onload = function(){ resolve({ img:img, dataUrl:e.target.result, size:file.size, name:file.name, type:file.type }); };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  function canvasToBlob(canvas, type, quality){
+    return new Promise(function(resolve){ canvas.toBlob(function(b){ resolve(b); }, type, quality); });
+  }
+  function downloadBlob(blob, filename){
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  }
+  function formatBytes(bytes){
+    if(bytes < 1024) return bytes + ' B';
+    if(bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(2) + ' MB';
+  }
+  function extFor(mime){ return mime === 'image/png' ? 'png' : (mime === 'image/webp' ? 'webp' : 'jpg'); }
+  function baseName(name){ return (name || 'image').replace(/\.[^.]+$/, ''); }
+
+  function setupDropzone(zone, input, onFiles, multiple){
+    zone.addEventListener('click', function(){ input.click(); });
+    zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', function(){ zone.classList.remove('drag'); });
+    zone.addEventListener('drop', function(e){
+      e.preventDefault(); zone.classList.remove('drag');
+      var files = Array.from(e.dataTransfer.files).filter(function(f){ return f.type.indexOf('image/') === 0; });
+      if(files.length) onFiles(multiple ? files : [files[0]]);
+    });
+    input.addEventListener('change', function(){
+      var files = Array.from(input.files);
+      if(files.length) onFiles(multiple ? files : [files[0]]);
+      input.value = '';
+    });
+  }
+
+  function drawToCanvas(canvas, img, w, h){
+    canvas.width = w; canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,w,h);
+    ctx.drawImage(img, 0, 0, w, h);
+    return ctx;
+  }
+
+  /* ---------------- tab switching ---------------- */
+  document.querySelectorAll('.tool-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.tool-tab').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelectorAll('.tool-panel').forEach(function(p){ p.classList.remove('active'); });
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tool).classList.add('active');
+    });
+  });
+
+  /* ==================== CONVERT ==================== */
+  (function(){
+    var current = null;
+    var drop = document.getElementById('convDrop');
+    var input = document.getElementById('convInput');
+    var wb = document.getElementById('convWorkbench');
+    var canvas = document.getElementById('convCanvas');
+    var formatSel = document.getElementById('convFormat');
+    var qualityField = document.getElementById('convQualityField');
+    var quality = document.getElementById('convQuality');
+
+    function updateQualityVisibility(){
+      qualityField.style.display = formatSel.value === 'image/png' ? 'none' : 'flex';
+    }
+    formatSel.addEventListener('change', updateQualityVisibility);
+
+    setupDropzone(drop, input, function(files){
+      fileToImage(files[0]).then(function(res){
+        current = res;
+        drawToCanvas(canvas, res.img, res.img.naturalWidth, res.img.naturalHeight);
+        document.getElementById('convOrigSize').textContent = formatBytes(res.size);
+        document.getElementById('convDims').textContent = res.img.naturalWidth + ' x ' + res.img.naturalHeight;
+        updateQualityVisibility();
+        wb.classList.add('show');
+      });
+    }, false);
+
+    document.getElementById('convDownloadBtn').addEventListener('click', function(){
+      if(!current) return;
+      var type = formatSel.value;
+      var q = parseInt(quality.value,10) / 100;
+      canvasToBlob(canvas, type, q).then(function(blob){
+        downloadBlob(blob, baseName(current.name) + '-converted.' + extFor(type));
+      });
+    });
+    document.getElementById('convAnotherBtn').addEventListener('click', function(){ wb.classList.remove('show'); current=null; });
+  })();
+
+  /* ==================== COMPRESS ==================== */
+  (function(){
+    var current = null;
+    var drop = document.getElementById('compDrop');
+    var input = document.getElementById('compInput');
+    var wb = document.getElementById('compWorkbench');
+    var canvas = document.getElementById('compCanvas');
+    var formatSel = document.getElementById('compFormat');
+    var quality = document.getElementById('compQuality');
+    var qualityVal = document.getElementById('compQualityVal');
+    var newSizeEl = document.getElementById('compNewSize');
+    var savingsEl = document.getElementById('compSavings');
+    var debounceTimer = null;
+
+    function recompute(){
+      if(!current) return;
+      var type = formatSel.value;
+      var q = parseInt(quality.value,10) / 100;
+      canvasToBlob(canvas, type, q).then(function(blob){
+        newSizeEl.textContent = formatBytes(blob.size);
+        var pct = Math.max(0, Math.round((1 - blob.size / current.size) * 100));
+        savingsEl.textContent = pct > 0 ? (pct + '% smaller') : '';
+      });
+    }
+    function debouncedRecompute(){
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(recompute, 150);
+    }
+
+    quality.addEventListener('input', function(){ qualityVal.textContent = quality.value; debouncedRecompute(); });
+    formatSel.addEventListener('change', debouncedRecompute);
+
+    setupDropzone(drop, input, function(files){
+      fileToImage(files[0]).then(function(res){
+        current = res;
+        drawToCanvas(canvas, res.img, res.img.naturalWidth, res.img.naturalHeight);
+        document.getElementById('compOrigSize').textContent = formatBytes(res.size);
+        wb.classList.add('show');
+        recompute();
+      });
+    }, false);
+
+    document.getElementById('compDownloadBtn').addEventListener('click', function(){
+      if(!current) return;
+      var type = formatSel.value;
+      var q = parseInt(quality.value,10) / 100;
+      canvasToBlob(canvas, type, q).then(function(blob){
+        downloadBlob(blob, baseName(current.name) + '-compressed.' + extFor(type));
+      });
+    });
+    document.getElementById('compAnotherBtn').addEventListener('click', function(){ wb.classList.remove('show'); current=null; });
+  })();
+
+  /* ==================== RESIZE ==================== */
+  (function(){
+    var current = null;
+    var ratio = 1;
+    var drop = document.getElementById('rszDrop');
+    var input = document.getElementById('rszInput');
+    var wb = document.getElementById('rszWorkbench');
+    var canvas = document.getElementById('rszCanvas');
+    var widthEl = document.getElementById('rszWidth');
+    var heightEl = document.getElementById('rszHeight');
+    var lockEl = document.getElementById('rszLock');
+    var formatSel = document.getElementById('rszFormat');
+
+    function renderPreview(){
+      var w = parseInt(widthEl.value,10) || 1;
+      var h = parseInt(heightEl.value,10) || 1;
+      drawToCanvas(canvas, current.img, w, h);
+    }
+
+    widthEl.addEventListener('input', function(){
+      if(lockEl.checked){ heightEl.value = Math.round(parseInt(widthEl.value,10) / ratio) || ''; }
+      renderPreview();
+    });
+    heightEl.addEventListener('input', function(){
+      if(lockEl.checked){ widthEl.value = Math.round(parseInt(heightEl.value,10) * ratio) || ''; }
+      renderPreview();
+    });
+
+    document.querySelectorAll('#panel-resize [data-pct]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        if(!current) return;
+        var pct = parseInt(btn.dataset.pct,10) / 100;
+        widthEl.value = Math.round(current.img.naturalWidth * pct);
+        heightEl.value = Math.round(current.img.naturalHeight * pct);
+        renderPreview();
+      });
+    });
+
+    setupDropzone(drop, input, function(files){
+      fileToImage(files[0]).then(function(res){
+        current = res;
+        ratio = res.img.naturalWidth / res.img.naturalHeight;
+        widthEl.value = res.img.naturalWidth;
+        heightEl.value = res.img.naturalHeight;
+        document.getElementById('rszOrigDims').textContent = res.img.naturalWidth + ' x ' + res.img.naturalHeight;
+        drawToCanvas(canvas, res.img, res.img.naturalWidth, res.img.naturalHeight);
+        wb.classList.add('show');
+      });
+    }, false);
+
+    document.getElementById('rszDownloadBtn').addEventListener('click', function(){
+      if(!current) return;
+      var type = formatSel.value;
+      canvasToBlob(canvas, type, 0.92).then(function(blob){
+        downloadBlob(blob, baseName(current.name) + '-resized.' + extFor(type));
+      });
+    });
+    document.getElementById('rszAnotherBtn').addEventListener('click', function(){ wb.classList.remove('show'); current=null; });
+  })();
+
+  /* ==================== CROPPER (shared) ==================== */
+  function createCropper(stageEl, imgEl, initialAspect){
+    var aspect = initialAspect || null;
+    var box = document.createElement('div');
+    box.className = 'crop-box';
+    stageEl.appendChild(box);
+    var handles = {};
+    ['nw','ne','sw','se'].forEach(function(pos){
+      var h = document.createElement('div');
+      h.className = 'crop-handle handle-' + pos;
+      box.appendChild(h);
+      handles[pos] = h;
+    });
+    var rect = { x:20, y:20, w:100, h:100 };
+
+    function clampRect(){
+      var maxW = stageEl.clientWidth, maxH = stageEl.clientHeight;
+      if(rect.w > maxW) rect.w = maxW;
+      if(rect.h > maxH) rect.h = maxH;
+      if(rect.x < 0) rect.x = 0;
+      if(rect.y < 0) rect.y = 0;
+      if(rect.x + rect.w > maxW) rect.x = maxW - rect.w;
+      if(rect.y + rect.h > maxH) rect.y = maxH - rect.h;
+    }
+    function applyStyle(){
+      box.style.left = rect.x + 'px'; box.style.top = rect.y + 'px';
+      box.style.width = rect.w + 'px'; box.style.height = rect.h + 'px';
+    }
+    function initRect(){
+      var w = stageEl.clientWidth, h = stageEl.clientHeight;
+      if(!w || !h) return;
+      var boxW, boxH;
+      if(aspect){
+        boxW = w * 0.7; boxH = boxW / aspect;
+        if(boxH > h * 0.7){ boxH = h * 0.7; boxW = boxH * aspect; }
+      } else {
+        boxW = w * 0.6; boxH = h * 0.6;
+      }
+      rect = { x:(w-boxW)/2, y:(h-boxH)/2, w:boxW, h:boxH };
+      clampRect();
+      applyStyle();
+    }
+
+    var dragging = false, dragOffset = {x:0,y:0};
+    box.addEventListener('pointerdown', function(e){
+      if(e.target !== box) return;
+      dragging = true;
+      var sr = stageEl.getBoundingClientRect();
+      dragOffset.x = e.clientX - sr.left - rect.x;
+      dragOffset.y = e.clientY - sr.top - rect.y;
+      box.setPointerCapture(e.pointerId);
+    });
+    box.addEventListener('pointermove', function(e){
+      if(!dragging) return;
+      var sr = stageEl.getBoundingClientRect();
+      rect.x = e.clientX - sr.left - dragOffset.x;
+      rect.y = e.clientY - sr.top - dragOffset.y;
+      clampRect();
+      applyStyle();
+    });
+    box.addEventListener('pointerup', function(){ dragging = false; });
+
+    var activeHandle = null;
+    Object.keys(handles).forEach(function(pos){
+      var h = handles[pos];
+      h.addEventListener('pointerdown', function(e){
+        e.stopPropagation();
+        activeHandle = pos;
+        h.setPointerCapture(e.pointerId);
+      });
+      h.addEventListener('pointermove', function(e){
+        if(activeHandle !== pos) return;
+        var sr = stageEl.getBoundingClientRect();
+        var mx = e.clientX - sr.left, my = e.clientY - sr.top;
+        resizeFromHandle(pos, mx, my);
+      });
+      h.addEventListener('pointerup', function(){ activeHandle = null; });
+    });
+
+    function resizeFromHandle(pos, mx, my){
+      var nr = { x:rect.x, y:rect.y, w:rect.w, h:rect.h };
+      if(pos === 'se'){ nr.w = mx - rect.x; nr.h = my - rect.y; }
+      if(pos === 'nw'){ nr.w = rect.x + rect.w - mx; nr.h = rect.y + rect.h - my; nr.x = mx; nr.y = my; }
+      if(pos === 'ne'){ nr.w = mx - rect.x; nr.h = rect.y + rect.h - my; nr.y = my; }
+      if(pos === 'sw'){ nr.w = rect.x + rect.w - mx; nr.h = my - rect.y; nr.x = mx; }
+      if(aspect){
+        nr.h = nr.w / aspect;
+        if(pos === 'nw' || pos === 'ne'){ nr.y = rect.y + rect.h - nr.h; }
+      }
+      if(nr.w < 30 || nr.h < 30) return;
+      if(nr.x < 0 || nr.y < 0) return;
+      if(nr.x + nr.w > stageEl.clientWidth || nr.y + nr.h > stageEl.clientHeight) return;
+      rect = nr;
+      applyStyle();
+    }
+
+    return {
+      setAspect: function(a){ aspect = a; initRect(); },
+      reset: initRect,
+      getRectOnImage: function(){
+        var scaleX = imgEl.naturalWidth / imgEl.clientWidth;
+        var scaleY = imgEl.naturalHeight / imgEl.clientHeight;
+        return { x: rect.x*scaleX, y: rect.y*scaleY, w: rect.w*scaleX, h: rect.h*scaleY };
+      }
+    };
+  }
+
+  /* ==================== CROP TAB ==================== */
+  (function(){
+    var current = null, cropper = null;
+    var drop = document.getElementById('cropDrop');
+    var input = document.getElementById('cropInput');
+    var wb = document.getElementById('cropWorkbench');
+    var stage = document.getElementById('cropStage');
+    var imgEl = document.getElementById('cropImg');
+    var formatSel = document.getElementById('cropFormat');
+
+    setupDropzone(drop, input, function(files){
+      fileToImage(files[0]).then(function(res){
+        current = res;
+        imgEl.src = res.dataUrl;
+        imgEl.onload = function(){
+          wb.classList.add('show');
+          setTimeout(function(){ cropper = createCropper(stage, imgEl, null); }, 30);
+        };
+      });
+    }, false);
+
+    document.querySelectorAll('#cropAspectBtns .aspect-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('#cropAspectBtns .aspect-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var r = btn.dataset.ratio === 'free' ? null : parseFloat(btn.dataset.ratio);
+        if(cropper) cropper.setAspect(r);
+      });
+    });
+
+    document.getElementById('cropApplyBtn').addEventListener('click', function(){
+      if(!current || !cropper) return;
+      var r = cropper.getRectOnImage();
+      var out = document.createElement('canvas');
+      out.width = Math.round(r.w); out.height = Math.round(r.h);
+      var ctx = out.getContext('2d');
+      ctx.drawImage(current.img, r.x, r.y, r.w, r.h, 0, 0, out.width, out.height);
+      var type = formatSel.value;
+      canvasToBlob(out, type, 0.92).then(function(blob){
+        downloadBlob(blob, baseName(current.name) + '-cropped.' + extFor(type));
+      });
+    });
+    document.getElementById('cropAnotherBtn').addEventListener('click', function(){ wb.classList.remove('show'); current=null; });
+  })();
+
+  /* ==================== ROTATE ==================== */
+  (function(){
+    var current = null;
+    var angle = 0, flipH = false, flipV = false;
+    var drop = document.getElementById('rotDrop');
+    var input = document.getElementById('rotInput');
+    var wb = document.getElementById('rotWorkbench');
+    var canvas = document.getElementById('rotCanvas');
+    var slider = document.getElementById('rotSlider');
+    var sliderVal = document.getElementById('rotSliderVal');
+    var formatSel = document.getElementById('rotFormat');
+
+    function render(){
+      var rad = angle * Math.PI / 180;
+      var w = current.img.naturalWidth, h = current.img.naturalHeight;
+      var bboxW = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad));
+      var bboxH = Math.abs(w * Math.sin(rad)) + Math.abs(h * Math.cos(rad));
+      canvas.width = bboxW; canvas.height = bboxH;
+      var ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,bboxW,bboxH);
+      ctx.save();
+      ctx.translate(bboxW/2, bboxH/2);
+      ctx.rotate(rad);
+      ctx.scale(flipH ? -1 : 1, flipV ? -1 : 1);
+      ctx.drawImage(current.img, -w/2, -h/2, w, h);
+      ctx.restore();
+    }
+
+    setupDropzone(drop, input, function(files){
+      fileToImage(files[0]).then(function(res){
+        current = res; angle = 0; flipH = false; flipV = false;
+        slider.value = 0; sliderVal.textContent = '0';
+        render();
+        wb.classList.add('show');
+      });
+    }, false);
+
+    document.getElementById('rotLeftBtn').addEventListener('click', function(){
+      if(!current) return;
+      angle -= 90; if(angle < -180) angle += 360;
+      slider.value = angle; sliderVal.textContent = angle;
+      render();
+    });
+    document.getElementById('rotRightBtn').addEventListener('click', function(){
+      if(!current) return;
+      angle += 90; if(angle > 180) angle -= 360;
+      slider.value = angle; sliderVal.textContent = angle;
+      render();
+    });
+    document.getElementById('rotFlipHBtn').addEventListener('click', function(){ if(current){ flipH = !flipH; render(); } });
+    document.getElementById('rotFlipVBtn').addEventListener('click', function(){ if(current){ flipV = !flipV; render(); } });
+    slider.addEventListener('input', function(){
+      if(!current) return;
+      angle = parseInt(slider.value,10);
+      sliderVal.textContent = angle;
+      render();
+    });
+
+    document.getElementById('rotDownloadBtn').addEventListener('click', function(){
+      if(!current) return;
+      var type = formatSel.value;
+      canvasToBlob(canvas, type, 0.92).then(function(blob){
+        downloadBlob(blob, baseName(current.name) + '-rotated.' + extFor(type));
+      });
+    });
+    document.getElementById('rotAnotherBtn').addEventListener('click', function(){ wb.classList.remove('show'); current=null; });
+  })();
+
+  /* ==================== IMAGE TO PDF ==================== */
+  (function(){
+    var items = [];
+    var drop = document.getElementById('pdfDrop');
+    var input = document.getElementById('pdfInput');
+    var wb = document.getElementById('pdfWorkbench');
+    var listEl = document.getElementById('pdfFileList');
+
+    function renderList(){
+      listEl.innerHTML = '';
+      items.forEach(function(item, idx){
+        var row = document.createElement('div');
+        row.className = 'file-row';
+        row.innerHTML =
+          '<img src="' + item.dataUrl + '" alt="">' +
+          '<span class="f-name">' + item.name + '</span>' +
+          '<div class="f-actions">' +
+            (idx > 0 ? '<button class="icon-btn" data-act="up" title="Move up">&uarr;</button>' : '') +
+            (idx < items.length-1 ? '<button class="icon-btn" data-act="down" title="Move down">&darr;</button>' : '') +
+            '<button class="icon-btn" data-act="remove" title="Remove">&times;</button>' +
+          '</div>';
+        row.querySelectorAll('[data-act]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var act = btn.dataset.act;
+            if(act === 'remove'){ items.splice(idx,1); }
+            if(act === 'up'){ var t = items[idx-1]; items[idx-1] = items[idx]; items[idx] = t; }
+            if(act === 'down'){ var t2 = items[idx+1]; items[idx+1] = items[idx]; items[idx] = t2; }
+            renderList();
+          });
+        });
+        listEl.appendChild(row);
+      });
+      wb.classList.toggle('show', items.length > 0);
+    }
+
+    setupDropzone(drop, input, function(files){
+      Promise.all(files.map(fileToImage)).then(function(results){
+        items = items.concat(results);
+        renderList();
+      });
+    }, true);
+
+    document.getElementById('pdfClearBtn').addEventListener('click', function(){ items = []; renderList(); });
+
+    document.getElementById('pdfGenerateBtn').addEventListener('click', function(){
+      if(!items.length || !window.jspdf) return;
+      var jsPDF = window.jspdf.jsPDF;
+      var pageSize = document.getElementById('pdfPageSize').value;
+      var doc = null;
+
+      items.forEach(function(item, idx){
+        var imgFmt = item.type.indexOf('png') > -1 ? 'PNG' : 'JPEG';
+        var iw = item.img.naturalWidth, ih = item.img.naturalHeight;
+
+        if(pageSize === 'fit'){
+          var pw = iw * 72 / 96, ph = ih * 72 / 96;
+          if(idx === 0){ doc = new jsPDF({ unit:'pt', format:[pw, ph] }); }
+          else{ doc.addPage([pw, ph]); }
+          doc.addImage(item.dataUrl, imgFmt, 0, 0, pw, ph);
+        } else {
+          var format = pageSize === 'letter' ? 'letter' : 'a4';
+          var orientation = iw > ih ? 'landscape' : 'portrait';
+          if(idx === 0){ doc = new jsPDF({ unit:'pt', format: format, orientation: orientation }); }
+          else{ doc.addPage(format, orientation); }
+          var pageW = doc.internal.pageSize.getWidth();
+          var pageH = doc.internal.pageSize.getHeight();
+          var margin = 24;
+          var maxW = pageW - margin*2, maxH = pageH - margin*2;
+          var scale = Math.min(maxW / iw, maxH / ih);
+          var drawW = iw * scale, drawH = ih * scale;
+          var x = (pageW - drawW) / 2, y = (pageH - drawH) / 2;
+          doc.addImage(item.dataUrl, imgFmt, x, y, drawW, drawH);
+        }
+      });
+
+      doc.save('images.pdf');
+    });
+  })();
+
+  /* ==================== PASSPORT PHOTO ==================== */
+  (function(){
+    var PRESETS = {
+      '51x51':    { mmW:51, mmH:51, label:'51x51mm' },
+      '51x51-us': { mmW:51, mmH:51, label:'2x2in' },
+      '35x45':    { mmW:35, mmH:45, label:'35x45mm' },
+      '25x35':    { mmW:25, mmH:35, label:'25x35mm' }
+    };
+    var DPI = 300;
+    var current = null, cropper = null;
+    var drop = document.getElementById('passDrop');
+    var input = document.getElementById('passInput');
+    var wb = document.getElementById('passWorkbench');
+    var stage = document.getElementById('passStage');
+    var imgEl = document.getElementById('passImg');
+    var presetSel = document.getElementById('passPreset');
+
+    function currentAspect(){
+      var p = PRESETS[presetSel.value];
+      return p.mmW / p.mmH;
+    }
+
+    setupDropzone(drop, input, function(files){
+      fileToImage(files[0]).then(function(res){
+        current = res;
+        imgEl.src = res.dataUrl;
+        imgEl.onload = function(){
+          wb.classList.add('show');
+          setTimeout(function(){ cropper = createCropper(stage, imgEl, currentAspect()); }, 30);
+        };
+      });
+    }, false);
+
+    presetSel.addEventListener('change', function(){ if(cropper) cropper.setAspect(currentAspect()); });
+
+    function pxFromMm(mm){ return Math.round(mm / 25.4 * DPI); }
+
+    document.getElementById('passApplyBtn').addEventListener('click', function(){
+      if(!current || !cropper) return;
+      var p = PRESETS[presetSel.value];
+      var targetW = pxFromMm(p.mmW), targetH = pxFromMm(p.mmH);
+      var r = cropper.getRectOnImage();
+
+      var photoCanvas = document.createElement('canvas');
+      photoCanvas.width = targetW; photoCanvas.height = targetH;
+      var ctx = photoCanvas.getContext('2d');
+      ctx.drawImage(current.img, r.x, r.y, r.w, r.h, 0, 0, targetW, targetH);
+
+      canvasToBlob(photoCanvas, 'image/jpeg', 0.95).then(function(blob){
+        downloadBlob(blob, baseName(current.name) + '-passport-photo.jpg');
+      });
+
+      if(document.getElementById('passSheet').checked){
+        var sheetW = pxFromMm(6 * 25.4), sheetH = pxFromMm(4 * 25.4);
+        var isLandscapeSheet = true;
+        var sheet = document.createElement('canvas');
+        sheet.width = 6 * DPI; sheet.height = 4 * DPI;
+        var sctx = sheet.getContext('2d');
+        sctx.fillStyle = '#ffffff'; sctx.fillRect(0,0,sheet.width,sheet.height);
+        var gap = Math.round(DPI * 0.08);
+        var cols = Math.max(1, Math.floor((sheet.width - gap) / (targetW + gap)));
+        var rows = Math.max(1, Math.floor((sheet.height - gap) / (targetH + gap)));
+        var totalW = cols*targetW + (cols-1)*gap;
+        var totalH = rows*targetH + (rows-1)*gap;
+        var offsetX = (sheet.width - totalW) / 2, offsetY = (sheet.height - totalH) / 2;
+        sctx.strokeStyle = '#cccccc'; sctx.lineWidth = 1;
+        for(var row=0; row<rows; row++){
+          for(var col=0; col<cols; col++){
+            var x = offsetX + col*(targetW+gap), y = offsetY + row*(targetH+gap);
+            sctx.drawImage(photoCanvas, x, y, targetW, targetH);
+            sctx.strokeRect(x+0.5, y+0.5, targetW-1, targetH-1);
+          }
+        }
+        canvasToBlob(sheet, 'image/jpeg', 0.95).then(function(blob){
+          downloadBlob(blob, baseName(current.name) + '-print-sheet.jpg');
+        });
+      }
+    });
+    document.getElementById('passAnotherBtn').addEventListener('click', function(){ wb.classList.remove('show'); current=null; });
+  })();
+
+  /* ==================== SIGNATURE RESIZER ==================== */
+  (function(){
+    var current = null;
+    var drop = document.getElementById('sigDrop');
+    var input = document.getElementById('sigInput');
+    var wb = document.getElementById('sigWorkbench');
+    var canvas = document.getElementById('sigCanvas');
+    var presetSel = document.getElementById('sigPreset');
+    var customRow = document.getElementById('sigCustomRow');
+    var widthEl = document.getElementById('sigWidth');
+    var heightEl = document.getElementById('sigHeight');
+    var maxKbEl = document.getElementById('sigMaxKb');
+    var transparentEl = document.getElementById('sigTransparent');
+    var finalSizeEl = document.getElementById('sigFinalSize');
+
+    function targetDims(){
+      if(presetSel.value === 'custom'){
+        return { w: parseInt(widthEl.value,10) || 200, h: parseInt(heightEl.value,10) || 100 };
+      }
+      var parts = presetSel.value.split('x');
+      return { w: parseInt(parts[0],10), h: parseInt(parts[1],10) };
+    }
+
+    presetSel.addEventListener('change', function(){
+      customRow.style.display = presetSel.value === 'custom' ? 'grid' : 'none';
+      renderPreview();
+    });
+    [widthEl, heightEl].forEach(function(el){ el.addEventListener('input', renderPreview); });
+    transparentEl.addEventListener('change', function(){
+      document.getElementById('sigMaxKb').closest('.field').style.opacity = transparentEl.checked ? '0.5' : '1';
+      renderPreview();
+    });
+
+    function makeTransparent(ctx, w, h){
+      var imgData = ctx.getImageData(0,0,w,h);
+      var d = imgData.data;
+      for(var i=0; i<d.length; i+=4){
+        if(d[i] > 235 && d[i+1] > 235 && d[i+2] > 235){ d[i+3] = 0; }
+      }
+      ctx.putImageData(imgData, 0, 0);
+    }
+
+    function renderPreview(){
+      if(!current) return;
+      var dims = targetDims();
+      canvas.width = dims.w; canvas.height = dims.h;
+      var ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,dims.w,dims.h);
+      if(!transparentEl.checked){ ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,dims.w,dims.h); }
+
+      var iw = current.img.naturalWidth, ih = current.img.naturalHeight;
+      var scale = Math.min(dims.w / iw, dims.h / ih);
+      var dw = iw*scale, dh = ih*scale;
+      var dx = (dims.w - dw)/2, dy = (dims.h - dh)/2;
+      ctx.drawImage(current.img, dx, dy, dw, dh);
+
+      if(transparentEl.checked){ makeTransparent(ctx, dims.w, dims.h); }
+    }
+
+    setupDropzone(drop, input, function(files){
+      fileToImage(files[0]).then(function(res){
+        current = res;
+        wb.classList.add('show');
+        renderPreview();
+      });
+    }, false);
+
+    function compressUnderTarget(targetBytes){
+      var q = 0.92;
+      function attempt(){
+        return canvasToBlob(canvas, 'image/jpeg', q).then(function(blob){
+          if(blob.size <= targetBytes || q <= 0.35){ return blob; }
+          q -= 0.08;
+          return attempt();
+        });
+      }
+      return attempt();
+    }
+
+    document.getElementById('sigApplyBtn').addEventListener('click', function(){
+      if(!current) return;
+      renderPreview();
+      if(transparentEl.checked){
+        canvasToBlob(canvas, 'image/png').then(function(blob){
+          finalSizeEl.textContent = formatBytes(blob.size);
+          downloadBlob(blob, baseName(current.name) + '-signature.png');
+        });
+      } else {
+        var targetBytes = (parseInt(maxKbEl.value,10) || 20) * 1024;
+        compressUnderTarget(targetBytes).then(function(blob){
+          finalSizeEl.textContent = formatBytes(blob.size);
+          downloadBlob(blob, baseName(current.name) + '-signature.jpg');
+        });
+      }
+    });
+    document.getElementById('sigAnotherBtn').addEventListener('click', function(){ wb.classList.remove('show'); current=null; });
+  })();
+
+})();
+</script>
+
+</body>
+</html>
