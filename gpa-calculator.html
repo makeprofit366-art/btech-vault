@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GPA Calculator – Free 4.0 GPA Calculator | BTechVault</title>
+
+<meta name="description" content="Calculate your GPA quickly with BTechVault's free GPA calculator. Enter your courses, grades and credit hours to calculate your GPA on a 4.0 scale.">
+
+<link rel="canonical" href="https://peritto.online/gpa-calculator.html">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-65G3NWR8C0"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-65G3NWR8C0');
+</script>
+
+<style>
+:root{
+  --ink:#16213E;
+  --ink-soft:#2A3B63;
+  --parchment:#FBF7EE;
+  --parchment-dim:#F3EDDD;
+  --rule:#E3DAC3;
+  --gold:#C9962B;
+  --gold-dim:#E9D3A0;
+  --teal:#2F6F68;
+  --coral:#D96C4F;
+  --radius:14px;
+}
+
+*{box-sizing:border-box;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  margin:0;
+  background:var(--parchment);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+h1,h2,h3{
+  font-family:'Fraunces',serif;
+  color:var(--ink);
+}
+
+a{color:inherit;}
+
+.wrap{
+  max-width:1100px;
+  margin:auto;
+  padding:0 24px;
+}
+
+.topbar{
+  border-bottom:1px solid var(--rule);
+  padding:18px 0;
+  background:var(--parchment);
+}
+
+.topbar .wrap{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.brand{
+  text-decoration:none;
+  display:flex;
+  align-items:baseline;
+  gap:9px;
+}
+
+.brand-mark{
+  font-family:'Fraunces',serif;
+  font-size:22px;
+  font-weight:700;
+}
+
+.brand-sub{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--teal);
+}
+
+.hero{
+  padding:50px 0 30px;
+}
+
+.eyebrow{
+  color:var(--teal);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+
+h1{
+  font-size:clamp(32px,5vw,48px);
+  line-height:1.12;
+  margin:14px 0;
+  max-width:700px;
+}
+
+.hero p{
+  color:var(--ink-soft);
+  font-size:16px;
+  line-height:1.7;
+  max-width:720px;
+}
+
+.calculator{
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:26px;
+  box-shadow:0 20px 45px -25px rgba(22,33,62,.35);
+}
+
+.calculator h2{
+  margin-top:0;
+  font-size:24px;
+}
+
+.subtitle{
+  color:var(--ink-soft);
+  font-size:14px;
+  line-height:1.6;
+  margin-bottom:22px;
+}
+
+.course-head,
+.course-row{
+  display:grid;
+  grid-template-columns:1.5fr .8fr .9fr 35px;
+  gap:10px;
+  align-items:center;
+}
+
+.course-head{
+  color:var(--ink-soft);
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.course-row{
+  margin-bottom:9px;
+}
+
+input,select{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid var(--rule);
+  border-radius:8px;
+  background:var(--parchment);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+}
+
+input:focus,select:focus{
+  outline:none;
+  border-color:var(--teal);
+  background:#fff;
+}
+
+.remove{
+  width:30px;
+  height:30px;
+  border:0;
+  border-radius:50%;
+  background:#eee;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.remove:hover{
+  background:var(--coral);
+  color:white;
+}
+
+.buttons{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+  flex-wrap:wrap;
+}
+
+button{
+  font-family:'Inter',sans-serif;
+  cursor:pointer;
+}
+
+.add{
+  flex:1;
+  min-width:160px;
+  padding:12px 18px;
+  border:0;
+  border-radius:9px;
+  background:var(--teal);
+  color:#fff;
+  font-weight:600;
+}
+
+.calculate{
+  flex:1;
+  min-width:160px;
+  padding:12px 18px;
+  border:0;
+  border-radius:9px;
+  background:var(--ink);
+  color:#fff;
+  font-weight:600;
+}
+
+.result{
+  margin-top:22px;
+  padding:22px;
+  border-radius:12px;
+  background:var(--parchment-dim);
+  border:1px solid var(--rule);
+  text-align:center;
+}
+
+.result-number{
+  font-family:'Fraunces',serif;
+  font-size:42px;
+  font-weight:600;
+}
+
+.result-label{
+  color:var(--teal);
+  font-weight:600;
+  margin-top:4px;
+}
+
+.result-details{
+  margin-top:16px;
+  color:var(--ink-soft);
+  font-size:13px;
+  line-height:1.8;
+}
+
+.article{
+  max-width:780px;
+  padding:45px 24px;
+}
+
+.article h2{
+  font-size:27px;
+  margin-top:35px;
+}
+
+.article h3{
+  font-size:20px;
+  margin-top:25px;
+}
+
+.article p,
+.article li{
+  color:var(--ink-soft);
+  font-size:15px;
+  line-height:1.8;
+}
+
+.related{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:20px;
+}
+
+.related a{
+  display:block;
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:10px;
+  padding:15px;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.related a:hover{
+  border-color:var(--teal);
+}
+
+footer{
+  border-top:1px solid var(--rule);
+  padding:28px 0;
+  margin-top:20px;
+}
+
+footer p{
+  color:var(--ink-soft);
+  font-size:12px;
+}
+
+@media(max-width:650px){
+  .wrap{padding:0 17px;}
+
+  .course-head{
+    display:none;
+  }
+
+  .course-row{
+    grid-template-columns:1fr;
+    background:var(--parchment-dim);
+    padding:12px;
+    border-radius:9px;
+  }
+
+  .remove{
+    justify-self:end;
+  }
+
+  .calculator{
+    padding:18px;
+  }
+
+  .related{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+
+<!-- WebApplication structured data -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"GPA Calculator",
+  "url":"https://peritto.online/gpa-calculator.html",
+  "applicationCategory":"EducationalApplication",
+  "operatingSystem":"Web",
+  "description":"Free online GPA calculator for students."
+}
+</script>
+
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">BTechVault</span>
+      <span class="brand-sub">Study Tools</span>
+    </a>
+
+    <span class="brand-sub">GPA Calculator</span>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="wrap">
+
+    <div class="eyebrow">Free Student Calculator</div>
+
+    <h1>GPA Calculator</h1>
+
+    <p>
+      Calculate your GPA on a standard 4.0 scale using your course grades
+      and credit hours. Add your classes below and get your GPA instantly.
+    </p>
+
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+
+    <div class="calculator">
+
+      <h2>Calculate Your GPA</h2>
+
+      <p class="subtitle">
+        Enter each course, the number of credit hours, and your letter grade.
+        Your calculation happens directly in your browser.
+      </p>
+
+      <div class="course-head">
+        <span>Course</span>
+        <span>Credits</span>
+        <span>Grade</span>
+        <span></span>
+      </div>
+
+      <div id="courses"></div>
+
+      <div class="buttons">
+        <button class="add" id="addCourse" type="button">
+          + Add Course
+        </button>
+
+        <button class="calculate" id="calculate" type="button">
+          Calculate GPA
+        </button>
+      </div>
+
+      <div class="result" id="result">
+        <div class="result-number">—</div>
+        <div class="result-label">Your GPA will appear here</div>
+        <div class="result-details">
+          Add your courses and click Calculate GPA.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<section class="article">
+  <div class="wrap">
+
+    <h2>What is a GPA?</h2>
+
+    <p>
+      GPA stands for Grade Point Average. It is a number used by schools,
+      colleges and universities to summarize a student's academic performance.
+      A common GPA scale ranges from 0.0 to 4.0.
+    </p>
+
+    <h2>How is GPA calculated?</h2>
+
+    <p>
+      GPA is generally calculated by multiplying the grade points for each
+      course by the course's credit hours, adding those values together,
+      and dividing the result by the total number of credit hours.
+    </p>
+
+    <h3>GPA Formula</h3>
+
+    <p>
+      GPA = Total Grade Points ÷ Total Credit Hours
+    </p>
+
+    <h2>Example</h2>
+
+    <p>
+      Suppose you take three courses. If your courses have different credit
+      hours, each course contributes to your GPA according to its credit
+      value. The calculator above performs this weighted calculation
+      automatically.
+    </p>
+
+    <h2>Common GPA Grade Points</h2>
+
+    <ul>
+      <li>A+ = 4.0</li>
+      <li>A = 4.0</li>
+      <li>A- = 3.7</li>
+      <li>B+ = 3.3</li>
+      <li>B = 3.0</li>
+      <li>B- = 2.7</li>
+      <li>C+ = 2.3</li>
+      <li>C = 2.0</li>
+      <li>C- = 1.7</li>
+      <li>D = 1.0</li>
+      <li>F = 0.0</li>
+    </ul>
+
+    <h2>Frequently Asked Questions</h2>
+
+    <h3>What is a good GPA?</h3>
+
+    <p>
+      A GPA of 3.0 or higher is commonly considered solid, while a GPA of
+      3.5 or higher is often considered strong. Requirements vary by school,
+      program, scholarship and university.
+    </p>
+
+    <h3>Is GPA calculated using credit hours?</h3>
+
+    <p>
+      Many GPA systems use credit hours. A course with more credits can have
+      a larger effect on the overall GPA than a course with fewer credits.
+    </p>
+
+    <h3>Can I use this calculator on my phone?</h3>
+
+    <p>
+      Yes. The GPA calculator is responsive and works in modern desktop and
+      mobile browsers.
+    </p>
+
+    <h2>More Student Tools</h2>
+
+    <div class="related">
+
+      <a href="grade-gpa-calculators.html">
+        Grade & GPA Calculators
+      </a>
+
+      <a href="jee-percentage-calculator.html">
+        JEE Percentage Calculator
+      </a>
+
+      <a href="study-timetable.html">
+        Study Timetable Generator
+      </a>
+
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>BTechVault — Free tools for students.</p>
+    <p>Calculator results are for educational and planning purposes.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+
+  const gradePoints = {
+    "A+":4.0,
+    "A":4.0,
+    "A-":3.7,
+    "B+":3.3,
+    "B":3.0,
+    "B-":2.7,
+    "C+":2.3,
+    "C":2.0,
+    "C-":1.7,
+    "D+":1.3,
+    "D":1.0,
+    "D-":0.7,
+    "F":0.0
+  };
+
+  const courses = document.getElementById("courses");
+
+  function createCourse(){
+
+    const row = document.createElement("div");
+    row.className = "course-row";
+
+    row.innerHTML = `
+      <input
+        type="text"
+        placeholder="Course name"
+        aria-label="Course name"
+      >
+
+      <input
+        type="number"
+        value="3"
+        min="0"
+        step="0.5"
+        aria-label="Credit hours"
+      >
+
+      <select aria-label="Grade">
+        ${Object.keys(gradePoints)
+          .map(g => `<option value="${g}">${g}</option>`)
+          .join("")}
+      </select>
+
+      <button
+        class="remove"
+        type="button"
+        aria-label="Remove course"
+      >×</button>
+    `;
+
+    row.querySelector(".remove").addEventListener("click",()=>{
+      row.remove();
+    });
+
+    courses.appendChild(row);
+  }
+
+  for(let i=0;i<3;i++){
+    createCourse();
+  }
+
+  document.getElementById("addCourse").addEventListener("click",()=>{
+    createCourse();
+  });
+
+  document.getElementById("calculate").addEventListener("click",()=>{
+
+    const rows = document.querySelectorAll(".course-row");
+
+    let totalCredits = 0;
+    let totalPoints = 0;
+
+    rows.forEach(row=>{
+
+      const credits =
+        parseFloat(row.querySelector('input[type="number"]').value) || 0;
+
+      const grade =
+        row.querySelector("select").value;
+
+      const points =
+        gradePoints[grade];
+
+      totalCredits += credits;
+      totalPoints += points * credits;
+
+    });
+
+    const gpa =
+      totalCredits > 0
+      ? totalPoints / totalCredits
+      : 0;
+
+    document.getElementById("result").innerHTML = `
+      <div class="result-number">${gpa.toFixed(2)}</div>
+
+      <div class="result-label">
+        GPA
+      </div>
+
+      <div class="result-details">
+        Total Credit Hours: ${totalCredits.toFixed(1)}<br>
+        Total Grade Points: ${totalPoints.toFixed(2)}
+      </div>
+    `;
+
+  });
+
+})();
+</script>
+
+</body>
+</html>
