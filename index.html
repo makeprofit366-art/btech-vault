@@ -387,6 +387,335 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
 @media(min-width:900px){
   .footer-grid{grid-template-columns:1.4fr 1fr 1fr;}
 }
+  /* =========================================
+   STUDENT TOOLS CAROUSEL
+========================================= */
+
+.tools-section-header{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.tools-view-all{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:9px 14px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  color:var(--ink);
+  font-size:.86rem;
+  font-weight:600;
+  white-space:nowrap;
+  transition:.2s ease;
+}
+
+.tools-view-all:hover{
+  border-color:var(--teal);
+  color:var(--teal);
+}
+
+
+/* Carousel wrapper */
+
+.tools-carousel-wrap{
+  position:relative;
+  margin-top:1.2rem;
+}
+
+
+/* Horizontal scrolling area */
+
+.tools-carousel{
+  display:flex;
+  gap:16px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-behavior:smooth;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  padding:4px 2px 12px;
+}
+
+.tools-carousel::-webkit-scrollbar{
+  display:none;
+}
+
+
+/* Individual cards */
+
+.carousel-tool-card{
+  flex:0 0 calc((100% - 48px) / 4);
+  min-height:205px;
+
+  background:var(--paper-raised,#fff);
+  border:1px solid var(--line);
+  border-radius:var(--radius,14px);
+
+  padding:1.1rem;
+
+  text-decoration:none;
+  color:inherit;
+
+  scroll-snap-align:start;
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease;
+}
+
+.carousel-tool-card:hover{
+  transform:translateY(-3px);
+  border-color:var(--teal);
+  box-shadow:0 14px 30px rgba(22,33,62,.10);
+}
+
+
+/* Card top */
+
+.carousel-tool-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:1.15rem;
+}
+
+
+/* Icon */
+
+.carousel-tool-icon{
+  width:42px;
+  height:42px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:var(--paper-2,#f3eddd);
+  border-radius:10px;
+
+  font-size:21px;
+}
+
+
+/* Live badge */
+
+.carousel-tool-tag{
+  background:#e2f3f0;
+  color:#18766d;
+
+  padding:5px 8px;
+  border-radius:6px;
+
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9px;
+  font-weight:600;
+
+  text-transform:uppercase;
+}
+
+
+/* Card heading */
+
+.carousel-tool-card h3{
+  margin:0 0 .55rem;
+
+  font-family:Inter,sans-serif;
+  font-size:17px;
+  line-height:1.3;
+}
+
+
+/* Card description */
+
+.carousel-tool-card p{
+  margin:0;
+
+  color:var(--ink-soft,#2a3b63);
+
+  font-size:13px;
+  line-height:1.55;
+}
+
+
+/* Arrows */
+
+.tools-arrow{
+  position:absolute;
+
+  top:50%;
+  transform:translateY(-50%);
+
+  z-index:5;
+
+  width:38px;
+  height:38px;
+
+  border:1px solid var(--line);
+  border-radius:50%;
+
+  background:var(--paper);
+
+  color:var(--ink);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  font-size:18px;
+  font-weight:700;
+
+  box-shadow:0 5px 15px rgba(22,33,62,.12);
+
+  transition:.2s ease;
+}
+
+.tools-arrow:hover{
+  background:var(--teal);
+  color:white;
+  border-color:var(--teal);
+}
+
+.tools-arrow-left{
+  left:-19px;
+}
+
+.tools-arrow-right{
+  right:-19px;
+}
+
+
+/* Mobile hint */
+
+.tools-mobile-hint{
+  display:none;
+
+  margin-top:8px;
+
+  color:var(--ink-soft);
+  font-family:"IBM Plex Mono",monospace;
+
+  font-size:10px;
+  text-align:center;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media(max-width:1000px){
+
+  .carousel-tool-card{
+    flex:0 0 calc((100% - 32px) / 3);
+  }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:700px){
+
+  .tools-section-header{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .tools-view-all{
+    font-size:12px;
+    padding:8px 11px;
+  }
+
+  .tools-carousel{
+    gap:10px;
+    padding-bottom:10px;
+
+    /* native mobile swipe */
+    touch-action:pan-x;
+  }
+
+  .carousel-tool-card{
+    flex:0 0 calc((100% - 10px) / 2);
+    min-height:185px;
+    padding:14px;
+  }
+
+  .carousel-tool-card h3{
+    font-size:15px;
+  }
+
+  .carousel-tool-card p{
+    font-size:12px;
+    line-height:1.5;
+  }
+
+  .carousel-tool-icon{
+    width:36px;
+    height:36px;
+    font-size:18px;
+  }
+
+  .carousel-tool-tag{
+    padding:4px 6px;
+    font-size:8px;
+  }
+
+  .tools-arrow{
+    width:32px;
+    height:32px;
+    font-size:15px;
+  }
+
+  .tools-arrow-left{
+    left:-7px;
+  }
+
+  .tools-arrow-right{
+    right:-7px;
+  }
+
+  .tools-mobile-hint{
+    display:block;
+  }
+
+}
+
+
+/* =========================================
+   VERY SMALL PHONES
+========================================= */
+
+@media(max-width:400px){
+
+  .carousel-tool-card{
+    flex:0 0 calc((100% - 10px) / 2);
+    min-height:175px;
+    padding:11px;
+  }
+
+  .carousel-tool-card h3{
+    font-size:14px;
+  }
+
+  .carousel-tool-card p{
+    font-size:11px;
+  }
+
+  .tools-arrow{
+    display:none;
+  }
+
+}
 </style>
 </head>
 <body>
@@ -449,61 +778,263 @@ footer{background:var(--navy-deep);color:#B9C4CE;padding:2.5rem 1.25rem 1.5rem;m
   <div class="stat"><div class="stat-num" id="totalUsers">—</div><div class="stat-label">Contributors</div></div>
 </div>
 
-<!-- ═══════════════════════════════ STUDENT TOOLS ═══════════════════════ -->
-<div class="section" id="tools">
-  <div class="section-header">
-    <h2>Student tools</h2>
-    <p>Small utilities built for day-to-day B.Tech life. More are added regularly.</p>
+<!-- =========================
+     STUDENT TOOLS
+========================= -->
+
+<section class="section" id="tools">
+
+  <div class="section-header tools-section-header">
+
+    <div>
+      <h2>Student tools</h2>
+
+      <p>
+        Small utilities built for day-to-day student life.
+        More are added regularly.
+      </p>
+    </div>
+
+    <a href="free-student-tools.html" class="tools-view-all">
+      View all tools →
+    </a>
+
   </div>
-  <div class="tools-grid">
-    <a href="resume-builder.html" class="tool-card">
-      <div class="tool-card-top"><div class="tool-icon">📄</div><span class="tool-tag live">Live</span></div>
-      <h3>Resume Builder</h3>
-      <p>Put together a clean, recruiter-ready resume in a few minutes.</p>
-    </a>
-    <a href="chat.html" class="tool-card">
-      <div class="tool-card-top"><div class="tool-icon">💬</div><span class="tool-tag live">Live</span></div>
-      <h3>Study Chat</h3>
-      <p>Ask questions about your notes and get explanations on the spot.</p>
-    </a>
-    <a href="study-timetable.html" class="tool-card">
-      <div class="tool-card-top"><div class="tool-icon">🗓️</div><span class="tool-tag live">Live</span></div>
-      <h3>Study Timetable</h3>
-      <p>Build a personalised weekly study schedule around your free hours.</p>
-    </a>
-    <a href="jee-percentage-calculator.html" class="tool-card">
-      <div class="tool-card-top"><div class="tool-icon">🎯</div><span class="tool-tag live">Live</span></div>
-      <h3>JEE Percentage Calculator</h3>
-      <p>Work out your JEE Main percentage and check your Class 12 board eligibility.</p>
-    </a>
-    <a href="image-tools.html" class="tool-card">
-      <div class="tool-card-top"><div class="tool-icon">🖼️</div><span class="tool-tag live">Live</span></div>
-      <h3>Image Tools</h3>
-      <p>Convert, compress, resize, crop and prepare photos for applications and exams.</p>
-    </a>
-    <a href="grade-gpa-calculators.html" class="tool-card">
-      <div class="tool-card-top"><div class="tool-icon">📊</div><span class="tool-tag live">Live</span></div>
-      <h3>Grade & GPA Calculators</h3>
-      <p>GPA, final grade, and AP, SAT, ACT score estimators in one place.</p>
-    </a>
-    <a href="gpa-calculator.html" class="tool-card">
-  <div class="tool-card-top">
-    <div class="tool-icon">🎓</div>
-    <span class="tool-tag live">Live</span>
+
+
+  <div class="tools-carousel-wrap">
+
+    <button
+      class="tools-arrow tools-arrow-left"
+      type="button"
+      aria-label="Previous tools"
+      onclick="scrollStudentTools(-1)">
+      ←
+    </button>
+
+
+    <div class="tools-carousel" id="studentToolsCarousel">
+
+
+      <!-- Resume Builder -->
+
+      <a href="resume-builder.html" class="carousel-tool-card">
+
+        <div class="carousel-tool-top">
+
+          <div class="carousel-tool-icon">
+            📄
+          </div>
+
+          <span class="carousel-tool-tag">
+            Live
+          </span>
+
+        </div>
+
+        <h3>Resume Builder</h3>
+
+        <p>
+          Put together a clean, recruiter-ready resume in a few minutes.
+        </p>
+
+      </a>
+
+
+      <!-- Study Chat -->
+
+      <a href="chat.html" class="carousel-tool-card">
+
+        <div class="carousel-tool-top">
+
+          <div class="carousel-tool-icon">
+            💬
+          </div>
+
+          <span class="carousel-tool-tag">
+            Live
+          </span>
+
+        </div>
+
+        <h3>Study Chat</h3>
+
+        <p>
+          Ask questions about your notes and get explanations on the spot.
+        </p>
+
+      </a>
+
+
+      <!-- Study Timetable -->
+
+      <a href="study-timetable.html" class="carousel-tool-card">
+
+        <div class="carousel-tool-top">
+
+          <div class="carousel-tool-icon">
+            🗓️
+          </div>
+
+          <span class="carousel-tool-tag">
+            Live
+          </span>
+
+        </div>
+
+        <h3>Study Timetable</h3>
+
+        <p>
+          Build a personalised weekly study schedule around your free hours.
+        </p>
+
+      </a>
+
+
+      <!-- JEE Percentage Calculator -->
+
+      <a href="jee-percentage-calculator.html" class="carousel-tool-card">
+
+        <div class="carousel-tool-top">
+
+          <div class="carousel-tool-icon">
+            🎯
+          </div>
+
+          <span class="carousel-tool-tag">
+            Live
+          </span>
+
+        </div>
+
+        <h3>JEE Percentage Calculator</h3>
+
+        <p>
+          Work out your JEE Main percentage and check Class 12 eligibility.
+        </p>
+
+      </a>
+
+
+      <!-- Image Tools -->
+
+      <a href="image-tools.html" class="carousel-tool-card">
+
+        <div class="carousel-tool-top">
+
+          <div class="carousel-tool-icon">
+            🖼️
+          </div>
+
+          <span class="carousel-tool-tag">
+            Live
+          </span>
+
+        </div>
+
+        <h3>Image Tools</h3>
+
+        <p>
+          Convert, compress, resize, crop and prepare images for applications.
+        </p>
+
+      </a>
+
+
+      <!-- Grade & GPA -->
+
+      <a href="grade-gpa-calculators.html" class="carousel-tool-card">
+
+        <div class="carousel-tool-top">
+
+          <div class="carousel-tool-icon">
+            📊
+          </div>
+
+          <span class="carousel-tool-tag">
+            Live
+          </span>
+
+        </div>
+
+        <h3>Grade &amp; GPA Calculators</h3>
+
+        <p>
+          GPA, final grade, and AP, SAT, ACT score estimators in one place.
+        </p>
+
+      </a>
+
+
+      <!-- GPA Calculator -->
+
+      <a href="gpa-calculator.html" class="carousel-tool-card">
+
+        <div class="carousel-tool-top">
+
+          <div class="carousel-tool-icon">
+            🎓
+          </div>
+
+          <span class="carousel-tool-tag">
+            Live
+          </span>
+
+        </div>
+
+        <h3>GPA Calculator</h3>
+
+        <p>
+          Calculate your GPA quickly using your course grades and credit hours.
+        </p>
+
+      </a>
+
+
+      <!-- Grade Calculator -->
+
+      <a href="grade-calculator.html" class="carousel-tool-card">
+
+        <div class="carousel-tool-top">
+
+          <div class="carousel-tool-icon">
+            📝
+          </div>
+
+          <span class="carousel-tool-tag">
+            Live
+          </span>
+
+        </div>
+
+        <h3>Grade Calculator</h3>
+
+        <p>
+          Calculate your course grade using scores and assessment weights.
+        </p>
+
+      </a>
+
+
+    </div>
+
+
+    <button
+      class="tools-arrow tools-arrow-right"
+      type="button"
+      aria-label="Next tools"
+      onclick="scrollStudentTools(1)">
+      →
+    </button>
+
   </div>
-  <h3>GPA Calculator</h3>
-  <p>Calculate your GPA quickly using your course grades and credit hours.</p>
-</a>
-    <a href="grade-calculator.html" class="tool-card">
-  <div class="tool-card-top">
-    <div class="tool-icon">📝</div>
-    <span class="tool-tag live">Live</span>
+
+
+  <div class="tools-mobile-hint">
+    Swipe to explore more tools →
   </div>
-  <h3>Grade Calculator</h3>
-  <p>Calculate your course grade using scores and assessment weights.</p>
-</a>
-  </div>
-</div>
+
+</section>
 
 <!-- ═══════════════════════════════ MAIN GRID ════════════════════════════ -->
 <div class="section">
@@ -750,6 +1281,28 @@ function dismissPWA(){
 window.addEventListener('appinstalled', () => {
   document.getElementById('pwaBanner').classList.remove('show');
 });
+  <script>
+function scrollStudentTools(direction){
+
+  const carousel = document.getElementById('studentToolsCarousel');
+
+  if(!carousel) return;
+
+  const card = carousel.querySelector('.carousel-tool-card');
+
+  if(!card) return;
+
+  const gap = 16;
+
+  const amount = card.offsetWidth + gap;
+
+  carousel.scrollBy({
+    left: direction * amount,
+    behavior: 'smooth'
+  });
+
+}
+</script>
 </script>
 </body>
 </html>
