@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Grade Calculator – Free Course Grade Calculator | BTechVault</title>
+
+<meta name="description" content="Use BTechVault's free Grade Calculator to calculate your current course grade from assignments, exams, quizzes and other scores.">
+
+<link rel="canonical" href="https://peritto.online/grade-calculator.html">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-65G3NWR8C0"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-65G3NWR8C0');
+</script>
+
+<style>
+:root{
+  --ink:#16213E;
+  --ink-soft:#2A3B63;
+  --parchment:#FBF7EE;
+  --parchment-dim:#F3EDDD;
+  --rule:#E3DAC3;
+  --teal:#2F6F68;
+  --coral:#D96C4F;
+  --radius:14px;
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:var(--parchment);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+}
+
+h1,h2,h3{
+  font-family:'Fraunces',serif;
+}
+
+a{color:inherit}
+
+.wrap{
+  max-width:1100px;
+  margin:auto;
+  padding:0 24px;
+}
+
+.topbar{
+  border-bottom:1px solid var(--rule);
+  padding:18px 0;
+}
+
+.topbar .wrap{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.brand{
+  text-decoration:none;
+  display:flex;
+  align-items:baseline;
+  gap:9px;
+}
+
+.brand-mark{
+  font-family:'Fraunces',serif;
+  font-size:22px;
+  font-weight:700;
+}
+
+.brand-sub{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--teal);
+}
+
+.hero{
+  padding:50px 0 30px;
+}
+
+.eyebrow{
+  color:var(--teal);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+
+h1{
+  font-size:clamp(32px,5vw,48px);
+  line-height:1.12;
+  margin:14px 0;
+}
+
+.hero p{
+  max-width:720px;
+  color:var(--ink-soft);
+  line-height:1.7;
+}
+
+.calculator{
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:26px;
+  box-shadow:0 20px 45px -25px rgba(22,33,62,.35);
+}
+
+.calculator h2{
+  margin-top:0;
+}
+
+.item{
+  display:grid;
+  grid-template-columns:1.4fr .8fr .8fr 35px;
+  gap:10px;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.item-head{
+  display:grid;
+  grid-template-columns:1.4fr .8fr .8fr 35px;
+  gap:10px;
+  margin-bottom:8px;
+  color:var(--ink-soft);
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+input{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid var(--rule);
+  border-radius:8px;
+  background:var(--parchment);
+  font:inherit;
+  color:var(--ink);
+}
+
+input:focus{
+  outline:none;
+  border-color:var(--teal);
+  background:#fff;
+}
+
+.remove{
+  width:30px;
+  height:30px;
+  border:0;
+  border-radius:50%;
+  background:#eee;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.remove:hover{
+  background:var(--coral);
+  color:#fff;
+}
+
+.buttons{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+  flex-wrap:wrap;
+}
+
+button{
+  font-family:'Inter',sans-serif;
+}
+
+.add{
+  flex:1;
+  min-width:170px;
+  padding:12px 18px;
+  border:0;
+  border-radius:9px;
+  background:var(--teal);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.calculate{
+  flex:1;
+  min-width:170px;
+  padding:12px 18px;
+  border:0;
+  border-radius:9px;
+  background:var(--ink);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.result{
+  margin-top:22px;
+  padding:22px;
+  border-radius:12px;
+  background:var(--parchment-dim);
+  border:1px solid var(--rule);
+  text-align:center;
+}
+
+.result-number{
+  font-family:'Fraunces',serif;
+  font-size:42px;
+  font-weight:600;
+}
+
+.result-label{
+  color:var(--teal);
+  font-weight:600;
+  margin-top:4px;
+}
+
+.result-details{
+  color:var(--ink-soft);
+  font-size:13px;
+  line-height:1.8;
+  margin-top:12px;
+}
+
+.article{
+  max-width:800px;
+  padding:45px 24px;
+}
+
+.article h2{
+  margin-top:35px;
+  font-size:27px;
+}
+
+.article h3{
+  font-size:20px;
+  margin-top:25px;
+}
+
+.article p,
+.article li{
+  color:var(--ink-soft);
+  line-height:1.8;
+  font-size:15px;
+}
+
+.related{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:20px;
+}
+
+.related a{
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:10px;
+  padding:15px;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.related a:hover{
+  border-color:var(--teal);
+}
+
+footer{
+  border-top:1px solid var(--rule);
+  margin-top:20px;
+  padding:28px 0;
+}
+
+footer p{
+  color:var(--ink-soft);
+  font-size:12px;
+}
+
+@media(max-width:650px){
+
+  .wrap{
+    padding:0 17px;
+  }
+
+  .item-head{
+    display:none;
+  }
+
+  .item{
+    grid-template-columns:1fr;
+    background:var(--parchment-dim);
+    padding:12px;
+    border-radius:9px;
+  }
+
+  .remove{
+    justify-self:end;
+  }
+
+  .calculator{
+    padding:18px;
+  }
+
+  .related{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"Grade Calculator",
+  "url":"https://peritto.online/grade-calculator.html",
+  "applicationCategory":"EducationalApplication",
+  "operatingSystem":"Web",
+  "description":"Free online grade calculator for calculating course grades."
+}
+</script>
+
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+
+    <a href="index.html" class="brand">
+      <span class="brand-mark">BTechVault</span>
+      <span class="brand-sub">Study Tools</span>
+    </a>
+
+    <span class="brand-sub">Grade Calculator</span>
+
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="wrap">
+
+    <div class="eyebrow">Free Student Calculator</div>
+
+    <h1>Grade Calculator</h1>
+
+    <p>
+      Calculate your current course grade using assignment, quiz, exam
+      and project scores. Add your grades and weights below to get your
+      weighted course grade instantly.
+    </p>
+
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+
+    <div class="calculator">
+
+      <h2>Calculate Your Course Grade</h2>
+
+      <p>
+        Enter the name of each assessment, your score, and its weight.
+        The total weights should normally add up to 100%.
+      </p>
+
+      <div class="item-head">
+        <span>Assessment</span>
+        <span>Score %</span>
+        <span>Weight %</span>
+        <span></span>
+      </div>
+
+      <div id="items"></div>
+
+      <div class="buttons">
+
+        <button class="add" id="addItem" type="button">
+          + Add Assessment
+        </button>
+
+        <button class="calculate" id="calculate" type="button">
+          Calculate Grade
+        </button>
+
+      </div>
+
+      <div class="result" id="result">
+
+        <div class="result-number">—</div>
+
+        <div class="result-label">
+          Your grade will appear here
+        </div>
+
+        <div class="result-details">
+          Add your scores and weights, then click Calculate Grade.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<section class="article">
+
+  <div class="wrap">
+
+    <h2>What is a Grade Calculator?</h2>
+
+    <p>
+      A grade calculator helps students determine their overall course
+      grade by combining scores from assignments, quizzes, exams, projects
+      and other assessments according to their weights.
+    </p>
+
+    <h2>How Does a Grade Calculator Work?</h2>
+
+    <p>
+      Each assessment contributes to the final grade according to its
+      percentage weight. For example, if an exam is worth 30% of your
+      course grade, its score contributes 30% of the final weighted grade.
+    </p>
+
+    <h3>Grade Calculator Formula</h3>
+
+    <p>
+      Weighted Grade = Σ (Score × Weight) ÷ 100
+    </p>
+
+    <h2>Example</h2>
+
+    <p>
+      Suppose you score 90% on an assignment worth 20%, 80% on an exam
+      worth 30%, and 95% on a project worth 50%. The calculator combines
+      each score with its corresponding weight to calculate the overall
+      course grade.
+    </p>
+
+    <h2>Common Letter Grade Scale</h2>
+
+    <ul>
+      <li>A: 90–100%</li>
+      <li>B: 80–89%</li>
+      <li>C: 70–79%</li>
+      <li>D: 60–69%</li>
+      <li>F: Below 60%</li>
+    </ul>
+
+    <p>
+      Grade boundaries can vary between schools, colleges and universities,
+      so always check your institution's grading policy.
+    </p>
+
+    <h2>Frequently Asked Questions</h2>
+
+    <h3>How do I calculate my current grade?</h3>
+
+    <p>
+      Enter each completed assessment's score and its percentage weight.
+      The calculator will combine the weighted scores to estimate your
+      current grade.
+    </p>
+
+    <h3>Do all assessment weights need to equal 100%?</h3>
+
+    <p>
+      If you are calculating the final course grade, the assessment weights
+      should normally total 100%. For partial-course calculations, the
+      calculator can still show the weighted contribution of the entered
+      assessments.
+    </p>
+
+    <h3>Can I use this calculator on mobile?</h3>
+
+    <p>
+      Yes. The calculator is designed to work on both desktop and mobile
+      browsers.
+    </p>
+
+    <h2>More Student Tools</h2>
+
+    <div class="related">
+
+      <a href="gpa-calculator.html">
+        GPA Calculator
+      </a>
+
+      <a href="grade-gpa-calculators.html">
+        Grade & GPA Calculators
+      </a>
+
+      <a href="study-timetable.html">
+        Study Timetable
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+
+  <div class="wrap">
+
+    <p>
+      BTechVault — Free tools for students.
+    </p>
+
+    <p>
+      Calculator results are for educational and planning purposes.
+    </p>
+
+  </div>
+
+</footer>
+
+<script>
+
+(function(){
+
+  const items = document.getElementById("items");
+
+  function addAssessment(
+    name = "",
+    score = "",
+    weight = ""
+  ){
+
+    const row = document.createElement("div");
+
+    row.className = "item";
+
+    row.innerHTML = `
+      <input
+        type="text"
+        placeholder="e.g. Midterm Exam"
+        value="${name}"
+        aria-label="Assessment name"
+      >
+
+      <input
+        type="number"
+        min="0"
+        max="100"
+        step="0.01"
+        placeholder="Score"
+        value="${score}"
+        aria-label="Score percentage"
+      >
+
+      <input
+        type="number"
+        min="0"
+        max="100"
+        step="0.01"
+        placeholder="Weight"
+        value="${weight}"
+        aria-label="Assessment weight"
+      >
+
+      <button
+        class="remove"
+        type="button"
+        aria-label="Remove assessment"
+      >×</button>
+    `;
+
+    row
+      .querySelector(".remove")
+      .addEventListener("click",function(){
+        row.remove();
+      });
+
+    items.appendChild(row);
+  }
+
+  addAssessment("Assignment", "", "20");
+  addAssessment("Midterm Exam", "", "30");
+  addAssessment("Final Exam", "", "50");
+
+  document
+    .getElementById("addItem")
+    .addEventListener("click",function(){
+      addAssessment();
+    });
+
+  document
+    .getElementById("calculate")
+    .addEventListener("click",function(){
+
+      const rows =
+        document.querySelectorAll(".item");
+
+      let weightedTotal = 0;
+      let totalWeight = 0;
+
+      rows.forEach(function(row){
+
+        const inputs =
+          row.querySelectorAll("input");
+
+        const score =
+          parseFloat(inputs[1].value);
+
+        const weight =
+          parseFloat(inputs[2].value);
+
+        if(
+          !isNaN(score) &&
+          !isNaN(weight)
+        ){
+
+          weightedTotal += score * weight;
+          totalWeight += weight;
+
+        }
+
+      });
+
+      const result =
+        document.getElementById("result");
+
+      if(totalWeight <= 0){
+
+        result.innerHTML = `
+          <div class="result-number">—</div>
+          <div class="result-label">
+            Enter your scores first
+          </div>
+          <div class="result-details">
+            Add at least one score and weight.
+          </div>
+        `;
+
+        return;
+      }
+
+      const grade =
+        weightedTotal / totalWeight;
+
+      let letter = "F";
+
+      if(grade >= 90) letter = "A";
+      else if(grade >= 80) letter = "B";
+      else if(grade >= 70) letter = "C";
+      else if(grade >= 60) letter = "D";
+
+      result.innerHTML = `
+        <div class="result-number">
+          ${grade.toFixed(2)}%
+        </div>
+
+        <div class="result-label">
+          Estimated Grade: ${letter}
+        </div>
+
+        <div class="result-details">
+          Total Weight Entered:
+          ${totalWeight.toFixed(2)}%
+        </div>
+      `;
+
+    });
+
+})();
+
+</script>
+
+</body>
+</html>
