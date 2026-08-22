@@ -1135,13 +1135,31 @@ function renderNav(user){
 
 async function loadPdfs(){
   try{
-    const snap=await db.collection('pdfs').where('status','==','active').orderBy('uploadedAt','desc').get();
-    allPdfs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const snap = await db.collection('pdfs')
+      .where('status','==','active')
+      .get();
+
+    allPdfs = snap.docs
+      .map(d => ({id:d.id, ...d.data()}))
+      .sort((a,b) => {
+        const aTime = a.uploadedAt?.toMillis ? a.uploadedAt.toMillis() : 0;
+        const bTime = b.uploadedAt?.toMillis ? b.uploadedAt.toMillis() : 0;
+        return bTime - aTime;
+      });
+
     buildFilters();
     renderPdfs(allPdfs);
-    document.getElementById('pdfCount').textContent=allPdfs.length+' results';
+
+    document.getElementById('pdfCount').textContent =
+      allPdfs.length + ' results';
+
   }catch(e){
-    document.getElementById('pdfGrid').innerHTML=`<div class="empty"><div class="e-icon">⚠️</div><h3>Could not load PDFs</h3><p>${e.message}</p></div>`;
+    document.getElementById('pdfGrid').innerHTML =
+      `<div class="empty">
+        <div class="e-icon">⚠️</div>
+        <h3>Could not load PDFs</h3>
+        <p>${e.message}</p>
+      </div>`;
   }
 }
 
