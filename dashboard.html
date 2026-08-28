@@ -111,6 +111,7 @@
 
     @media (max-width: 640px) { .grid-wrap, nav, .tabs { padding-left: 1rem; padding-right: 1rem; } .pdf-grid { grid-template-columns: 1fr; } }
   </style>
+  <meta name="robots" content="noindex,follow"/>
 </head>
 <body>
 
@@ -132,7 +133,7 @@
 <div id="tab-upload" class="form-wrap">
   <div class="form-card">
     <h2>Upload a PDF</h2>
-    <p>Subject name is mandatory. Tags help others find your PDF easily.</p>
+    <p>Subject name is mandatory. Tags help others find your PDF easily. Please read our <a href="content-policy.html" target="_blank" rel="noopener">Content & Copyright Policy</a> before uploading.</p>
 
     <div class="form-group">
       <label>PDF File *</label>
@@ -223,6 +224,13 @@
       <p style="font-size:0.85rem;color:#92400e;margin-bottom:0.4rem;">⚠️ <strong>File too large!</strong> Cloudinary free plan allows max 10MB per file.</p>
       <a href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-25mb" target="_blank" style="font-size:0.85rem;color:#4f46e5;font-weight:600;">👉 Click here to compress your PDF for free ↗</a>
       <p style="font-size:0.78rem;color:#92400e;margin-top:0.3rem;">After compressing, upload again!</p>
+    </div>
+
+    <div class="form-group" style="margin-top:1rem;">
+      <label style="display:flex;align-items:flex-start;gap:.55rem;cursor:pointer;font-size:.8rem;color:#4b5563;line-height:1.45;">
+        <input type="checkbox" id="copyrightConfirm" style="margin-top:.2rem;flex-shrink:0;"/>
+        <span>I confirm that I created this material or have permission to share it, and that it does not infringe another person's copyright or privacy.</span>
+      </label>
     </div>
 
     <button class="btn btn-primary" id="uploadBtn" style="width:100%;justify-content:center;margin-top:1rem;padding:0.75rem;" onclick="uploadPdf()">
@@ -347,6 +355,7 @@ async function uploadPdf() {
   if (!selectedFile) { showToast('Please select a PDF!'); return; }
   if (!title) { showToast('Please enter a title!'); return; }
   if (!subject) { showToast('Subject name is required!'); return; }
+  if (!document.getElementById('copyrightConfirm').checked) { showToast('Please confirm you have the right to share this material.'); return; }
 
   const btn = document.getElementById('uploadBtn');
   btn.disabled = true;
@@ -401,7 +410,9 @@ async function uploadPdf() {
       uploadedBy: currentUser.uid,
       uploaderName: currentUser.displayName,
       uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      status: 'active'
+      status: 'active',
+      copyrightConfirmed: true,
+      copyrightConfirmedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     progressFill.style.width = '100%';
